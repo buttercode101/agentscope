@@ -83,6 +83,28 @@ def parse_cadence_minutes(sched_s):
         pass
     return None
 
+
+def success_rates(execs, min_runs=3):
+    """Per-job success rate over recent runs. Flags high-failure jobs.
+
+    Returns dict: jid -> {"total": n, "ok": k, "rate": float}
+    Only meaningful when a job has >= min_runs recorded.
+    """
+    stats = {}
+    for e in execs[-40:]:
+        jid = e.get("job_id")
+        if not jid:
+            continue
+        s = stats.setdefault(jid, {"total": 0, "ok": 0})
+        s["total"] += 1
+        if (e.get("status") or "").lower() in ("succeeded", "success", "ok", "completed"):
+            s["ok"] += 1
+    out = {}
+    for jid, s in stats.items():
+        if s["total"] >= min_runs:
+            out[jid] = {"total": s["total"], "ok": s["ok"], "rate": round(s["ok"] / s["total"] * 100)}
+    return out
+
 # ---------------------------------------------------------------- config ----
 
 DEFAULT_CONFIG = {
@@ -102,6 +124,7 @@ DEFAULT_CONFIG = {
     "group_by": "none",                  # "none" | "group" — group jobs by their 'group'/'project' field
     "compact": False,                    # compact density option
     "ack_db": "~/.hermes/cron/executions.db",  # sqlite for acknowledged anomalies (table: acks(key TEXT, ts))
+        "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls: {"tool","ts","ok"}
 }
 
 def load_config(path):
@@ -276,6 +299,39 @@ def ack_key(kind, msg):
     import hashlib
     return hashlib.sha1(f"{kind}:{msg}".encode()).hexdigest()[:10]
 
+
+def mcp_tool_stats(jsonl_path):
+    """Per-tool success counts from an MCP activity JSONL.
+
+    Expected line shape: {"tool": "server.tool", "ts": "...", "ok": true}
+    Returns list of {"tool","total","rate"} sorted by volume, or [] if absent.
+    """
+    out = {}
+    try:
+        with open(jsonl_path) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                except Exception:
+                    continue
+                tool = rec.get("tool") or rec.get("name")
+                if not tool:
+                    continue
+                s = out.setdefault(tool, {"total": 0, "ok": 0})
+                s["total"] += 1
+                okv = rec.get("ok", rec.get("success", True))
+                if okv in (True, "true", 1, "1"):
+                    s["ok"] += 1
+    except Exception:
+        pass
+    rows = [{"tool": t, "total": v["total"],
+             "rate": round(v["ok"] / v["total"] * 100) if v["total"] else 0}
+            for t, v in out.items()]
+    return sorted(rows, key=lambda r: -r["total"])[:8]
+
 # ---------------------------------------------------------------- render ----
 
 BADGE = {"warn": ("WARN", "#b45309", "#fef3c7"),
@@ -309,6 +365,8 @@ def build(cfg, out_path):
     last24_fail = sum(1 for e in execs if e.get("status")=="failed" and (e.get("started_at") or "") >= day_ago)
     last24_ok = sum(1 for e in execs if e.get("status") in ("succeeded","success","ok") and (e.get("started_at") or "") >= day_ago)
     names = job_names(s["cron_jobs_glob"], s["executions_db"]) if s.get("executions_db") else {}
+    rates = success_rates(execs)
+    mcp_rows = mcp_tool_stats(s["mcp_jsonl"]) if s.get("mcp_jsonl") else []
 
     job_rows = "".join(
         f'<tr><td>{esc(j["name"])}</td><td class="mut">{esc(j["schedule"])}</td>'
@@ -345,6 +403,22 @@ def build(cfg, out_path):
     if ackd:
         an_html += '<div class="mut" style="font-size:12px;margin-top:8px">&amp;#9745; ' + str(len(ackd)) + ' acknowledged (hidden until they change)</div>'
 
+    def _job_row(j):
+        """One jobs-table row; gains a health % cell when data supports it."""
+        jid = j.get("id") or ""
+        r = rates.get(jid) or rates.get(jid[:8])
+        if r and j["enabled"]:
+            pct = r["rate"]
+            cls = "ok" if pct >= 80 else ("warn" if pct >= 50 else "bad")
+            health = f'<td><span class="hlth {cls}">{pct}%</span><span class="vsub"> of {r["total"]}</span></td>'
+        elif not j["enabled"]:
+            health = '<td class="mut">-</td>'
+        else:
+            health = '<td class="mut">n/a</td>'
+        return ('<tr><td>' + esc(j["name"]) + '</td><td class="mut">' + esc(j["schedule"]) + '</td>'
+                '<td><span class="pill ' + ("on" if j["enabled"] else "off") + '">' + ("ON" if j["enabled"] else "OFF") + '</span></td>'
+                + health + '</tr>')
+
     # jobs table with optional grouping
     group_by = cfg.get("group_by", "none")
     if group_by == "group" and any(j.get("group") for j in jobs):
@@ -359,16 +433,26 @@ def build(cfg, out_path):
                 '<tr><td>' + esc(j["name"]) + '</td><td class="mut">' + esc(j["schedule"]) + '</td>'
                 '<td><span class="pill ' + ("on" if j["enabled"] else "off") + '">' + ("ON" if j["enabled"] else "OFF") + '</span></td></tr>'
                 for j in gj)
-            parts.append('<tr class="grp"><td colspan="3">' + esc(g) +
-                         ' <span class="vsub">- ' + str(n_on) + '/' + str(len(gj)) + ' on</span></td></tr>' + rows)
+            parts.append('<tr class="grp"><td colspan="4">' + esc(g) +
+                         ' <span class="vsub">- ' + str(n_on) + '/' + str(len(gj)) + ' on</span></td></tr>')
+        for j in gj:
+            parts.append(_job_row(j))
         job_rows = "".join(parts)
     else:
-        job_rows = "".join(
-            '<tr><td>' + esc(j["name"]) + '</td><td class="mut">' + esc(j["schedule"]) + '</td>'
-            '<td><span class="pill ' + ("on" if j["enabled"] else "off") + '">' + ("ON" if j["enabled"] else "OFF") + '</span></td></tr>'
-            for j in jobs) or '<tr><td class="mut">No scheduled jobs found.</td></tr>'
+        job_rows = "".join(_job_row(j) for j in jobs) or '<tr><td class="mut" colspan="4">No scheduled jobs found.</td></tr>'
 
     sess_spark = " · ".join(f"{d}: {n}" for d, n in sorted(sess.items())) or "no recent activity"
+
+    if mcp_rows:
+        mrows = "".join(
+            '<tr><td>' + esc(r["tool"]) + '</td>'
+            '<td class="mut">' + str(r["total"]) + ' calls</td>'
+            '<td><span class="hlth ' + ("ok" if r["rate"] >= 80 else ("warn" if r["rate"] >= 50 else "bad")) + '">' + str(r["rate"]) + '%</span></td></tr>'
+            for r in mcp_rows)
+        mcp_panel = ('<div class="panel"><h2>MCP / tool calls</h2>'
+                     '<table><tbody>' + mrows + '</tbody></table></div>')
+    else:
+        mcp_panel = ""
     kpi_leads = (f'<div class="kpi"><div class="v">{leads["active"]}<span class="vsub">/{leads["total"]}</span></div>'
                  f'<div class="l">{esc(s.get("leads_label","Active items"))}</div></div>') if s.get("leads_db") else ""
 
@@ -417,6 +501,9 @@ tr:first-child td{{border-top:none}}
 .chips{{display:flex;gap:8px;margin-bottom:10px}}
 .chip{{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
 .chip.active{{background:var(--acc);border-color:var(--acc);color:#fff}}
+.hlth{{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px}}
+.hlth.ok{{color:#15803d;background:#dcfce7}} .hlth.warn{{color:#b45309;background:#fef3c7}} .hlth.bad{{color:#b91c1c;background:#fee2e2}}
+:root .hlth.ok{{color:var(--ok);background:transparent;border:1px solid var(--line)}}
 .ackbtn{{float:right;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;padding:2px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
 .ackbtn:hover{{border-color:var(--mut)}}
 tr.grp td{{background:var(--card);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding-top:14px;border-top:2px solid var(--line)}}
@@ -439,7 +526,7 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
 
 <div class="panel {'attn' if not anom[0][0] == 'ok' else 'calm'}"><h2>&#9888; Needs attention</h2>{an_html}</div>
 
-<div class="panel"><h2>Scheduled jobs</h2><table><tbody>{job_rows}</tbody></table></div>
+<div class="panel"><h2>Scheduled jobs &amp; health</h2><table><tbody>{job_rows}</tbody></table></div>
 <div class="panel"><h2>Recent agent actions</h2>
 <div class="chips" role="group" aria-label="Time range filter">
 <button class="chip active" data-range="7">Last 7 days</button>
@@ -478,9 +565,32 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
   }}catch(e){{}}
 }})();
 </script>
-<div class="panel"><h2>Agent sessions ({cfg['session_days']}d)</h2><div style="font-size:13.5px">{esc(sess_spark)}</div></div>
+{mcp_panel}<div class="panel"><h2>Agent sessions ({cfg['session_days']}d)</h2><div style="font-size:13.5px">{esc(sess_spark)}</div></div>
 
-<footer>{esc(cfg['footer'])}</footer>
+<div style="text-align:center;margin:6px 0 14px">
+<button id="sharebtn" class="chip" title="Copy a clean text summary">Copy status summary</button>
+</div>
+<footer>{{esc(cfg['footer'])}}</footer>
+<script>
+(function(){{
+  var b=document.getElementById('sharebtn');
+  if(!b)return;
+  b.addEventListener('click',function(){{
+    var lines=[document.querySelector('h1').textContent+' - '+document.querySelector('.sub').textContent.split(' — ')[0]];
+    document.querySelectorAll('.kpi').forEach(function(k){{
+      lines.push(k.querySelector('.l').textContent+': '+k.querySelector('.v').textContent);
+    }});
+    var attn=document.querySelector('.panel.attn,.panel.calm h2');
+    document.querySelectorAll('.anom').forEach(function(a){{lines.push('- '+a.textContent.replace('Got it','').trim());}});
+    try{{
+      navigator.clipboard.writeText(lines.join('\n')).then(function(){{
+        b.textContent='Copied';setTimeout(function(){{b.textContent='Copy status summary';}},2000);
+      }},function(){{b.textContent='Clipboard blocked';}});
+    }}catch(e){{b.textContent='Clipboard unavailable';}}
+  }});
+}})();
+</script>
+
 </body></html>"""
     d = os.path.dirname(out_path)
     if d:

@@ -78,6 +78,7 @@ Copy `config.example.json`:
 | `group_by` | `"none"` or `"group"` — group jobs by their group/project field |
 | `compact` | `true` for compact density |
 | `ack_db` | SQLite file holding the `acks(key, ts)` table for acknowledged anomalies |
+| `sources.mcp_jsonl` | Optional JSONL of MCP/tool calls (`tool`, `ts`, `ok`) → per-tool success panel |
 
 Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
 
@@ -94,6 +95,12 @@ Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` �
 - [ ] Anomaly rule packs per agent framework
 
 ## Changelog
+
+### v0.5 — Success indicators, sharing, MCP awareness
+
+- **Agent-success indicators**: jobs with 3+ recorded runs show a health chip (e.g. `92% of 12`) — green ≥80%, amber ≥50%, red below
+- **Copy status summary**: one click copies a clean text summary (KPIs + anomalies) for pasting into chat/email — a share action, not an operational control
+- **MCP / tool-call panel**: point `sources.mcp_jsonl` at a JSONL of tool calls (`{"tool","ts","ok"}`) and get per-tool success rates for the top 8 tools by volume; panel stays hidden when no data
 
 ### v0.4 — Multi-source & usability
 

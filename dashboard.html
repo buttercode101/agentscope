@@ -43,6 +43,9 @@ tr:first-child td{border-top:none}
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chip{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
 .chip.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.hlth{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px}
+.hlth.ok{color:#15803d;background:#dcfce7} .hlth.warn{color:#b45309;background:#fef3c7} .hlth.bad{color:#b91c1c;background:#fee2e2}
+:root .hlth.ok{color:var(--ok);background:transparent;border:1px solid var(--line)}
 .ackbtn{float:right;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;padding:2px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
 .ackbtn:hover{border-color:var(--mut)}
 tr.grp td{background:var(--card);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding-top:14px;border-top:2px solid var(--line)}
@@ -54,7 +57,7 @@ footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
 }
 </style></head><body class="">
 <h1>Agent Command</h1>
-<div class="sub">Mon 24 Aug 2026 · 10:37 — supervision view · read-only</div>
+<div class="sub">Mon 24 Aug 2026 · 11:00 — supervision view · read-only</div>
 
 <div class="grid">
 <div class="kpi"><div class="v">4<span class="vsub">/10</span></div><div class="l">Scheduled jobs on</div></div>
@@ -65,13 +68,13 @@ footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
 
 <div class="panel attn"><h2>&#9888; Needs attention</h2><div class="anom" data-ak="1b43144a7b"><span class="badge" style="color:#b45309;background:#fef3c7">WARN</span> 6 scheduled job(s) disabled: Agent Reach daily health watch, BOQ Intake Daily Summary, Living Memory waitlist checker, Loopii Daily Summary, Loopii Payment Reminders, playbook-wave1-followups<button class="ackbtn" data-key="1b43144a7b" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="2059dc8a81"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;e6f5f011&#x27; skipping every run — config drifted. Re-pin to restore.<button class="ackbtn" data-key="2059dc8a81" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="13f094b8ed"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;70b51eae&#x27; skipping every run — config drifted. Re-pin to restore.<button class="ackbtn" data-key="13f094b8ed" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="c8f4e57f31"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;fb20292a&#x27;: failed 1x — Script not found: /data/data/com<button class="ackbtn" data-key="c8f4e57f31" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="43fe12d619"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;31da595c&#x27;: failed 1x — Script not found: /data/data/com<button class="ackbtn" data-key="43fe12d619" title="Mark as seen - hides until it changes">Got it</button></div></div>
 
-<div class="panel"><h2>Scheduled jobs</h2><table><tbody><tr><td>FS Tender Discovery</td><td class="mut">every 360m</td><td><span class="pill on">ON</span></td></tr><tr><td>FS Tender Weekly Learning</td><td class="mut">0 9 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Supervision Daily Digest</td><td class="mut">0 8 * * *</td><td><span class="pill on">ON</span></td></tr><tr><td>Taste Index weekly curator</td><td class="mut">0 8 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Agent Reach daily health watch</td><td class="mut">0 7 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>BOQ Intake Daily Summary</td><td class="mut">0 17 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Living Memory waitlist checker</td><td class="mut">once in 6h</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Daily Summary</td><td class="mut">0 18 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Payment Reminders</td><td class="mut">0 9 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>playbook-wave1-followups</td><td class="mut">0 13 * * *</td><td><span class="pill off">OFF</span></td></tr></tbody></table></div>
+<div class="panel"><h2>Scheduled jobs &amp; health</h2><table><tbody><tr><td>FS Tender Discovery</td><td class="mut">every 360m</td><td><span class="pill on">ON</span></td><td><span class="hlth bad">3%</span><span class="vsub"> of 32</span></td></tr><tr><td>FS Tender Weekly Learning</td><td class="mut">0 9 * * 1</td><td><span class="pill on">ON</span></td><td class="mut">n/a</td></tr><tr><td>Supervision Daily Digest</td><td class="mut">0 8 * * *</td><td><span class="pill on">ON</span></td><td class="mut">n/a</td></tr><tr><td>Taste Index weekly curator</td><td class="mut">0 8 * * 1</td><td><span class="pill on">ON</span></td><td class="mut">n/a</td></tr><tr><td>Agent Reach daily health watch</td><td class="mut">0 7 * * *</td><td><span class="pill off">OFF</span></td><td class="mut">-</td></tr><tr><td>BOQ Intake Daily Summary</td><td class="mut">0 17 * * *</td><td><span class="pill off">OFF</span></td><td class="mut">-</td></tr><tr><td>Living Memory waitlist checker</td><td class="mut">once in 6h</td><td><span class="pill off">OFF</span></td><td class="mut">-</td></tr><tr><td>Loopii Daily Summary</td><td class="mut">0 18 * * *</td><td><span class="pill off">OFF</span></td><td class="mut">-</td></tr><tr><td>Loopii Payment Reminders</td><td class="mut">0 9 * * *</td><td><span class="pill off">OFF</span></td><td class="mut">-</td></tr><tr><td>playbook-wave1-followups</td><td class="mut">0 13 * * *</td><td><span class="pill off">OFF</span></td><td class="mut">-</td></tr></tbody></table></div>
 <div class="panel"><h2>Recent agent actions</h2>
 <div class="chips" role="group" aria-label="Time range filter">
 <button class="chip active" data-range="7">Last 7 days</button>
 <button class="chip" data-range="1">Last 24h</button>
 </div>
-<table id="actions-table"><tbody><tr data-ts="2026-08-24T09:00:18.310682+02:00"><td class="mut nowrap">1h ago</td><td>FS Tender Weekly Learning</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T08:00:13.783923+02:00"><td class="mut nowrap">2h ago</td><td>Supervision Daily Digest</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T08:00:13.776585+02:00"><td class="mut nowrap">2h ago</td><td>Taste Index weekly curator</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T07:50:10.698058+02:00"><td class="mut nowrap">2h ago</td><td>FS Tender Discovery</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T03:14:57.834321+02:00"><td class="mut nowrap">7h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T21:14:37.426729+02:00"><td class="mut nowrap">13h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T15:14:17.190566+02:00"><td class="mut nowrap">19h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T14:39:14.595025+02:00"><td class="mut nowrap">19h ago</td><td>Living Memory waitlist checker</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-23T09:13:56.335455+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T03:13:38.326724+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T21:13:18.998772+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T15:12:58.408779+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T09:12:36.454696+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T03:12:15.514437+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-21T21:11:57.906271+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr></tbody></table></div>
+<table id="actions-table"><tbody><tr data-ts="2026-08-24T09:00:18.310682+02:00"><td class="mut nowrap">1h ago</td><td>FS Tender Weekly Learning</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T08:00:13.783923+02:00"><td class="mut nowrap">2h ago</td><td>Supervision Daily Digest</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T08:00:13.776585+02:00"><td class="mut nowrap">2h ago</td><td>Taste Index weekly curator</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T07:50:10.698058+02:00"><td class="mut nowrap">3h ago</td><td>FS Tender Discovery</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T03:14:57.834321+02:00"><td class="mut nowrap">7h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T21:14:37.426729+02:00"><td class="mut nowrap">13h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T15:14:17.190566+02:00"><td class="mut nowrap">19h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T14:39:14.595025+02:00"><td class="mut nowrap">20h ago</td><td>Living Memory waitlist checker</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-23T09:13:56.335455+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T03:13:38.326724+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T21:13:18.998772+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T15:12:58.408779+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T09:12:36.454696+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T03:12:15.514437+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-21T21:11:57.906271+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr></tbody></table></div>
 <script>
 (function(){
   var chips=document.querySelectorAll('.chip');
@@ -104,7 +107,31 @@ footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
   }catch(e){}
 })();
 </script>
-<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 2 · Mon 24: 20 · Sat 22: 38 · Sun 23: 24 · Thu 20: 12 · Tue 18: 13</div></div>
+<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 3 · Mon 24: 20 · Sat 22: 37 · Sun 23: 24 · Thu 20: 12 · Tue 18: 13</div></div>
 
-<footer>generated locally · no data leaves this device</footer>
+<div style="text-align:center;margin:6px 0 14px">
+<button id="sharebtn" class="chip" title="Copy a clean text summary">Copy status summary</button>
+</div>
+<footer>{esc(cfg['footer'])}</footer>
+<script>
+(function(){
+  var b=document.getElementById('sharebtn');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    var lines=[document.querySelector('h1').textContent+' - '+document.querySelector('.sub').textContent.split(' — ')[0]];
+    document.querySelectorAll('.kpi').forEach(function(k){
+      lines.push(k.querySelector('.l').textContent+': '+k.querySelector('.v').textContent);
+    });
+    var attn=document.querySelector('.panel.attn,.panel.calm h2');
+    document.querySelectorAll('.anom').forEach(function(a){lines.push('- '+a.textContent.replace('Got it','').trim());});
+    try{
+      navigator.clipboard.writeText(lines.join('
+')).then(function(){
+        b.textContent='Copied';setTimeout(function(){b.textContent='Copy status summary';},2000);
+      },function(){b.textContent='Clipboard blocked';});
+    }catch(e){b.textContent='Clipboard unavailable';}
+  });
+})();
+</script>
+
 </body></html>
