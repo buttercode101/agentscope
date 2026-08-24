@@ -1,0 +1,13 @@
+{
+  "title": "Agent Command",
+  "footer": "generated locally · no data leaves this device",
+  "sources": {
+    "cron_jobs_glob": "~/.hermes/cron/jobs*",
+    "executions_db": "~/.hermes/cron/executions.db",
+    "sessions_dir": "~/.hermes/sessions",
+    "leads_db": "~/.hermes/tender-intake/leads.db",
+    "leads_query": ["SELECT count(*) FROM leads", "SELECT count(*) FROM leads WHERE status NOT IN ('completed','closed','lost')"]
+  },
+  "session_days": 7,
+  "max_actions": 15
+}

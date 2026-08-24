@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Command</title>
+<style>
+:root{--bg:#101418;--card:#181e25;--line:#2a323c;--tx:#e8edf2;--mut:#8a97a5}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif;padding:16px;max-width:900px;margin:0 auto}
+h1{font-size:17px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.panel h2{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.anom{padding:7px 0;border-bottom:1px solid var(--line);font-size:14px} .anom:last-child{border:none}
+.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-right:6px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+td{padding:6px 8px;border-top:1px solid var(--line)}
+.mut{color:var(--mut)}
+.pill{font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px}
+.pill.on{color:#15803d;background:#dcfce7} .pill.off{color:#9ca3af;background:#374151}
+.st.f{color:#f87171;font-weight:600} .st.s{color:#4ade80}
+footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){body{padding:10px} .kpi .v{font-size:22px}}
+</style></head><body>
+<h1>Agent Command</h1>
+<div class="sub">Mon 24 Aug 2026 · 08:02 — supervision view · read-only</div>
+
+<div class="grid">
+<div class="kpi"><div class="v">4<span style="font-size:15px;color:var(--mut)">/10</span></div><div class="l">Scheduled jobs on</div></div>
+<div class="kpi"><div class="v" style="color:#f87171">5</div><div class="l">Failed runs (24h)</div></div>
+<div class="kpi"><div class="v">0</div><div class="l">OK runs (24h)</div></div>
+
+</div>
+
+<div class="panel"><h2>&#9888; Needs attention</h2><div class="anom"><span class="badge" style="color:#b45309;background:#fef3c7">WARN</span> 6 scheduled job(s) disabled: Agent Reach daily health watch, BOQ Intake Daily Summary, Living Memory waitlist checker, Loopii Daily Summary, Loopii Payment Reminders, playbook-wave1-followups</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;e6f5f011&#x27; skipping runs — inference/config drift detected. Re-pin its config to restore.</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;70b51eae&#x27; skipping runs — inference/config drift detected. Re-pin its config to restore.</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;fb20292a&#x27;: failed 1x recently</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;31da595c&#x27;: failed 1x recently</div></div>
+
+<div class="panel"><h2>Scheduled jobs</h2><table><tbody><tr><td>FS Tender Discovery</td><td class="mut">every 360m</td><td><span class="pill on">ON</span></td></tr><tr><td>FS Tender Weekly Learning</td><td class="mut">0 9 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Supervision Daily Digest</td><td class="mut">0 8 * * *</td><td><span class="pill on">ON</span></td></tr><tr><td>Taste Index weekly curator</td><td class="mut">0 8 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Agent Reach daily health watch</td><td class="mut">0 7 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>BOQ Intake Daily Summary</td><td class="mut">0 17 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Living Memory waitlist checker</td><td class="mut">once in 6h</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Daily Summary</td><td class="mut">0 18 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Payment Reminders</td><td class="mut">0 9 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>playbook-wave1-followups</td><td class="mut">0 13 * * *</td><td><span class="pill off">OFF</span></td></tr></tbody></table></div>
+<div class="panel"><h2>Recent agent actions</h2><table><tbody><tr><td class="mut">2026-08-24 08:00</td><td>Supervision Daily Digest</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-24 08:00</td><td>Taste Index weekly curator</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-24 07:50</td><td>FS Tender Discovery</td><td><span class="st m">running</span></td></tr><tr><td class="mut">2026-08-24 03:14</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 21:14</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 15:14</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 14:39</td><td>Living Memory waitlist checker</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-23 09:13</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 03:13</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 21:13</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 15:12</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 09:12</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 03:12</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip] Skipped to prevent unintended spend: global inference config dr…</td></tr><tr><td class="mut">2026-08-21 21:11</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: Skipped to prevent unintended spend: global inference config drifted since t…</td></tr><tr><td class="mut">2026-08-21 15:11</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: Skipped to prevent unintended spend: global inference config drifted since t…</td></tr></tbody></table></div>
+<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 1 · Mon 24: 19 · Sat 22: 33 · Sun 23: 29 · Thu 20: 12 · Tue 18: 14</div></div>
+
+<footer>generated locally · no data leaves this device</footer>
+</body></html>
