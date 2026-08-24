@@ -1,74 +1,87 @@
+<div align="center">
+
 # agentscope
 
-**One clean screen that shows what your AI agents already did — so you catch problems fast without living in logs.**
+**One clean screen for your AI agent crew.**
+*Your agents worked all night. Is anything off?*
 
-A scan-first, supervision-only dashboard for people running multi-tool agent crews (Hermes, cron-driven agents, scheduled jobs). It answers a single question every morning: **"is anything off?"**
+[Live site](https://agentscope-liard.vercel.app) · [Get started](#quick-start) · [MIT licensed](LICENSE)
 
-Not an orchestrator. Not a tracing tool. A supervision layer.
+</div>
+
+---
+
+A scan-first, supervision-only dashboard for people running multi-tool agent crews (Hermes Agent, cron-driven jobs, scheduled workflows). It renders one self-contained HTML page that answers a single question every morning:
+
+> **"Is anything off?"**
+
+Not an orchestrator. Not distributed tracing. A supervision layer.
 
 ![dashboard](docs/screenshot.png)
 
 ## Why
 
-Agent observability tools (LangSmith, Langfuse, Braintrust) are built for ML engineers debugging traces. But when your *agent crew* is doing the work — scheduled jobs, tool calls, campaigns — what the human needs is not a flame graph. It's a 10-second glance:
+Agent observability platforms (LangSmith, Langfuse, Braintrust) are built for ML engineers reading traces. When your *agent crew* is doing the work — scheduled jobs, campaigns, tool calls around the clock — the human need is different:
 
-- Are my scheduled jobs actually running? (Silent drift-skips and disabled-by-accident jobs are the #1 failure mode.)
-- What did my agents already do?
+- Are my scheduled jobs **actually running**? (Silent config-drift skips and accidentally-disabled jobs are the #1 failure mode in practice.)
+- What did my agents **already do**?
 - Is anything off?
 
-This was built dogfood-first: on its first real run it caught two production jobs that had been silently skipping for days due to inference config drift — fixed within minutes of seeing it.
+The interface inverts: fewer buttons, more signal. agentscope has zero controls. It's read-only by design.
 
-## Features
+## What it caught on day one
 
-- **KPI row** — jobs on/total, failed runs (24h), OK runs (24h), active items
-- **Needs Attention panel** — surfaces ONLY real problems; quiet when healthy:
-  - config-drift skips (job created under one provider/model, environment moved on)
-  - auth failures (401/403 patterns)
-  - repeated failures
-  - accidentally-disabled jobs
-- **Scheduled jobs table** with ON/OFF pills
-- **Recent agent actions feed** (status + truncated error reasons)
-- **Sessions activity sparkline**
-- Dark, mobile-friendly, single self-contained HTML file
-- Zero buttons — read-only by design. Supervision, not control plane.
-- **Local-only**: reads local SQLite/JSON state; nothing leaves your device
+Two production jobs had been silently skipping every run for days: their inference config had drifted from the global environment, and the scheduler skipped them "to prevent unintended spend" — with no error surfacing anywhere. The dashboard's first render flagged both as FAIL with the exact fix hint. Fixed in two minutes.
+
+That's the whole thesis: supervision surfaces what logs hide.
+
+## Panels
+
+| Panel | Answers |
+|---|---|
+| KPI row | Jobs on/total, failed runs 24h, OK runs 24h, active items |
+| ⚠ Needs attention | Anomalies ONLY — quiet when healthy. Config-drift skips, auth failures (401/403), repeat failures, disabled jobs |
+| Scheduled jobs | Every job with ON/OFF pill and cadence |
+| Recent agent actions | Status feed with truncated error reasons |
+| Sessions sparkline | Activity per day |
 
 ## Quick start
 
 ```bash
-# Auto-detects Hermes Agent layout (~/.hermes/)
+# auto-detects Hermes Agent layout (~/.hermes/)
 python3 generate.py -o dashboard.html
 
-# Or with a custom config (see config.example.json)
+# or point it at your own stack
 python3 generate.py --config myconfig.json -o dashboard.html
 ```
 
 Open `dashboard.html` in any browser. Done.
 
+Requirements: Python 3.8+, stdlib only. Zero dependencies.
+
 ### Daily digest (optional)
 
-Wire `generate.py` into any scheduler and have the printed summary sent to yourself
-(WhatsApp/Telegram/email). Example Hermes prompt: *"Run generate.py, turn the output
-into a <200-word morning digest."*
+Wire `generate.py` into any scheduler and have its printed summary sent to yourself (WhatsApp/Telegram/email). Example Hermes prompt: *"Run generate.py, turn the output into a <200-word morning digest."*
 
 ## Configuration
 
-`config.example.json`:
+Copy `config.example.json`:
 
 | Key | Purpose |
 |---|---|
-| `title`, `footer` | Page branding |
+| `title`, `footer`, `theme` | Branding; `"dark"` or `"light"` |
 | `sources.cron_jobs_glob` | Glob for job-definition JSON files (`name`, `schedule.display`, `enabled`) |
 | `sources.executions_db` | SQLite with an `executions` table (`job_id`, `status`, `started_at`, `error`) |
 | `sources.sessions_dir` | Directory of session files (activity counted by mtime) |
-| `sources.leads_db` + `leads_query` | Optional generic counter (leads, tasks, tickets): `[total_sql, active_sql]` |
+| `sources.leads_db` + `leads_query` | Optional generic counter: `[total_sql, active_sql]` |
 | `session_days`, `max_actions` | Display tuning |
 
-Any source can be `null` to skip it. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
+Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
 
-## Requirements
+## Scope
 
-Python 3.8+, stdlib only. No dependencies.
+**In:** supervision of scheduled agent work, anomaly surfacing, one-page scanning.
+**Out:** orchestration, deep tracing, multi-user permissions, automatic fixing. This is a supervision layer, not a control plane.
 
 ## Roadmap
 

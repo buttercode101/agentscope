@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>agentscope — one screen for your AI agents</title>
+<meta name="description" content="A scan-first supervision dashboard for AI agent crews. One self-contained HTML page answers: is anything off? Open source, stdlib-only Python.">
+<style>
+/* atoms: blue-professional frame — cream canvas, single cobalt accent,
+   Space Grotesk display + Inter body, tinted cards, no shadows except CTA hover */
+:root{
+  --bg:#fdfae7;--ink:#111;--mut:#6b6b6b;--light:#9a9a9a;
+  --cobalt:#1e2bfa;
+  --tint:rgba(30,43,250,.04);--tint-mid:rgba(30,43,250,.08);
+  --border:rgba(30,43,250,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:17px/1.65 Inter,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.g{font-family:'Space Grotesk',Inter,sans-serif}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+a{color:var(--cobalt);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0}
+.wordmark{font-family:'Space Grotesk';font-weight:700;font-size:19px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;color:var(--ink)}
+.wordmark i{width:12px;height:12px;border-radius:50%;background:var(--cobalt);flex:none}
+nav .links a{margin-left:28px;font-family:'Space Grotesk';font-size:15px;font-weight:500}
+
+/* hero */
+header{padding:72px 0 64px}
+.tag{display:inline-block;background:var(--tint-mid);color:var(--cobalt);font-family:'Space Grotesk';font-size:13px;font-weight:500;padding:5px 16px;border-radius:100px;margin-bottom:26px}
+h1{font-family:'Space Grotesk';font-weight:700;font-size:clamp(38px,6vw,68px);line-height:1.06;letter-spacing:-.02em;max-width:15ch}
+h1 em{font-style:normal;color:var(--cobalt)}
+.hero-sub{max-width:56ch;font-size:19px;color:var(--mut);margin:26px 0 34px}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--cobalt);color:#fff;font-family:'Space Grotesk';font-weight:600;font-size:16px;padding:13px 30px;border-radius:100px;display:inline-block;transition:box-shadow .18s ease,transform .18s ease}
+.btn:hover{text-decoration:none;box-shadow:0 10px 26px rgba(30,43,250,.35);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+.btn-ghost:hover{box-shadow:none;background:var(--tint)}
+.microline{color:var(--light);font-size:13.5px;margin-top:18px}
+
+/* screenshot stage */
+.stage{margin:58px 0 0;border:1.5px solid var(--border);border-radius:14px;background:#101418;padding:clamp(10px,2vw,22px)}
+.stage img{width:100%;display:block;border-radius:8px}
+.caption{font-size:13px;color:var(--light);text-align:center;margin-top:12px}
+
+/* sections */
+section{padding:70px 0;border-top:1px solid var(--tint-mid)}
+.kicker{font-family:'Space Grotesk';font-size:13px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--cobalt);margin-bottom:14px}
+h2{font-family:'Space Grotesk';font-weight:600;font-size:clamp(27px,3.6vw,40px);letter-spacing:-.02em;line-height:1.12;max-width:22ch}
+.lede{color:var(--mut);max-width:60ch;margin-top:16px;font-size:17.5px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:44px}
+.card{background:var(--tint);border:1.5px solid var(--border);border-radius:14px;padding:26px}
+.card h3{font-family:'Space Grotesk';font-weight:600;font-size:19px;margin-bottom:9px;letter-spacing:-.01em}
+.card p{color:var(--mut);font-size:15.5px}
+.card .num{font-family:'Space Grotesk';font-weight:700;color:var(--cobalt);font-size:14px;display:block;margin-bottom:12px}
+
+/* story block */
+.story{background:var(--tint);border:1.5px solid var(--border);border-radius:14px;padding:clamp(28px,4vw,48px);margin-top:44px}
+.story p{font-family:'Space Grotesk';font-weight:500;font-size:clamp(20px,2.6vw,28px);line-height:1.4;letter-spacing:-.01em}
+.story .who{font-family:Inter,sans-serif;font-weight:400;font-size:15px;color:var(--mut);margin-top:20px}
+
+/* table */
+.spec{width:100%;border-collapse:collapse;margin-top:40px;font-size:15.5px}
+.spec td{padding:13px 6px;border-top:1px solid var(--tint-mid);vertical-align:top}
+.spec td:first-child{font-family:'Space Grotesk';font-weight:600;width:220px;white-space:nowrap}
+.spec td:last-child{color:var(--mut)}
+
+/* code */
+pre{background:#14181f;color:#dce6f5;border-radius:12px;padding:22px 26px;overflow-x:auto;font-size:14.5px;line-height:1.7;margin-top:36px}
+pre .c{color:#7d8ca3}
+pre .p{color:#8fb4ff}
+
+/* footer */
+footer{padding:46px 0 60px;border-top:1px solid var(--tint-mid)}
+footer .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center}
+footer small{color:var(--light)}
+
+@media(max-width:640px){
+  nav .links a:not(:last-child){display:none}
+  header{padding:52px 0 48px}
+  section{padding:54px 0}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <span class="wordmark"><i></i>agentscope</span>
+  <div class="links">
+    <a href="#how">How it works</a>
+    <a href="#story">The story</a>
+    <a href="https://github.com/buttercode101/agentscope">GitHub →</a>
+  </div>
+</nav>
+
+<header>
+  <span class="tag">open source · stdlib-only · MIT</span>
+  <h1>Your agents worked all night. <em>Is anything off?</em></h1>
+  <p class="hero-sub">agentscope renders one scan-first HTML page over your agent crew's scheduled jobs and activity — so you catch silent failures in ten seconds instead of discovering them in logs.</p>
+  <div class="cta-row">
+    <a class="btn" href="https://github.com/buttercode101/agentscope">Get it on GitHub</a>
+    <a class="btn btn-ghost" href="#how">See how it works</a>
+  </div>
+  <p class="microline">Python 3.8+ · no dependencies · data never leaves your machine</p>
+
+  <figure class="stage">
+    <img src="docs/screenshot.png" alt="agentscope dashboard — dark supervision view with KPI row and Needs Attention panel" loading="lazy">
+    <figcaption class="caption">A real morning view — the panel flagged two jobs silently skipping due to config drift.</figcaption>
+  </figure>
+</header>
+
+<section id="how">
+  <p class="kicker">Why</p>
+  <h2>Observability tools are for debugging traces. You need to supervise a workforce.</h2>
+  <p class="lede">LangSmith-class tools assume an ML engineer reading spans. But when your agent crew runs scheduled work around the clock, the human question is simpler — and almost nobody builds for it.</p>
+  <div class="cards">
+    <div class="card"><span class="num">01</span><h3>Silent failure is the default</h3><p>Config drift, expired credentials, accidentally disabled jobs — none of these raise their hand. They just quietly stop working.</p></div>
+    <div class="card"><span class="num">02</span><h3>Supervision ≠ operation</h3><p>The interface inverts: fewer buttons, more signal. agentscope has zero controls. It shows what was already done and whether anything's off.</p></div>
+    <div class="card"><span class="num">03</span><h3>Ten seconds, one page</h3><p>KPIs up top, problems isolated in one panel, quiet when healthy. If the panel is empty, everything is fine — go make coffee.</p></div>
+  </div>
+</section>
+
+<section id="story">
+  <p class="kicker">Day one</p>
+  <h2>It earned its keep immediately.</h2>
+  <div class="story">
+    <p>"Two production jobs had been silently skipping every run for days. The scheduler noticed a model-config drift and skipped 'to prevent unintended spend' — with no error surfacing anywhere I looked. The dashboard's first render flagged both as FAIL with the exact fix hint. Fixed in two minutes."</p>
+    <p class="who">— the build log, first real run</p>
+  </div>
+</section>
+
+<section id="spec">
+  <p class="kicker">What you get</p>
+  <h2>One file in. One file out.</h2>
+  <table class="spec"><tbody>
+    <tr><td>Input</td><td>Your agent state: job definitions (JSON), execution history (SQLite), session directories. Config-driven — point it at anything.</td></tr>
+    <tr><td>Output</td><td>A single self-contained HTML dashboard. Dark or light theme. Opens on any device.</td></tr>
+    <tr><td>The panels</td><td>KPI row → Needs Attention (anomalies only) → scheduled jobs with ON/OFF → recent actions feed → sessions sparkline.</td></tr>
+    <tr><td>What it isn't</td><td>Not an orchestrator. Not distributed tracing. No multi-user permissions. No buttons at all — read-only by design.</td></tr>
+    <tr><td>Privacy</td><td>Reads local files, writes one HTML file. Nothing leaves your machine.</td></tr>
+  </tbody></table>
+
+<pre><span class="c"># auto-detects Hermes Agent layout</span>
+<span class="p">python3</span> generate.py -o dashboard.html
+
+<span class="c"># or point it at your own stack</span>
+<span class="p">python3</span> generate.py --config myconfig.json -o dashboard.html</pre>
+</section>
+
+<footer>
+  <div class="row">
+    <span class="wordmark"><i></i>agentscope</span>
+    <small>MIT licensed · built dogfood-first by <a href="https://github.com/buttercode101">buttercode101</a></small>
+    <a href="https://github.com/buttercode101/agentscope">GitHub →</a>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
