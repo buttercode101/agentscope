@@ -75,6 +75,9 @@ Copy `config.example.json`:
 | `sources.sessions_dir` | Directory of session files (activity counted by mtime) |
 | `sources.leads_db` + `leads_query` | Optional generic counter: `[total_sql, active_sql]` |
 | `session_days`, `max_actions` | Display tuning |
+| `group_by` | `"none"` or `"group"` — group jobs by their group/project field |
+| `compact` | `true` for compact density |
+| `ack_db` | SQLite file holding the `acks(key, ts)` table for acknowledged anomalies |
 
 Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
 
@@ -91,6 +94,13 @@ Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` �
 - [ ] Anomaly rule packs per agent framework
 
 ## Changelog
+
+### v0.4 — Multi-source & usability
+
+- **Acknowledge anomalies**: "Got it" button marks an item as seen — it dims locally and stays hidden until it changes (localStorage-persisted view state; the `acks` SQLite table remains authoritative for programmatic use)
+- **Job grouping**: set `"group_by": "group"` in config to group jobs by their `group`/`project` field with per-group ON counts
+- **Compact density**: set `"compact": true` for tighter rows and panels
+- **Group capture**: job definitions may carry `group` or `project` fields
 
 ### v0.3 — Core supervision upgrade
 

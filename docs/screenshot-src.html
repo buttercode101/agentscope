@@ -3,6 +3,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent Command</title>
 <style>
+body.compact td{padding:4px 8px}
+body.compact .panel{padding:10px;margin-bottom:10px}
+body.compact .anom{padding:5px 0}
+body.compact .kpi{padding:9px 12px}
+body.compact .kpi .v{font-size:23px}
 :root{
   --bg:#101418;--card:#181e25;
   --line:#2a323c;--tx:#e8edf2;
@@ -30,11 +35,26 @@ tr:first-child td{border-top:none}
 .pill{font-size:11px;font-weight:700;padding:2px 10px;border-radius:99px}
 .pill.on{color:#fff;background:var(--acc)} .pill.off{color:var(--mut);background:transparent;border:1px solid var(--line)}
 .st.f{color:var(--bad);font-weight:600} .st.s{color:var(--ok)}
+.panel.attn{border:2px solid var(--bad);background:linear-gradient(0deg,transparent,transparent),var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 12%,transparent)}
+.panel.attn h2{color:var(--bad)}
+.panel.calm{border-color:var(--line);opacity:.85}
+.panel.calm .anom{color:var(--mut)}
+.nowrap{white-space:nowrap}
+.chips{display:flex;gap:8px;margin-bottom:10px}
+.chip{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
+.chip.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.ackbtn{float:right;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;padding:2px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
+.ackbtn:hover{border-color:var(--mut)}
+tr.grp td{background:var(--card);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding-top:14px;border-top:2px solid var(--line)}
 footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
-@media(max-width:600px){body{padding:10px} .kpi .v{font-size:22px}}
-</style></head><body>
+@media(max-width:600px){
+  body{padding:10px} .kpi .v{font-size:22px}
+  td{padding:9px 6px} table{font-size:13px}
+  .panel{padding:12px;margin-bottom:16px} .grid{gap:8px}
+}
+</style></head><body class="">
 <h1>Agent Command</h1>
-<div class="sub">Mon 24 Aug 2026 · 08:16 — supervision view · read-only</div>
+<div class="sub">Mon 24 Aug 2026 · 10:37 — supervision view · read-only</div>
 
 <div class="grid">
 <div class="kpi"><div class="v">4<span class="vsub">/10</span></div><div class="l">Scheduled jobs on</div></div>
@@ -43,11 +63,48 @@ footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
 <div class="kpi"><div class="v">1<span class="vsub">/1</span></div><div class="l">Active items</div></div>
 </div>
 
-<div class="panel"><h2>&#9888; Needs attention</h2><div class="anom"><span class="badge" style="color:#b45309;background:#fef3c7">WARN</span> 6 scheduled job(s) disabled: Agent Reach daily health watch, BOQ Intake Daily Summary, Living Memory waitlist checker, Loopii Daily Summary, Loopii Payment Reminders, playbook-wave1-followups</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;e6f5f011&#x27; skipping runs — inference/config drift detected. Re-pin its config to restore.</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;70b51eae&#x27; skipping runs — inference/config drift detected. Re-pin its config to restore.</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;fb20292a&#x27;: failed 1x recently</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;31da595c&#x27;: failed 1x recently</div></div>
+<div class="panel attn"><h2>&#9888; Needs attention</h2><div class="anom" data-ak="1b43144a7b"><span class="badge" style="color:#b45309;background:#fef3c7">WARN</span> 6 scheduled job(s) disabled: Agent Reach daily health watch, BOQ Intake Daily Summary, Living Memory waitlist checker, Loopii Daily Summary, Loopii Payment Reminders, playbook-wave1-followups<button class="ackbtn" data-key="1b43144a7b" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="2059dc8a81"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;e6f5f011&#x27; skipping every run — config drifted. Re-pin to restore.<button class="ackbtn" data-key="2059dc8a81" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="13f094b8ed"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;70b51eae&#x27; skipping every run — config drifted. Re-pin to restore.<button class="ackbtn" data-key="13f094b8ed" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="c8f4e57f31"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;fb20292a&#x27;: failed 1x — Script not found: /data/data/com<button class="ackbtn" data-key="c8f4e57f31" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="43fe12d619"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;31da595c&#x27;: failed 1x — Script not found: /data/data/com<button class="ackbtn" data-key="43fe12d619" title="Mark as seen - hides until it changes">Got it</button></div></div>
 
 <div class="panel"><h2>Scheduled jobs</h2><table><tbody><tr><td>FS Tender Discovery</td><td class="mut">every 360m</td><td><span class="pill on">ON</span></td></tr><tr><td>FS Tender Weekly Learning</td><td class="mut">0 9 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Supervision Daily Digest</td><td class="mut">0 8 * * *</td><td><span class="pill on">ON</span></td></tr><tr><td>Taste Index weekly curator</td><td class="mut">0 8 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Agent Reach daily health watch</td><td class="mut">0 7 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>BOQ Intake Daily Summary</td><td class="mut">0 17 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Living Memory waitlist checker</td><td class="mut">once in 6h</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Daily Summary</td><td class="mut">0 18 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Payment Reminders</td><td class="mut">0 9 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>playbook-wave1-followups</td><td class="mut">0 13 * * *</td><td><span class="pill off">OFF</span></td></tr></tbody></table></div>
-<div class="panel"><h2>Recent agent actions</h2><table><tbody><tr><td class="mut">2026-08-24 08:00</td><td>Supervision Daily Digest</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-24 08:00</td><td>Taste Index weekly curator</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-24 07:50</td><td>FS Tender Discovery</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-24 03:14</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 21:14</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 15:14</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 14:39</td><td>Living Memory waitlist checker</td><td><span class="st m">completed</span></td></tr><tr><td class="mut">2026-08-23 09:13</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-23 03:13</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 21:13</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 15:12</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 09:12</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip:silent] Skipped to prevent unintended spend: global inference co…</td></tr><tr><td class="mut">2026-08-22 03:12</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: [drift_skip] Skipped to prevent unintended spend: global inference config dr…</td></tr><tr><td class="mut">2026-08-21 21:11</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: Skipped to prevent unintended spend: global inference config drifted since t…</td></tr><tr><td class="mut">2026-08-21 15:11</td><td>FS Tender Discovery</td><td><span class="st f">failed</span> — RuntimeError: Skipped to prevent unintended spend: global inference config drifted since t…</td></tr></tbody></table></div>
-<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 1 · Mon 24: 19 · Sat 22: 34 · Sun 23: 28 · Thu 20: 12 · Tue 18: 14</div></div>
+<div class="panel"><h2>Recent agent actions</h2>
+<div class="chips" role="group" aria-label="Time range filter">
+<button class="chip active" data-range="7">Last 7 days</button>
+<button class="chip" data-range="1">Last 24h</button>
+</div>
+<table id="actions-table"><tbody><tr data-ts="2026-08-24T09:00:18.310682+02:00"><td class="mut nowrap">1h ago</td><td>FS Tender Weekly Learning</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T08:00:13.783923+02:00"><td class="mut nowrap">2h ago</td><td>Supervision Daily Digest</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T08:00:13.776585+02:00"><td class="mut nowrap">2h ago</td><td>Taste Index weekly curator</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T07:50:10.698058+02:00"><td class="mut nowrap">2h ago</td><td>FS Tender Discovery</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-24T03:14:57.834321+02:00"><td class="mut nowrap">7h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T21:14:37.426729+02:00"><td class="mut nowrap">13h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T15:14:17.190566+02:00"><td class="mut nowrap">19h ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T14:39:14.595025+02:00"><td class="mut nowrap">19h ago</td><td>Living Memory waitlist checker</td><td><span class="st m">Completed</span></td></tr><tr data-ts="2026-08-23T09:13:56.335455+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-23T03:13:38.326724+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T21:13:18.998772+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T15:12:58.408779+02:00"><td class="mut nowrap">yesterday</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T09:12:36.454696+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-22T03:12:15.514437+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr><tr data-ts="2026-08-21T21:11:57.906271+02:00"><td class="mut nowrap">2d ago</td><td>FS Tender Discovery</td><td><span class="st f">Skipped – inference config drifted</span></td></tr></tbody></table></div>
+<script>
+(function(){
+  var chips=document.querySelectorAll('.chip');
+  chips.forEach(function(c){c.addEventListener('click',function(){
+    chips.forEach(function(x){x.classList.remove('active')});
+    c.classList.add('active');
+    var cutoff=Date.now()-(parseInt(c.dataset.range)*864e5);
+    document.querySelectorAll('#actions-table tr[data-ts]').forEach(function(tr){
+      var ts=Date.parse(tr.dataset.ts);
+      tr.style.display=(isNaN(ts)||ts>=cutoff)?'':'none';
+    });
+  })});
+})();
+(function(){
+  document.querySelectorAll('.ackbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var key=b.dataset.key, dv=b.closest('.anom');
+      try{var s=JSON.parse(localStorage.getItem('as_ack')||'[]');if(s.indexOf(key)<0){s.push(key);localStorage.setItem('as_ack',JSON.stringify(s));}}catch(e){}
+      if(dv){dv.style.opacity='.45';}
+      b.textContent='Seen';
+      b.disabled=true;
+    });
+  });
+  // re-apply locally acknowledged state on load
+  try{
+    var s=JSON.parse(localStorage.getItem('as_ack')||'[]');
+    document.querySelectorAll('.ackbtn').forEach(function(b){
+      if(s.indexOf(b.dataset.key)>=0){b.click();}
+    });
+  }catch(e){}
+})();
+</script>
+<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 2 · Mon 24: 20 · Sat 22: 38 · Sun 23: 24 · Thu 20: 12 · Tue 18: 13</div></div>
 
 <footer>generated locally · no data leaves this device</footer>
 </body></html>

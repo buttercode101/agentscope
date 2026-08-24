@@ -99,6 +99,9 @@ DEFAULT_CONFIG = {
     },
     "session_days": 7,
     "max_actions": 15,
+    "group_by": "none",                  # "none" | "group" — group jobs by their 'group'/'project' field
+    "compact": False,                    # compact density option
+    "ack_db": "~/.hermes/cron/executions.db",  # sqlite for acknowledged anomalies (table: acks(key TEXT, ts))
 }
 
 def load_config(path):
@@ -111,7 +114,7 @@ def load_config(path):
             else:
                 cfg[k] = v
     s = cfg["sources"]
-    for k in ("cron_jobs_glob", "executions_db", "sessions_dir", "leads_db"):
+    for k in ("cron_jobs_glob", "executions_db", "sessions_dir", "leads_db", "ack_db"):
         if s.get(k):
             s[k] = os.path.expanduser(s[k])
     return cfg
@@ -130,7 +133,9 @@ def load_cron_jobs(pattern):
                 sched = j.get("schedule", {})
                 sched_s = sched.get("display", "") if isinstance(sched, dict) else str(sched)
                 jobs.append({"name": j.get("name", "?"), "schedule": sched_s,
-                             "enabled": bool(j.get("enabled", True))})
+                             "enabled": bool(j.get("enabled", True)),
+                             "id": j.get("id", ""),
+                             "group": j.get("group", j.get("project", "")) or ""})
         except Exception:
             pass
     seen, out = set(), []
@@ -251,7 +256,25 @@ def anomalies(jobs, execs):
             pass
     if not a:
         a.append(("ok", "All clear — nothing off."))
-    return a
+    return [(k, m, ack_key(k, m)) for k, m in a]
+
+
+def ack_load(db_path):
+    """Load set of acknowledged anomaly keys."""
+    acks = set()
+    try:
+        c = sqlite3.connect(db_path)
+        c.execute("CREATE TABLE IF NOT EXISTS acks(key TEXT PRIMARY KEY, ts TEXT)")
+        for (k,) in c.execute("SELECT key FROM acks"):
+            acks.add(k)
+    except Exception:
+        pass
+    return acks
+
+def ack_key(kind, msg):
+    """Stable short key for an anomaly message."""
+    import hashlib
+    return hashlib.sha1(f"{kind}:{msg}".encode()).hexdigest()[:10]
 
 # ---------------------------------------------------------------- render ----
 
@@ -274,7 +297,12 @@ def build(cfg, out_path):
     execs = recent_executions(s["executions_db"]) if s.get("executions_db") else []
     leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None))) or {"total": 0, "active": 0}
     sess = session_activity(s.get("sessions_dir"), cfg["session_days"]) if s.get("sessions_dir") else {}
-    anom = anomalies(jobs, execs)
+    all_anom = anomalies(jobs, execs)
+    acks = ack_load(s.get("ack_db")) if s.get("ack_db") else set()
+    anom = [x for x in all_anom if x[2] not in acks]
+    ackd = [x for x in all_anom if x[2] in acks]
+    if not anom and ackd:
+        anom = [("ok", f"All clear - {len(ackd)} item(s) acknowledged.", "")]
 
     enabled_n = sum(1 for j in jobs if j["enabled"])
     day_ago = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%dT")
@@ -298,9 +326,47 @@ def build(cfg, out_path):
         act_rows += f'<tr data-ts="{esc(e.get("started_at") or "")}"><td class="mut nowrap">{esc(ts)}</td><td>{esc(jn)}</td><td><span class="st {cls}">{outcome}</span></td></tr>'
     act_rows = act_rows or '<tr><td class="mut">No runs recorded yet.</td></tr>'
 
-    an_html = "".join(
-        f'<div class="anom"><span class="badge" style="color:{badge[k][1]};background:{badge[k][2]}">{badge[k][0]}</span> {esc(m)}</div>'
-        for k, m in anom)
+    def _anom_row(item, with_ack=False):
+        k, m = item[0], item[1]
+        key = item[2] if len(item) > 2 else ""
+        btn = ""
+        if with_ack and key:
+            btn = ('<button class="ackbtn" data-key="' + esc(key) + '" '
+                   'title="Mark as seen - hides until it changes">Got it</button>')
+        ak = ' data-ak="' + esc(key) + '"' if key else ""
+        return ('<div class="anom"' + ak + '>'
+                '<span class="badge" style="color:' + badge[k][1] + ';background:' + badge[k][2] + '">' + badge[k][0] + '</span> '
+                + esc(m) + btn + '</div>')
+    active_items = [x for x in anom if x[0] != "ok"]
+    ok_items = [x for x in anom if x[0] == "ok"]
+    an_html = "".join(_anom_row(x, with_ack=True) for x in active_items)
+    if ok_items and not active_items:
+        an_html = _anom_row(ok_items[0])
+    if ackd:
+        an_html += '<div class="mut" style="font-size:12px;margin-top:8px">&amp;#9745; ' + str(len(ackd)) + ' acknowledged (hidden until they change)</div>'
+
+    # jobs table with optional grouping
+    group_by = cfg.get("group_by", "none")
+    if group_by == "group" and any(j.get("group") for j in jobs):
+        groups = {}
+        for j in jobs:
+            groups.setdefault(j.get("group") or "Other", []).append(j)
+        parts = []
+        for g in sorted(groups):
+            gj = sorted(groups[g], key=lambda x: (not x["enabled"], x["name"].lower()))
+            n_on = sum(1 for j in gj if j["enabled"])
+            rows = "".join(
+                '<tr><td>' + esc(j["name"]) + '</td><td class="mut">' + esc(j["schedule"]) + '</td>'
+                '<td><span class="pill ' + ("on" if j["enabled"] else "off") + '">' + ("ON" if j["enabled"] else "OFF") + '</span></td></tr>'
+                for j in gj)
+            parts.append('<tr class="grp"><td colspan="3">' + esc(g) +
+                         ' <span class="vsub">- ' + str(n_on) + '/' + str(len(gj)) + ' on</span></td></tr>' + rows)
+        job_rows = "".join(parts)
+    else:
+        job_rows = "".join(
+            '<tr><td>' + esc(j["name"]) + '</td><td class="mut">' + esc(j["schedule"]) + '</td>'
+            '<td><span class="pill ' + ("on" if j["enabled"] else "off") + '">' + ("ON" if j["enabled"] else "OFF") + '</span></td></tr>'
+            for j in jobs) or '<tr><td class="mut">No scheduled jobs found.</td></tr>'
 
     sess_spark = " · ".join(f"{d}: {n}" for d, n in sorted(sess.items())) or "no recent activity"
     kpi_leads = (f'<div class="kpi"><div class="v">{leads["active"]}<span class="vsub">/{leads["total"]}</span></div>'
@@ -311,6 +377,11 @@ def build(cfg, out_path):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(cfg['title'])}</title>
 <style>
+body.compact td{{padding:4px 8px}}
+body.compact .panel{{padding:10px;margin-bottom:10px}}
+body.compact .anom{{padding:5px 0}}
+body.compact .kpi{{padding:9px 12px}}
+body.compact .kpi .v{{font-size:23px}}
 :root{{
   --bg:{'#f7f5f0' if light else '#101418'};--card:{'#ffffff' if light else '#181e25'};
   --line:{'#ddd6c9' if light else '#2a323c'};--tx:{'#191919' if light else '#e8edf2'};
@@ -346,13 +417,16 @@ tr:first-child td{{border-top:none}}
 .chips{{display:flex;gap:8px;margin-bottom:10px}}
 .chip{{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
 .chip.active{{background:var(--acc);border-color:var(--acc);color:#fff}}
+.ackbtn{{float:right;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;padding:2px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
+.ackbtn:hover{{border-color:var(--mut)}}
+tr.grp td{{background:var(--card);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding-top:14px;border-top:2px solid var(--line)}}
 footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
 @media(max-width:600px){{
   body{{padding:10px}} .kpi .v{{font-size:22px}}
   td{{padding:9px 6px}} table{{font-size:13px}}
   .panel{{padding:12px;margin-bottom:16px}} .grid{{gap:8px}}
 }}
-</style></head><body>
+</style></head><body class="{'compact' if cfg.get('compact') else ''}">
 <h1>{esc(cfg['title'])}</h1>
 <div class="sub">{esc(now)} — supervision view · read-only</div>
 
@@ -385,6 +459,24 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
     }});
   }})}});
 }})();
+(function(){{
+  document.querySelectorAll('.ackbtn').forEach(function(b){{
+    b.addEventListener('click',function(){{
+      var key=b.dataset.key, dv=b.closest('.anom');
+      try{{var s=JSON.parse(localStorage.getItem('as_ack')||'[]');if(s.indexOf(key)<0){{s.push(key);localStorage.setItem('as_ack',JSON.stringify(s));}}}}catch(e){{}}
+      if(dv){{dv.style.opacity='.45';}}
+      b.textContent='Seen';
+      b.disabled=true;
+    }});
+  }});
+  // re-apply locally acknowledged state on load
+  try{{
+    var s=JSON.parse(localStorage.getItem('as_ack')||'[]');
+    document.querySelectorAll('.ackbtn').forEach(function(b){{
+      if(s.indexOf(b.dataset.key)>=0){{b.click();}}
+    }});
+  }}catch(e){{}}
+}})();
 </script>
 <div class="panel"><h2>Agent sessions ({cfg['session_days']}d)</h2><div style="font-size:13.5px">{esc(sess_spark)}</div></div>
 
@@ -397,7 +489,8 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
         f.write(doc)
     print(f"Wrote {out_path} ({len(doc)} bytes)")
     print(f"Jobs: {len(jobs)} ({enabled_n} on) | 24h: {last24_ok} ok / {last24_fail} failed")
-    for k, m in anom:
+    for item in anom:
+        k, m = item[0], item[1]
         print(f"  [{badge[k][0]}] {m}")
 
 if __name__ == "__main__":

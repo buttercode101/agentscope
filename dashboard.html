@@ -3,6 +3,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent Command</title>
 <style>
+body.compact td{padding:4px 8px}
+body.compact .panel{padding:10px;margin-bottom:10px}
+body.compact .anom{padding:5px 0}
+body.compact .kpi{padding:9px 12px}
+body.compact .kpi .v{font-size:23px}
 :root{
   --bg:#101418;--card:#181e25;
   --line:#2a323c;--tx:#e8edf2;
@@ -38,15 +43,18 @@ tr:first-child td{border-top:none}
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chip{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
 .chip.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.ackbtn{float:right;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;padding:2px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
+.ackbtn:hover{border-color:var(--mut)}
+tr.grp td{background:var(--card);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding-top:14px;border-top:2px solid var(--line)}
 footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
 @media(max-width:600px){
   body{padding:10px} .kpi .v{font-size:22px}
   td{padding:9px 6px} table{font-size:13px}
   .panel{padding:12px;margin-bottom:16px} .grid{gap:8px}
 }
-</style></head><body>
+</style></head><body class="">
 <h1>Agent Command</h1>
-<div class="sub">Mon 24 Aug 2026 · 10:17 — supervision view · read-only</div>
+<div class="sub">Mon 24 Aug 2026 · 10:37 — supervision view · read-only</div>
 
 <div class="grid">
 <div class="kpi"><div class="v">4<span class="vsub">/10</span></div><div class="l">Scheduled jobs on</div></div>
@@ -55,7 +63,7 @@ footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
 
 </div>
 
-<div class="panel attn"><h2>&#9888; Needs attention</h2><div class="anom"><span class="badge" style="color:#b45309;background:#fef3c7">WARN</span> 6 scheduled job(s) disabled: Agent Reach daily health watch, BOQ Intake Daily Summary, Living Memory waitlist checker, Loopii Daily Summary, Loopii Payment Reminders, playbook-wave1-followups</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;e6f5f011&#x27; skipping every run — config drifted. Re-pin to restore.</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;70b51eae&#x27; skipping every run — config drifted. Re-pin to restore.</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;fb20292a&#x27;: failed 1x — Script not found: /data/data/com</div><div class="anom"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;31da595c&#x27;: failed 1x — Script not found: /data/data/com</div></div>
+<div class="panel attn"><h2>&#9888; Needs attention</h2><div class="anom" data-ak="1b43144a7b"><span class="badge" style="color:#b45309;background:#fef3c7">WARN</span> 6 scheduled job(s) disabled: Agent Reach daily health watch, BOQ Intake Daily Summary, Living Memory waitlist checker, Loopii Daily Summary, Loopii Payment Reminders, playbook-wave1-followups<button class="ackbtn" data-key="1b43144a7b" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="2059dc8a81"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;e6f5f011&#x27; skipping every run — config drifted. Re-pin to restore.<button class="ackbtn" data-key="2059dc8a81" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="13f094b8ed"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;70b51eae&#x27; skipping every run — config drifted. Re-pin to restore.<button class="ackbtn" data-key="13f094b8ed" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="c8f4e57f31"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;fb20292a&#x27;: failed 1x — Script not found: /data/data/com<button class="ackbtn" data-key="c8f4e57f31" title="Mark as seen - hides until it changes">Got it</button></div><div class="anom" data-ak="43fe12d619"><span class="badge" style="color:#b91c1c;background:#fee2e2">FAIL</span> &#x27;31da595c&#x27;: failed 1x — Script not found: /data/data/com<button class="ackbtn" data-key="43fe12d619" title="Mark as seen - hides until it changes">Got it</button></div></div>
 
 <div class="panel"><h2>Scheduled jobs</h2><table><tbody><tr><td>FS Tender Discovery</td><td class="mut">every 360m</td><td><span class="pill on">ON</span></td></tr><tr><td>FS Tender Weekly Learning</td><td class="mut">0 9 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Supervision Daily Digest</td><td class="mut">0 8 * * *</td><td><span class="pill on">ON</span></td></tr><tr><td>Taste Index weekly curator</td><td class="mut">0 8 * * 1</td><td><span class="pill on">ON</span></td></tr><tr><td>Agent Reach daily health watch</td><td class="mut">0 7 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>BOQ Intake Daily Summary</td><td class="mut">0 17 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Living Memory waitlist checker</td><td class="mut">once in 6h</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Daily Summary</td><td class="mut">0 18 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>Loopii Payment Reminders</td><td class="mut">0 9 * * *</td><td><span class="pill off">OFF</span></td></tr><tr><td>playbook-wave1-followups</td><td class="mut">0 13 * * *</td><td><span class="pill off">OFF</span></td></tr></tbody></table></div>
 <div class="panel"><h2>Recent agent actions</h2>
@@ -77,8 +85,26 @@ footer{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}
     });
   })});
 })();
+(function(){
+  document.querySelectorAll('.ackbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var key=b.dataset.key, dv=b.closest('.anom');
+      try{var s=JSON.parse(localStorage.getItem('as_ack')||'[]');if(s.indexOf(key)<0){s.push(key);localStorage.setItem('as_ack',JSON.stringify(s));}}catch(e){}
+      if(dv){dv.style.opacity='.45';}
+      b.textContent='Seen';
+      b.disabled=true;
+    });
+  });
+  // re-apply locally acknowledged state on load
+  try{
+    var s=JSON.parse(localStorage.getItem('as_ack')||'[]');
+    document.querySelectorAll('.ackbtn').forEach(function(b){
+      if(s.indexOf(b.dataset.key)>=0){b.click();}
+    });
+  }catch(e){}
+})();
 </script>
-<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 2 · Mon 24: 20 · Sat 22: 37 · Sun 23: 25 · Thu 20: 12 · Tue 18: 13</div></div>
+<div class="panel"><h2>Agent sessions (7d)</h2><div style="font-size:13.5px">Fri 21: 2 · Mon 24: 20 · Sat 22: 38 · Sun 23: 24 · Thu 20: 12 · Tue 18: 13</div></div>
 
 <footer>generated locally · no data leaves this device</footer>
 </body></html>
