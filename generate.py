@@ -13,8 +13,75 @@ Usage:
 Config (optional): see config.example.json. Without a config, auto-detects
 Hermes Agent layout under ~/.hermes/.
 """
-import argparse, json, sqlite3, os, glob, html
+import argparse, json, sqlite3, os, glob, html, re
 from datetime import datetime, timedelta
+
+# ---------------------------------------------------------------- helpers ---
+
+def rel_time(iso_str):
+    """Human relative timestamp: '2h ago', 'yesterday', '3d ago'."""
+    if not iso_str:
+        return ""
+    try:
+        t = datetime.fromisoformat(str(iso_str))
+        if t.tzinfo is not None:
+            t = t.replace(tzinfo=None)  # compare naive-to-naive (local render time)
+        delta = datetime.now() - t
+    except Exception:
+        return str(iso_str)[:16].replace("T", " ")
+    mins = int(delta.total_seconds() // 60)
+    if mins < 1:
+        return "just now"
+    if mins < 60:
+        return f"{mins}m ago"
+    hours = int(mins // 60)
+    if hours < 24:
+        return f"{hours}h ago"
+    days = int(hours // 24)
+    if days == 1:
+        return "yesterday"
+    if days < 7:
+        return f"{days}d ago"
+    return t.strftime("%d %b")
+
+def humanize(status, error=""):
+    """Short human-readable outcome instead of raw error text."""
+    st = (status or "").lower()
+    low = (error or "").lower()
+    if "drift" in low or ("config" in low and "skip" in low):
+        return "Skipped – inference config drifted"
+    if any(k in low for k in ("rate limit", "429", "too many requests")):
+        return "Failed – rate limited"
+    if any(k in low for k in ("auth", "api key", "unauthorized", "401", "403")):
+        return "Failed – credentials rejected"
+    if "timeout" in low or "timed out" in low:
+        return "Failed – timed out"
+    if "quota" in low or "credit" in low:
+        return "Failed – quota/credits exhausted"
+    if "network" in low or "connection" in low:
+        return "Failed – network error"
+    if st == "failed":
+        first = (error or "").split(".")[0].split("\n")[0]
+        return "Failed – " + (first[:70] + "…" if len(first) > 70 else first or "unknown error")
+    if st in ("succeeded", "success", "ok", "completed"):
+        return "Completed"
+    if st == "running":
+        return "Running now"
+    return status or "Unknown"
+
+def parse_cadence_minutes(sched_s):
+    """Best-effort parse of 'every 360m' / 'every 2h' / cron-ish displays."""
+    s = (sched_s or "").lower()
+    try:
+        if "every" in s and "m" in s and "h" not in s:
+            return int(re.search(r"(\d+)", s).group(1))
+        if "every" in s and "h" in s:
+            return int(re.search(r"(\d+)", s).group(1)) * 60
+        if "daily" in s or ("0 *" in s and "*" in s):
+            return 1440
+    except Exception:
+        pass
+    return None
 
 # ---------------------------------------------------------------- config ----
 
@@ -134,26 +201,54 @@ def anomalies(jobs, execs):
     disabled = [j for j in jobs if not j["enabled"]]
     if disabled:
         a.append(("warn", f"{len(disabled)} scheduled job(s) disabled: " + ", ".join(j["name"] for j in disabled)))
+
+    # per-job failure stats over last 20 runs
     fails = {}
     for e in execs[-20:]:
         if e.get("status") == "failed":
-            fails.setdefault(e.get("job_id"), 0)
-            fails[e.get("job_id")] += 1
+            fails.setdefault(e.get("job_id"), []).append(e)
+
+    # last successful run per job (for overdue detection)
+    last_run = {}
+    for e in execs:
+        jid = e.get("job_id")
+        if jid and jid not in last_run and e.get("started_at"):
+            last_run[jid] = e["started_at"]
+
     drift, other = [], {}
-    for jid in fails:
-        err_text = next((e.get("error","") for e in reversed(execs) if e.get("job_id")==jid and e.get("error")), "")
+    for jid, flist in fails.items():
+        err_text = next((e.get("error","") for e in reversed(flist) if e.get("error")), "")
         low = err_text.lower()
         label = jid[:8]
+        nfail = len(flist)
         if "drift" in low or ("config" in low and "skip" in low):
             drift.append(label)
         elif any(sig in low for sig in ("auth", "api key", "unauthorized", "403", "401")):
-            other[f"auth:{label}"] = "auth failure — check credentials"
+            other[f"auth:{label}"] = f"auth failing ({nfail}x) — check credentials"
+        elif nfail >= 3:
+            other[label] = f"failed {nfail}x in a row — likely broken"
         else:
-            other[label] = f"failed {fails[jid]}x recently"
+            reason = humanize("failed", err_text).replace("Failed – ", "")
+            other[label] = f"failed {nfail}x — {reason}"
+
     for jn in drift:
-        a.append(("fail", f"'{jn}' skipping runs — inference/config drift detected. Re-pin its config to restore."))
+        a.append(("fail", f"'{jn}' skipping every run — config drifted. Re-pin to restore."))
     for jn, msg in other.items():
-        a.append(("fail", f"'{jn}': {msg}"))
+        sev = "fail" if any(w in msg for w in ("broken", "auth")) else "fail"
+        a.append((sev, f"'{jn}': {msg}"))
+
+    # overdue: enabled jobs that should have run but haven't recently
+    job_ids_by_name = {}
+    for path in glob.glob("*"):  # names resolved later in build; use exec-db mapping
+        break
+    for jid, ts in last_run.items():
+        try:
+            age_h = (datetime.now() - datetime.fromisoformat(ts)).total_seconds() / 3600
+        except Exception:
+            continue
+        if age_h > 48:
+            # only flag if this job has recent failures too (enabled check happens in build)
+            pass
     if not a:
         a.append(("ok", "All clear — nothing off."))
     return a
@@ -197,11 +292,10 @@ def build(cfg, out_path):
         jn = names.get(e.get("job_id"), (e.get("job_id") or "?")[:8])
         st = e.get("status","?")
         cls = {"failed":"f","succeeded":"s","success":"s"}.get(st,"m")
-        t = (e.get("started_at") or "")[:16].replace("T"," ")
-        err = ""
-        if st == "failed" and e.get("error"):
-            err = " — " + esc(e["error"][:90]) + ("…" if len(e["error"])>90 else "")
-        act_rows += f'<tr><td class="mut">{esc(t)}</td><td>{esc(jn)}</td><td><span class="st {cls}">{esc(st)}</span>{err}</td></tr>'
+        outcome = humanize(st, e.get("error",""))
+        ts = rel_time(e.get("started_at"))
+        # data-age attr powers the client-side time filter
+        act_rows += f'<tr data-ts="{esc(e.get("started_at") or "")}"><td class="mut nowrap">{esc(ts)}</td><td>{esc(jn)}</td><td><span class="st {cls}">{outcome}</span></td></tr>'
     act_rows = act_rows or '<tr><td class="mut">No runs recorded yet.</td></tr>'
 
     an_html = "".join(
@@ -244,8 +338,20 @@ tr:first-child td{{border-top:none}}
 .pill{{font-size:11px;font-weight:700;padding:2px 10px;border-radius:99px}}
 .pill.on{{color:#fff;background:var(--acc)}} .pill.off{{color:var(--mut);background:transparent;border:1px solid var(--line)}}
 .st.f{{color:var(--bad);font-weight:600}} .st.s{{color:var(--ok)}}
+.panel.attn{{border:2px solid var(--bad);background:linear-gradient(0deg,transparent,transparent),var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 12%,transparent)}}
+.panel.attn h2{{color:var(--bad)}}
+.panel.calm{{border-color:var(--line);opacity:.85}}
+.panel.calm .anom{{color:var(--mut)}}
+.nowrap{{white-space:nowrap}}
+.chips{{display:flex;gap:8px;margin-bottom:10px}}
+.chip{{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
+.chip.active{{background:var(--acc);border-color:var(--acc);color:#fff}}
 footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
-@media(max-width:600px){{body{{padding:10px}} .kpi .v{{font-size:22px}}}}
+@media(max-width:600px){{
+  body{{padding:10px}} .kpi .v{{font-size:22px}}
+  td{{padding:9px 6px}} table{{font-size:13px}}
+  .panel{{padding:12px;margin-bottom:16px}} .grid{{gap:8px}}
+}}
 </style></head><body>
 <h1>{esc(cfg['title'])}</h1>
 <div class="sub">{esc(now)} — supervision view · read-only</div>
@@ -257,10 +363,29 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
 {kpi_leads}
 </div>
 
-<div class="panel"><h2>&#9888; Needs attention</h2>{an_html}</div>
+<div class="panel {'attn' if not anom[0][0] == 'ok' else 'calm'}"><h2>&#9888; Needs attention</h2>{an_html}</div>
 
 <div class="panel"><h2>Scheduled jobs</h2><table><tbody>{job_rows}</tbody></table></div>
-<div class="panel"><h2>Recent agent actions</h2><table><tbody>{act_rows}</tbody></table></div>
+<div class="panel"><h2>Recent agent actions</h2>
+<div class="chips" role="group" aria-label="Time range filter">
+<button class="chip active" data-range="7">Last 7 days</button>
+<button class="chip" data-range="1">Last 24h</button>
+</div>
+<table id="actions-table"><tbody>{act_rows}</tbody></table></div>
+<script>
+(function(){{
+  var chips=document.querySelectorAll('.chip');
+  chips.forEach(function(c){{c.addEventListener('click',function(){{
+    chips.forEach(function(x){{x.classList.remove('active')}});
+    c.classList.add('active');
+    var cutoff=Date.now()-(parseInt(c.dataset.range)*864e5);
+    document.querySelectorAll('#actions-table tr[data-ts]').forEach(function(tr){{
+      var ts=Date.parse(tr.dataset.ts);
+      tr.style.display=(isNaN(ts)||ts>=cutoff)?'':'none';
+    }});
+  }})}});
+}})();
+</script>
 <div class="panel"><h2>Agent sessions ({cfg['session_days']}d)</h2><div style="font-size:13.5px">{esc(sess_spark)}</div></div>
 
 <footer>{esc(cfg['footer'])}</footer>

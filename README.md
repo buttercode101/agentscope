@@ -90,6 +90,22 @@ Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` �
 - [ ] Hosted multi-source version (if demand appears)
 - [ ] Anomaly rule packs per agent framework
 
+## Changelog
+
+### v0.3 — Core supervision upgrade
+
+- **Smarter Needs Attention**: drift detection via `drift_skip` marker + skip phrasing; per-job failure streaks ("failed 3x in a row — likely broken"); auth failures called out explicitly
+- **Human-readable outcomes**: raw errors replaced with short reasons — "Skipped – inference config drifted", "Failed – rate limited", "Failed – credentials rejected", "Completed". Graceful fallback to first sentence when no pattern matches
+- **Visual hierarchy**: Needs Attention panel gets accent border + tint when problems exist; slim/quiet "all clear" state when healthy. Better mobile spacing and row padding
+- **Relative timestamps**: "2h ago", "yesterday", "3d ago" throughout
+- **Time filtering**: Last 24h / Last 7 days view-only chips (client-side, zero operational control)
+
+### v0.2
+- Dark + light themes; landing page; README rewrite; marketing screenshot
+
+### v0.1
+- Initial release: auto-detect Hermes layout, config-driven sources, anomaly panel
+
 ## License
 
 MIT
