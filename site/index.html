@@ -9,8 +9,8 @@
 :root{--bg:#f7f7f5;--ink:#0b0d10;--mut:#646a73;--line:#dedfdf;--card:#fff;--accent:#315cff;--dark:#0b0d10;--good:#159447}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}.wrap{width:min(1160px,calc(100% - 40px));margin:auto}a{color:inherit}
 nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.wordmark{font-weight:800;letter-spacing:-.04em;font-size:18px;display:flex;gap:9px;align-items:center}.wordmark i{width:9px;height:9px;border-radius:50%;background:var(--accent)}nav .links{display:flex;gap:24px;align-items:center}nav .links a{margin:0;color:var(--mut);font:13px ui-monospace,monospace;text-decoration:none}.links .navcta{color:#fff;background:var(--ink);padding:9px 14px;border-radius:8px}
-header{padding:105px 0 70px;display:grid;grid-template-columns:1.08fr .92fr;gap:70px;align-items:center}.tag,.kicker{font:800 11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}h1{font:800 clamp(42px,6vw,76px)/1.02 ui-monospace,monospace;letter-spacing:-.065em;max-width:760px}h1 em{font-style:normal;color:var(--accent)}.hero-sub{font-size:19px;color:var(--mut);max-width:620px;margin:28px 0 32px}.cta-row{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;text-decoration:none;font:800 13px ui-monospace,monospace;padding:13px 18px;border-radius:9px;border:1px solid var(--ink)}.btn:hover{text-decoration:none}.btn-ghost{border-color:var(--line)}.microline{font-size:12px;color:#8b9097;margin-top:14px}
-.stage{background:#0b0d10;border:1px solid #20252c;border-radius:16px;padding:10px;box-shadow:0 24px 70px #0b0d101f}.stage img{width:100%;display:block;border-radius:9px}.caption{font-size:11px;color:#89939f;text-align:center;padding:10px 0 3px}
+header{padding:105px 0 70px;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:64px;align-items:center}.hero-copy{min-width:0}.tag,.kicker{font:800 11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}h1{font:800 clamp(42px,6vw,76px)/1.02 ui-monospace,monospace;letter-spacing:-.065em;max-width:760px}h1 em{font-style:normal;color:var(--accent)}.hero-sub{font-size:19px;color:var(--mut);max-width:620px;margin:28px 0 32px}.cta-row{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;text-decoration:none;font:800 13px ui-monospace,monospace;padding:13px 18px;border-radius:9px;border:1px solid var(--ink)}.btn:hover{text-decoration:none}.btn-ghost{border-color:var(--line)}.microline{font-size:12px;color:#8b9097;margin-top:14px}
+.stage{margin:0;background:#0b0d10;border:1px solid #20252c;border-radius:16px;padding:10px;box-shadow:0 24px 70px #0b0d101f;min-width:0}.stage img{width:100%;height:auto;aspect-ratio:900/620;object-fit:cover;display:block;border-radius:9px}.caption{font-size:11px;color:#89939f;text-align:center;padding:10px 0 3px}
 section{padding:88px 0;border-top:1px solid var(--line)}h2{font:800 clamp(28px,4vw,46px)/1.08 ui-monospace,monospace;letter-spacing:-.055em;max-width:760px}.lede{color:var(--mut);font-size:17px;max-width:690px;margin-top:16px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:25px}.card h3{font:800 16px ui-monospace,monospace;letter-spacing:-.03em;margin:30px 0 8px}.card p{color:var(--mut);font-size:14px;margin:0}
 .story{border-left:2px solid var(--accent);padding:5px 0 5px 25px;margin-top:40px}.story p{font:500 clamp(20px,3vw,29px)/1.35 ui-monospace,monospace}.story .who{font:12px Inter;color:#8a9098;margin-top:18px}.spec{width:100%;border-collapse:collapse;margin-top:38px;font-size:14px}.spec td{padding:13px 6px;border-top:1px solid var(--line);vertical-align:top}.spec td:first-child{font:800 11px ui-monospace,monospace;width:190px}.spec td:last-child{color:var(--mut)}pre{background:#11151b;color:#d8dee7;border:1px solid #252a31;border-radius:12px;padding:20px;overflow:auto;font:13px/1.7 ui-monospace,monospace;margin-top:34px}.dark{background:#0b0d10;color:#f3f5f7;border-color:#20242a}.dark .lede{color:#9da5af}.end{text-align:center}.end h2{margin:auto}.end .lede{margin:16px auto 26px}.footer{padding:30px 0 45px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#8a9098;font-size:12px}
 @media(max-width:850px){header{grid-template-columns:1fr;gap:42px;padding-top:70px}.cards{grid-template-columns:1fr}.wrap{width:min(100% - 28px,1160px)}}@media(max-width:640px){nav .links a:not(.navcta){display:none}header{padding:58px 0 52px}h1{font-size:42px}section{padding:64px 0}.footer{display:block}.footer>*{display:block;margin:8px 0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -29,15 +29,16 @@ section{padding:88px 0;border-top:1px solid var(--line)}h2{font:800 clamp(28px,4
 </nav>
 
 <header>
-  <span class="tag">open source · stdlib-only · MIT</span>
-  <h1>Your agents worked all night. <em>Know if anything went wrong.</em></h1>
-  <p class="hero-sub">AgentScope turns scheduled agent activity into one quiet morning screen. No orchestration. No trace maze. Just the failures, drift and missing work that deserve your attention.</p>
-  <div class="cta-row"><a class="btn" href="/demo.html">Open the live demo ↗</a><a class="btn btn-ghost" href="https://github.com/buttercode101/agentscope">Get the source</a></div>
-  <p class="microline">Python 3.8+ · zero dependencies · self-hosted · MIT</p>
-
+  <div class="hero-copy">
+    <p class="tag">open source · stdlib-only · MIT</p>
+    <h1>Your agents worked all night. <em>Know if anything went wrong.</em></h1>
+    <p class="hero-sub">AgentScope turns scheduled agent activity into one quiet morning screen. No orchestration. No trace maze. Just the failures, drift and missing work that deserve your attention.</p>
+    <div class="cta-row"><a class="btn" href="/demo.html">Open the live demo ↗</a><a class="btn btn-ghost" href="https://github.com/buttercode101/agentscope">Get the source</a></div>
+    <p class="microline">Python 3.8+ · zero dependencies · self-hosted · MIT</p>
+  </div>
   <figure class="stage">
-    <img src="docs/screenshot.png" alt="agentscope dashboard — dark supervision view with KPI row and Needs Attention panel" loading="lazy">
-    <figcaption class="caption">A real morning view — the panel flagged two jobs silently skipping due to config drift.</figcaption>
+    <img src="docs/screenshot.png" alt="AgentScope supervision dashboard showing KPIs, job health and anomalies" width="900" height="620">
+    <figcaption class="caption">A real supervision view — signal first, detail second.</figcaption>
   </figure>
 </header>
 
