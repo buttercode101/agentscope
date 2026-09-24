@@ -241,15 +241,17 @@ def anomalies(jobs, execs):
     # Track the actual consecutive failure streak for each job.
     # execs are newest-first, so the first non-failure ends the streak.
     streaks = {}
+    closed = set()
     for e in execs[:40]:
         jid = e.get("job_id")
-        if not jid:
+        if not jid or jid in closed:
             continue
         status = (e.get("status") or "").lower()
         if status == "failed":
             streaks.setdefault(jid, []).append(e)
-        elif jid not in streaks:
-            streaks[jid] = []
+        else:
+            # A success/completion closes the current failure streak.
+            closed.add(jid)
 
     drift, other = [], {}
     for jid, flist in streaks.items():
