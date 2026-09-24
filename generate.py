@@ -137,7 +137,7 @@ def load_config(path):
             else:
                 cfg[k] = v
     s = cfg["sources"]
-    for k in ("cron_jobs_glob", "executions_db", "sessions_dir", "leads_db", "ack_db"):
+    for k in ("cron_jobs_glob", "executions_db", "sessions_dir", "leads_db", "ack_db", "mcp_jsonl"):
         if s.get(k):
             s[k] = os.path.expanduser(s[k])
     return cfg
