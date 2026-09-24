@@ -50,6 +50,22 @@ class GenerateTests(unittest.TestCase):
             jobs = generate.load_cron_jobs(str(p))
             self.assertEqual([j["name"] for j in jobs], ["A", "B"])
 
+    def test_anomalies_detect_overdue_job(self):
+        jobs = [{"name": "Digest", "id": "j1", "enabled": True, "schedule": "every 1h"}]
+        old = (generate.datetime.now() - generate.timedelta(hours=4)).isoformat()
+        anomalies = generate.anomalies(jobs, [{"job_id": "j1", "status": "succeeded", "started_at": old}])
+        self.assertTrue(any("overdue" in item[1] for item in anomalies))
+
+    def test_anomalies_do_not_flag_old_failure_after_success(self):
+        jobs = [{"name": "Digest", "id": "j1", "enabled": True, "schedule": "daily"}]
+        rows = [
+            {"job_id": "j1", "status": "succeeded", "started_at": "2026-09-24T08:00:00"},
+            {"job_id": "j1", "status": "failed", "started_at": "2026-09-23T08:00:00", "error": "auth"},
+            {"job_id": "j1", "status": "failed", "started_at": "2026-09-22T08:00:00", "error": "auth"},
+        ]
+        anomalies = generate.anomalies(jobs, rows)
+        self.assertFalse(any("auth failing" in item[1] for item in anomalies))
+
 
 if __name__ == "__main__":
     unittest.main()
