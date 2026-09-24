@@ -91,7 +91,7 @@ def success_rates(execs, min_runs=3):
     Only meaningful when a job has >= min_runs recorded.
     """
     stats = {}
-    for e in execs[-40:]:
+    for e in execs[:40]:
         jid = e.get("job_id")
         if not jid:
             continue
@@ -168,16 +168,24 @@ def load_cron_jobs(pattern):
     return sorted(out, key=lambda x: (not x["enabled"], x["name"].lower()))
 
 def recent_executions(db_path, limit=40):
-    rows = []
+    """Load recent execution rows without assuming every optional column exists."""
+    wanted = ["job_id", "status", "started_at", "finished_at", "error"]
     try:
-        c = sqlite3.connect(db_path)
-        cols = [x[1] for x in c.execute("PRAGMA table_info(executions)")]
-        sel = ", ".join(x for x in ["job_id","status","started_at","finished_at","error"] if x in cols)
-        rows = [dict(zip(["job_id","status","started_at","finished_at","error"], r))
-                for r in c.execute(f"SELECT {sel} FROM executions ORDER BY rowid DESC LIMIT ?", (limit,))]
+        conn = sqlite3.connect(db_path)
+        cols = {row[1] for row in conn.execute("PRAGMA table_info(executions)")}
+        selected = [name for name in wanted if name in cols]
+        if not selected:
+            return []
+        sql = "SELECT " + ", ".join(selected) + " FROM executions ORDER BY rowid DESC LIMIT ?"
+        rows = []
+        for values in conn.execute(sql, (limit,)):
+            row = {name: None for name in wanted}
+            row.update(dict(zip(selected, values)))
+            rows.append(row)
+        conn.close()
+        return rows
     except Exception:
-        pass
-    return rows
+        return []
 
 def job_names(jobs_pattern, exec_db):
     names = {}
@@ -230,22 +238,24 @@ def anomalies(jobs, execs):
     if disabled:
         a.append(("warn", f"{len(disabled)} scheduled job(s) disabled: " + ", ".join(j["name"] for j in disabled)))
 
-    # per-job failure stats over last 20 runs
-    fails = {}
-    for e in execs[-20:]:
-        if e.get("status") == "failed":
-            fails.setdefault(e.get("job_id"), []).append(e)
-
-    # last successful run per job (for overdue detection)
-    last_run = {}
-    for e in execs:
+    # Track the actual consecutive failure streak for each job.
+    # execs are newest-first, so the first non-failure ends the streak.
+    streaks = {}
+    for e in execs[:40]:
         jid = e.get("job_id")
-        if jid and jid not in last_run and e.get("started_at"):
-            last_run[jid] = e["started_at"]
+        if not jid:
+            continue
+        status = (e.get("status") or "").lower()
+        if status == "failed":
+            streaks.setdefault(jid, []).append(e)
+        elif jid not in streaks:
+            streaks[jid] = []
 
     drift, other = [], {}
-    for jid, flist in fails.items():
-        err_text = next((e.get("error","") for e in reversed(flist) if e.get("error")), "")
+    for jid, flist in streaks.items():
+        if not flist:
+            continue
+        err_text = next((e.get("error","") for e in flist if e.get("error")), "")
         low = err_text.lower()
         label = jid[:8]
         nfail = len(flist)
