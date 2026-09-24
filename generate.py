@@ -461,58 +461,10 @@ def build(cfg, out_path):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(cfg['title'])}</title>
 <style>
-body.compact td{{padding:4px 8px}}
-body.compact .panel{{padding:10px;margin-bottom:10px}}
-body.compact .anom{{padding:5px 0}}
-body.compact .kpi{{padding:9px 12px}}
-body.compact .kpi .v{{font-size:23px}}
-:root{{
-  --bg:{'#f7f5f0' if light else '#101418'};--card:{'#ffffff' if light else '#181e25'};
-  --line:{'#ddd6c9' if light else '#2a323c'};--tx:{'#191919' if light else '#e8edf2'};
-  --mut:{'#6e6a60' if light else '#8a97a5'};--acc:{'#1e2bfa' if light else '#5b8def'};
-  --ok:{'#15803d' if light else '#4ade80'};--bad:{'#dc2626' if light else '#f87171'};
-}}
-*{{box-sizing:border-box;margin:0;padding:0}}
-body{{background:var(--bg);color:var(--tx);font:15px/1.55 'Space Grotesk',-apple-system,'Segoe UI',Roboto,sans-serif;padding:16px;max-width:900px;margin:0 auto}}
-h1{{font-size:17px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}}
-h1::before{{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--acc);margin-right:9px}}
-.sub{{color:var(--mut);font-size:13px;margin-bottom:14px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}}
-.kpi{{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}}
-.kpi .v{{font-size:27px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--acc)}}
-.vsub{{font-size:15px;color:var(--mut);font-weight:500}}
-.kpi .l{{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;margin-top:2px}}
-.panel{{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}}
-.panel h2{{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px}}
-.anom{{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}} .anom:last-child{{border:none}}
-.badge{{font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;margin-right:7px;font-family:'Space Grotesk',sans-serif}}
-table{{width:100%;border-collapse:collapse;font-size:13.5px}}
-td{{padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}}
-tr:first-child td{{border-top:none}}
-.mut{{color:var(--mut)}}
-.pill{{font-size:11px;font-weight:700;padding:2px 10px;border-radius:99px}}
-.pill.on{{color:#fff;background:var(--acc)}} .pill.off{{color:var(--mut);background:transparent;border:1px solid var(--line)}}
-.st.f{{color:var(--bad);font-weight:600}} .st.s{{color:var(--ok)}}
-.panel.attn{{border:2px solid var(--bad);background:linear-gradient(0deg,transparent,transparent),var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 12%,transparent)}}
-.panel.attn h2{{color:var(--bad)}}
-.panel.calm{{border-color:var(--line);opacity:.85}}
-.panel.calm .anom{{color:var(--mut)}}
-.nowrap{{white-space:nowrap}}
-.chips{{display:flex;gap:8px;margin-bottom:10px}}
-.chip{{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
-.chip.active{{background:var(--acc);border-color:var(--acc);color:#fff}}
-.hlth{{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px}}
-.hlth.ok{{color:#15803d;background:#dcfce7}} .hlth.warn{{color:#b45309;background:#fef3c7}} .hlth.bad{{color:#b91c1c;background:#fee2e2}}
-:root .hlth.ok{{color:var(--ok);background:transparent;border:1px solid var(--line)}}
-.ackbtn{{float:right;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;padding:2px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}
-.ackbtn:hover{{border-color:var(--mut)}}
-tr.grp td{{background:var(--card);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding-top:14px;border-top:2px solid var(--line)}}
-footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
-@media(max-width:600px){{
-  body{{padding:10px}} .kpi .v{{font-size:22px}}
-  td{{padding:9px 6px}} table{{font-size:13px}}
-  .panel{{padding:12px;margin-bottom:16px}} .grid{{gap:8px}}
-}}
+:root{--bg:#0b0d10;--card:#11151a;--line:#272e37;--tx:#eef1f4;--mut:#89939f;--acc:#7694ff;--ok:#56d68b;--bad:#ff7373;--warn:#e6ad59}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--tx);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:18px;width:min(1120px,calc(100% - 24px));margin:0 auto;-webkit-font-smoothing:antialiased}h1{font:800 15px ui-monospace,SFMono-Regular,monospace;letter-spacing:.06em;text-transform:uppercase;margin:2px 0}.sub{color:var(--mut);font:11px ui-monospace,monospace;margin:6px 0 18px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}.kpi,.panel{background:var(--card);border:1px solid var(--line);border-radius:11px}.kpi{padding:15px}.kpi .v{font:800 28px ui-monospace,monospace;color:var(--acc);font-variant-numeric:tabular-nums}.vsub{font-size:13px;color:var(--mut);font-weight:500}.kpi .l{color:var(--mut);font:800 9px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}.panel{padding:15px;margin-bottom:10px;overflow-x:auto}.panel h2{font:800 10px ui-monospace,monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.11em;margin-bottom:10px}.panel.attn{border-color:#5e3438}.panel.attn h2{color:#ff9c9c}.panel.calm{opacity:.9}.anom{padding:11px 0;border-top:1px solid var(--line);font-size:12px}.anom:first-of-type{border-top:0}.badge{font:800 9px ui-monospace;padding:4px 7px;border-radius:5px;margin-right:7px}.nowrap{white-space:nowrap}table{width:100%;min-width:620px;border-collapse:collapse;font-size:12px}td{padding:10px 8px;border-top:1px solid var(--line);vertical-align:top}tr:first-child td{border-top:0}.mut{color:var(--mut)}.pill{font:800 9px ui-monospace;padding:4px 7px;border-radius:999px}.pill.on{background:#143323;color:#7de3a6}.pill.off{border:1px solid var(--line);color:#77818c}.st{font-weight:600}.st.f{color:var(--bad)}.st.s{color:var(--ok)}.chips{display:flex;gap:6px;margin-bottom:8px}.chip{font:800 10px ui-monospace;padding:6px 10px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}.chip.active{background:#252e43;border-color:#3d4f80;color:#dce4ff}.hlth{font:800 10px ui-monospace;padding:3px 7px;border-radius:999px}.hlth.ok{color:var(--ok);background:#143323}.hlth.warn{color:var(--warn);background:#3d2e18}.hlth.bad{color:var(--bad);background:#4a2024}.ackbtn{float:right;font:800 9px ui-monospace;padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}.ackbtn:hover{border-color:#56606c}.ackbtn:disabled{cursor:default;opacity:.65}tr.grp td{background:#151a20;color:var(--mut);font:800 9px ui-monospace;text-transform:uppercase;letter-spacing:.1em}footer{color:#66717d;font:10px ui-monospace;text-align:center;margin-top:14px}
+@media(max-width:760px){body{width:calc(100% - 20px);padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi .v{font-size:23px}.panel{padding:12px}}@media(max-width:420px){.grid{grid-template-columns:1fr}.kpi .v{font-size:25px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body class="{'compact' if cfg.get('compact') else ''}">
 <h1>{esc(cfg['title'])}</h1>
 <div class="sub">{esc(now)} — supervision view · read-only</div>
@@ -570,7 +522,7 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
 <div style="text-align:center;margin:6px 0 14px">
 <button id="sharebtn" class="chip" title="Copy a clean text summary">Copy status summary</button>
 </div>
-<footer>{{esc(cfg['footer'])}}</footer>
+<footer>{esc(cfg['footer'])}</footer>
 <script>
 (function(){{
   var b=document.getElementById('sharebtn');
@@ -583,7 +535,7 @@ footer{{color:var(--mut);font-size:12px;text-align:center;margin-top:10px}}
     var attn=document.querySelector('.panel.attn,.panel.calm h2');
     document.querySelectorAll('.anom').forEach(function(a){{lines.push('- '+a.textContent.replace('Got it','').trim());}});
     try{{
-      navigator.clipboard.writeText(lines.join('\n')).then(function(){{
+      navigator.clipboard.writeText(lines.join('\\n')).then(function(){{
         b.textContent='Copied';setTimeout(function(){{b.textContent='Copy status summary';}},2000);
       }},function(){{b.textContent='Clipboard blocked';}});
     }}catch(e){{b.textContent='Clipboard unavailable';}}
