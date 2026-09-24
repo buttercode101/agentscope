@@ -6,85 +6,14 @@
 <title>agentscope — one screen for your AI agents</title>
 <meta name="description" content="A scan-first supervision dashboard for AI agent crews. One self-contained HTML page answers: is anything off? Open source, stdlib-only Python.">
 <style>
-/* atoms: blue-professional frame — cream canvas, single cobalt accent,
-   Space Grotesk display + Inter body, tinted cards, no shadows except CTA hover */
-:root{
-  --bg:#fdfae7;--ink:#111;--mut:#6b6b6b;--light:#9a9a9a;
-  --cobalt:#1e2bfa;
-  --tint:rgba(30,43,250,.04);--tint-mid:rgba(30,43,250,.08);
-  --border:rgba(30,43,250,.2);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font:17px/1.65 Inter,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-.g{font-family:'Space Grotesk',Inter,sans-serif}
-.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
-a{color:var(--cobalt);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* nav */
-nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0}
-.wordmark{font-family:'Space Grotesk';font-weight:700;font-size:19px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;color:var(--ink)}
-.wordmark i{width:12px;height:12px;border-radius:50%;background:var(--cobalt);flex:none}
-nav .links a{margin-left:28px;font-family:'Space Grotesk';font-size:15px;font-weight:500}
-
-/* hero */
-header{padding:72px 0 64px}
-.tag{display:inline-block;background:var(--tint-mid);color:var(--cobalt);font-family:'Space Grotesk';font-size:13px;font-weight:500;padding:5px 16px;border-radius:100px;margin-bottom:26px}
-h1{font-family:'Space Grotesk';font-weight:700;font-size:clamp(38px,6vw,68px);line-height:1.06;letter-spacing:-.02em;max-width:15ch}
-h1 em{font-style:normal;color:var(--cobalt)}
-.hero-sub{max-width:56ch;font-size:19px;color:var(--mut);margin:26px 0 34px}
-.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.btn{background:var(--cobalt);color:#fff;font-family:'Space Grotesk';font-weight:600;font-size:16px;padding:13px 30px;border-radius:100px;display:inline-block;transition:box-shadow .18s ease,transform .18s ease}
-.btn:hover{text-decoration:none;box-shadow:0 10px 26px rgba(30,43,250,.35);transform:translateY(-1px)}
-.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
-.btn-ghost:hover{box-shadow:none;background:var(--tint)}
-.microline{color:var(--light);font-size:13.5px;margin-top:18px}
-
-/* screenshot stage */
-.stage{margin:58px 0 0;border:1.5px solid var(--border);border-radius:14px;background:#101418;padding:clamp(10px,2vw,22px)}
-.stage img{width:100%;display:block;border-radius:8px}
-.caption{font-size:13px;color:var(--light);text-align:center;margin-top:12px}
-
-/* sections */
-section{padding:70px 0;border-top:1px solid var(--tint-mid)}
-.kicker{font-family:'Space Grotesk';font-size:13px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--cobalt);margin-bottom:14px}
-h2{font-family:'Space Grotesk';font-weight:600;font-size:clamp(27px,3.6vw,40px);letter-spacing:-.02em;line-height:1.12;max-width:22ch}
-.lede{color:var(--mut);max-width:60ch;margin-top:16px;font-size:17.5px}
-
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:44px}
-.card{background:var(--tint);border:1.5px solid var(--border);border-radius:14px;padding:26px}
-.card h3{font-family:'Space Grotesk';font-weight:600;font-size:19px;margin-bottom:9px;letter-spacing:-.01em}
-.card p{color:var(--mut);font-size:15.5px}
-.card .num{font-family:'Space Grotesk';font-weight:700;color:var(--cobalt);font-size:14px;display:block;margin-bottom:12px}
-
-/* story block */
-.story{background:var(--tint);border:1.5px solid var(--border);border-radius:14px;padding:clamp(28px,4vw,48px);margin-top:44px}
-.story p{font-family:'Space Grotesk';font-weight:500;font-size:clamp(20px,2.6vw,28px);line-height:1.4;letter-spacing:-.01em}
-.story .who{font-family:Inter,sans-serif;font-weight:400;font-size:15px;color:var(--mut);margin-top:20px}
-
-/* table */
-.spec{width:100%;border-collapse:collapse;margin-top:40px;font-size:15.5px}
-.spec td{padding:13px 6px;border-top:1px solid var(--tint-mid);vertical-align:top}
-.spec td:first-child{font-family:'Space Grotesk';font-weight:600;width:220px;white-space:nowrap}
-.spec td:last-child{color:var(--mut)}
-
-/* code */
-pre{background:#14181f;color:#dce6f5;border-radius:12px;padding:22px 26px;overflow-x:auto;font-size:14.5px;line-height:1.7;margin-top:36px}
-pre .c{color:#7d8ca3}
-pre .p{color:#8fb4ff}
-
-/* footer */
-footer{padding:46px 0 60px;border-top:1px solid var(--tint-mid)}
-footer .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center}
-footer small{color:var(--light)}
-
-@media(max-width:640px){
-  nav .links a:not(:last-child){display:none}
-  header{padding:52px 0 48px}
-  section{padding:54px 0}
-}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+:root{--bg:#f7f7f5;--ink:#0b0d10;--mut:#646a73;--line:#dedfdf;--card:#fff;--accent:#315cff;--dark:#0b0d10;--good:#159447}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}.wrap{width:min(1160px,calc(100% - 40px));margin:auto}a{color:inherit}
+nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.wordmark{font-weight:800;letter-spacing:-.04em;font-size:18px;display:flex;gap:9px;align-items:center}.wordmark i{width:9px;height:9px;border-radius:50%;background:var(--accent)}nav .links{display:flex;gap:24px;align-items:center}nav .links a{margin:0;color:var(--mut);font:13px ui-monospace,monospace;text-decoration:none}.links .navcta{color:#fff;background:var(--ink);padding:9px 14px;border-radius:8px}
+header{padding:105px 0 70px;display:grid;grid-template-columns:1.08fr .92fr;gap:70px;align-items:center}.tag,.kicker{font:800 11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}h1{font:800 clamp(42px,6vw,76px)/1.02 ui-monospace,monospace;letter-spacing:-.065em;max-width:760px}h1 em{font-style:normal;color:var(--accent)}.hero-sub{font-size:19px;color:var(--mut);max-width:620px;margin:28px 0 32px}.cta-row{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;text-decoration:none;font:800 13px ui-monospace,monospace;padding:13px 18px;border-radius:9px;border:1px solid var(--ink)}.btn:hover{text-decoration:none}.btn-ghost{border-color:var(--line)}.microline{font-size:12px;color:#8b9097;margin-top:14px}
+.stage{background:#0b0d10;border:1px solid #20252c;border-radius:16px;padding:10px;box-shadow:0 24px 70px #0b0d101f}.stage img{width:100%;display:block;border-radius:9px}.caption{font-size:11px;color:#89939f;text-align:center;padding:10px 0 3px}
+section{padding:88px 0;border-top:1px solid var(--line)}h2{font:800 clamp(28px,4vw,46px)/1.08 ui-monospace,monospace;letter-spacing:-.055em;max-width:760px}.lede{color:var(--mut);font-size:17px;max-width:690px;margin-top:16px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:25px}.card h3{font:800 16px ui-monospace,monospace;letter-spacing:-.03em;margin:30px 0 8px}.card p{color:var(--mut);font-size:14px;margin:0}
+.story{border-left:2px solid var(--accent);padding:5px 0 5px 25px;margin-top:40px}.story p{font:500 clamp(20px,3vw,29px)/1.35 ui-monospace,monospace}.story .who{font:12px Inter;color:#8a9098;margin-top:18px}.spec{width:100%;border-collapse:collapse;margin-top:38px;font-size:14px}.spec td{padding:13px 6px;border-top:1px solid var(--line);vertical-align:top}.spec td:first-child{font:800 11px ui-monospace,monospace;width:190px}.spec td:last-child{color:var(--mut)}pre{background:#11151b;color:#d8dee7;border:1px solid #252a31;border-radius:12px;padding:20px;overflow:auto;font:13px/1.7 ui-monospace,monospace;margin-top:34px}.dark{background:#0b0d10;color:#f3f5f7;border-color:#20242a}.dark .lede{color:#9da5af}.end{text-align:center}.end h2{margin:auto}.end .lede{margin:16px auto 26px}.footer{padding:30px 0 45px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#8a9098;font-size:12px}
+@media(max-width:850px){header{grid-template-columns:1fr;gap:42px;padding-top:70px}.cards{grid-template-columns:1fr}.wrap{width:min(100% - 28px,1160px)}}@media(max-width:640px){nav .links a:not(.navcta){display:none}header{padding:58px 0 52px}h1{font-size:42px}section{padding:64px 0}.footer{display:block}.footer>*{display:block;margin:8px 0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
@@ -93,21 +22,18 @@ footer small{color:var(--light)}
 <nav>
   <span class="wordmark"><i></i>agentscope</span>
   <div class="links">
-    <a href="#how">How it works</a>
-    <a href="#story">The story</a>
+    <a href="#how">Why</a>
+    <a href="/demo.html">Live demo</a>
     <a href="https://github.com/buttercode101/agentscope">GitHub →</a>
   </div>
 </nav>
 
 <header>
   <span class="tag">open source · stdlib-only · MIT</span>
-  <h1>Your agents worked all night. <em>Is anything off?</em></h1>
-  <p class="hero-sub">agentscope renders one scan-first HTML page over your agent crew's scheduled jobs and activity — so you catch silent failures in ten seconds instead of discovering them in logs.</p>
-  <div class="cta-row">
-    <a class="btn" href="https://github.com/buttercode101/agentscope">Get it on GitHub</a>
-    <a class="btn btn-ghost" href="#how">See how it works</a>
-  </div>
-  <p class="microline">Python 3.8+ · no dependencies · data never leaves your machine</p>
+  <h1>Your agents worked all night. <em>Know if anything went wrong.</em></h1>
+  <p class="hero-sub">AgentScope turns scheduled agent activity into one quiet morning screen. No orchestration. No trace maze. Just the failures, drift and missing work that deserve your attention.</p>
+  <div class="cta-row"><a class="btn" href="/demo.html">Open the live demo ↗</a><a class="btn btn-ghost" href="https://github.com/buttercode101/agentscope">Get the source</a></div>
+  <p class="microline">Python 3.8+ · zero dependencies · self-hosted · MIT</p>
 
   <figure class="stage">
     <img src="docs/screenshot.png" alt="agentscope dashboard — dark supervision view with KPI row and Needs Attention panel" loading="lazy">
@@ -115,51 +41,16 @@ footer small{color:var(--light)}
   </figure>
 </header>
 
-<section id="how">
-  <p class="kicker">Why</p>
-  <h2>Observability tools are for debugging traces. You need to supervise a workforce.</h2>
-  <p class="lede">LangSmith-class tools assume an ML engineer reading spans. But when your agent crew runs scheduled work around the clock, the human question is simpler — and almost nobody builds for it.</p>
-  <div class="cards">
-    <div class="card"><span class="num">01</span><h3>Silent failure is the default</h3><p>Config drift, expired credentials, accidentally disabled jobs — none of these raise their hand. They just quietly stop working.</p></div>
-    <div class="card"><span class="num">02</span><h3>Supervision ≠ operation</h3><p>The interface inverts: fewer buttons, more signal. agentscope has zero controls. It shows what was already done and whether anything's off.</p></div>
-    <div class="card"><span class="num">03</span><h3>Ten seconds, one page</h3><p>KPIs up top, problems isolated in one panel, quiet when healthy. If the panel is empty, everything is fine — go make coffee.</p></div>
-  </div>
-</section>
+<section id="how"><p class="kicker">The problem</p><h2>Agent systems fail quietly.</h2><p class="lede">The hard part is often not seeing an error. It is knowing that something that should have happened never did — a scheduled job disabled, credentials rejected, model configuration drifting, or a run failing repeatedly.</p><div class="cards"><div class="card"><span class="kicker">01 / SIGNAL</span><h3>Surface anomalies</h3><p>Needs Attention is deliberately narrow: disabled jobs, repeated failures, auth failures and known drift patterns instead of a wall of telemetry.</p></div><div class="card"><span class="kicker">02 / CONTEXT</span><h3>See what already happened</h3><p>Recent actions, outcomes, relative timestamps and job health give you enough context to investigate.</p></div><div class="card"><span class="kicker">03 / SPEED</span><h3>Scan in seconds</h3><p>KPIs first. Problems next. Detail after that. When healthy, the interface gets quieter rather than noisier.</p></div></div></section>
 
-<section id="story">
-  <p class="kicker">Day one</p>
-  <h2>It earned its keep immediately.</h2>
-  <div class="story">
-    <p>"Two production jobs had been silently skipping every run for days. The scheduler noticed a model-config drift and skipped 'to prevent unintended spend' — with no error surfacing anywhere I looked. The dashboard's first render flagged both as FAIL with the exact fix hint. Fixed in two minutes."</p>
-    <p class="who">— the build log, first real run</p>
-  </div>
-</section>
+<section id="story" class="dark"><p class="kicker">What ships</p><h2>Small surface area. Real utility.</h2><p class="lede">AgentScope reads local state and produces a self-contained supervision view. It is intentionally not another agent control plane.</p><div class="story"><p>“The goal is not to watch every token. It is to notice when the work your agents were supposed to do quietly stopped happening.”</p><p class="who">— AgentScope product thesis</p></div></section>
 
-<section id="spec">
-  <p class="kicker">What you get</p>
-  <h2>One file in. One file out.</h2>
-  <table class="spec"><tbody>
-    <tr><td>Input</td><td>Your agent state: job definitions (JSON), execution history (SQLite), session directories. Config-driven — point it at anything.</td></tr>
-    <tr><td>Output</td><td>A single self-contained HTML dashboard. Dark or light theme. Opens on any device.</td></tr>
-    <tr><td>The panels</td><td>KPI row → Needs Attention (anomalies only) → scheduled jobs with ON/OFF → recent actions feed → sessions sparkline.</td></tr>
-    <tr><td>What it isn't</td><td>Not an orchestrator. Not distributed tracing. No multi-user permissions. No buttons at all — read-only by design.</td></tr>
-    <tr><td>Privacy</td><td>Reads local files, writes one HTML file. Nothing leaves your machine.</td></tr>
-  </tbody></table>
+<section id="spec"><p class="kicker">Under the hood</p><h2>One file in. One file out.</h2><table class="spec"><tbody><tr><td>INPUT</td><td>JSON job definitions, SQLite execution history, session directories and optional MCP activity.</td></tr><tr><td>OUTPUT</td><td>One HTML file that works without a runtime, database or hosted service.</td></tr><tr><td>PRIVACY</td><td>Local by design. The generator reads your files and writes the dashboard locally.</td></tr><tr><td>EXTENSIBLE</td><td>Configurable sources, anomaly rules, themes, grouping and optional success-rate signals.</td></tr></tbody></table><pre>python3 generate.py -o dashboard.html
 
-<pre><span class="c"># auto-detects Hermes Agent layout</span>
-<span class="p">python3</span> generate.py -o dashboard.html
+# or point it at your own stack
+python3 generate.py --config myconfig.json -o dashboard.html</pre></section>
 
-<span class="c"># or point it at your own stack</span>
-<span class="p">python3</span> generate.py --config myconfig.json -o dashboard.html</pre>
-</section>
-
-<footer>
-  <div class="row">
-    <span class="wordmark"><i></i>agentscope</span>
-    <small>MIT licensed · built dogfood-first by <a href="https://github.com/buttercode101">buttercode101</a></small>
-    <a href="https://github.com/buttercode101/agentscope">GitHub →</a>
-  </div>
-</footer>
+<section class="end"><p class="kicker">Try it</p><h2>See the supervision screen before installing anything.</h2><p class="lede">The demo uses clearly labelled sample data. Your real dashboard stays local.</p><a class="btn" href="/demo.html">Open live demo ↗</a></section><footer><div class="footer"><span>© agentscope · MIT licensed</span><span><a href="https://github.com/buttercode101/agentscope">GitHub</a> · <a href="/demo.html">Demo</a></span></div></footer>
 
 </div>
 </body>
