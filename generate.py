@@ -277,18 +277,28 @@ def anomalies(jobs, execs):
         sev = "fail" if any(w in msg for w in ("broken", "auth")) else "fail"
         a.append((sev, f"'{jn}': {msg}"))
 
-    # overdue: enabled jobs that should have run but haven't recently
-    job_ids_by_name = {}
-    for path in glob.glob("*"):  # names resolved later in build; use exec-db mapping
-        break
-    for jid, ts in last_run.items():
+    # Overdue detection: compare the most recent run with the job cadence.
+    # This catches silent skips where there is no failed execution to inspect.
+    latest = {}
+    for e in execs:
+        jid = e.get("job_id")
+        ts = e.get("started_at")
+        if jid and ts and jid not in latest:
+            latest[jid] = ts
+    for j in jobs:
+        if not j.get("enabled") or not j.get("id") or j["id"] not in latest:
+            continue
+        cadence = parse_cadence_minutes(j.get("schedule"))
+        if not cadence:
+            continue
         try:
-            age_h = (datetime.now() - datetime.fromisoformat(ts)).total_seconds() / 3600
+            age_h = (datetime.now() - datetime.fromisoformat(latest[j["id"]])).total_seconds() / 3600
         except Exception:
             continue
-        if age_h > 48:
-            # only flag if this job has recent failures too (enabled check happens in build)
-            pass
+        expected_h = cadence / 60
+        threshold_h = max(2, expected_h * 2.5)
+        if age_h > threshold_h:
+            a.append(("warn", f"'{j['name']}' appears overdue — last run {rel_time(latest[j['id']])}. Expected about every {j['schedule']}."))
     if not a:
         a.append(("ok", "All clear — nothing off."))
     return [(k, m, ack_key(k, m)) for k, m in a]
@@ -447,8 +457,6 @@ def build(cfg, out_path):
                 for j in gj)
             parts.append('<tr class="grp"><td colspan="4">' + esc(g) +
                          ' <span class="vsub">- ' + str(n_on) + '/' + str(len(gj)) + ' on</span></td></tr>')
-        for j in gj:
-            parts.append(_job_row(j))
         job_rows = "".join(parts)
     else:
         job_rows = "".join(_job_row(j) for j in jobs) or '<tr><td class="mut" colspan="4">No scheduled jobs found.</td></tr>'
