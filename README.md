@@ -5,7 +5,7 @@
 **One clean screen for your AI agent crew.**
 *Your agents worked all night. Is anything off?*
 
-[Live site](https://agentscope-liard.vercel.app) · [Get started](#quick-start) · [MIT licensed](LICENSE)
+[Live site](https://agentscope-liard.vercel.app) · [Interactive demo](https://agentscope-liard.vercel.app/demo.html) · [Get started](#quick-start) · [MIT licensed](LICENSE)
 
 </div>
 
@@ -95,6 +95,17 @@ Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` �
 - [ ] Anomaly rule packs per agent framework
 
 ## Changelog
+
+### v0.6 — Product surface & reliability pass
+
+- Rebuilt the landing page around the supervision thesis and added a clearly labelled interactive demo.
+- Added responsive demo states for desktop and mobile, including 24h/7d activity filtering.
+- Fixed the deployed landing screenshot asset path so the preview is served from the Vercel output.
+- Hardened SQLite execution parsing when optional columns are absent.
+- Corrected success-rate sampling to use the most recent execution rows.
+- Corrected failure-streak detection so older failures do not remain flagged after a successful run.
+- Added regression tests for core generator behavior.
+
 
 ### v0.5 — Success indicators, sharing, MCP awareness
 
