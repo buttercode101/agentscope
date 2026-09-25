@@ -3,5 +3,7 @@
   "outputDirectory": "site",
   "framework": "vite",
   "installCommand": "echo 'no install'",
-  "devCommand": "python3 -m http.server 3000 -d site"
+  "devCommand": "python3 -m http.server 3000 -d site",
+  "public": true,
+  "cleanUrls": false
 }
