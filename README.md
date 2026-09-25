@@ -5,7 +5,9 @@
 **One clean screen for your AI agent crew.**
 *Your agents worked all night. Is anything off?*
 
-[Live site](https://agentscope-liard.vercel.app) · [Interactive demo](https://agentscope-liard.vercel.app/demo.html) · [Get started](#quick-start) · [MIT licensed](LICENSE)
+[Live site](https://agent-supervision.vercel.app) · [Get started](#quick-start) · [MIT licensed](LICENSE)
+
+> **Deployment note:** the public `agent-supervision.vercel.app` hostname is currently reachable. The latest repository build is verified by CI; the Vercel connection available to this workspace cannot currently inspect or re-alias that project.
 
 </div>
 
