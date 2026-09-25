@@ -8,6 +8,23 @@ import generate
 
 
 class GenerateTests(unittest.TestCase):
+    def test_parse_ts_normalizes_utc_and_local_timestamps(self):
+        t = generate.parse_ts("2026-09-25T00:00:00Z")
+        self.assertIsNotNone(t)
+        self.assertIsNone(generate.parse_ts("not-a-timestamp"))
+
+    def test_never_run_dated_job_is_flagged_after_grace(self):
+        old = "2026-09-20T00:00:00"
+        jobs = [{"name":"new-job","schedule":"every 6h","enabled":True,"required":True,"created_at":old,"id":"new"}]
+        rows = []
+        result = generate.anomalies(jobs, rows, never_run_grace_hours=24)
+        self.assertTrue(any("never run" in item[1] for item in result))
+
+    def test_disabled_optional_job_is_not_anomaly(self):
+        jobs = [{"name":"paused-job","schedule":"daily","enabled":False,"required":False,"created_at":"","id":"paused"}]
+        result = generate.anomalies(jobs, [])
+        self.assertTrue(any(item[0] == "ok" for item in result))
+
     def test_humanize_known_errors(self):
         self.assertEqual(generate.humanize("failed", "429 rate limit"), "Failed – rate limited")
         self.assertEqual(generate.humanize("failed", "401 unauthorized"), "Failed – credentials rejected")
