@@ -77,22 +77,22 @@ Copy `config.example.json`:
 | `session_days`, `max_actions` | Display tuning |
 | `group_by` | `"none"` or `"group"` — group jobs by their group/project field |
 | `compact` | `true` for compact density |
+| `never_run_grace_hours` | Grace period before an explicitly dated, enabled job with no runs is flagged |
 | `ack_db` | SQLite file holding the `acks(key, ts)` table for acknowledged anomalies |
 | `sources.mcp_jsonl` | Optional JSONL of MCP/tool calls (`tool`, `ts`, `ok`) → per-tool success panel |
 
-Any source may be `null` to skip it. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
+Any source may be `null` to skip it. Job definitions can optionally provide `required: false` for intentionally disabled jobs and `created_at` for reliable never-run detection. Timestamp parsing accepts timezone-aware ISO-8601 values and normalizes them before comparisons. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
 
 ## Scope
 
 **In:** supervision of scheduled agent work, anomaly surfacing, one-page scanning.
 **Out:** orchestration, deep tracing, multi-user permissions, automatic fixing. This is a supervision layer, not a control plane.
 
-## Roadmap
+## Product direction
 
-- [ ] Pluggable source adapters (n8n, Temporal, raw MCP activity logs)
-- [ ] Token/cost column from usage audit logs
-- [ ] Hosted multi-source version (if demand appears)
-- [ ] Anomaly rule packs per agent framework
+AgentScope stays deliberately focused on supervision rather than becoming an orchestration or tracing platform. The current source model is intentionally file/database based so a generated dashboard can remain self-contained and local.
+
+The next expansion points are additive: more source adapters, richer cost/usage signals, and framework-specific anomaly rule packs. Hosted multi-source operation is deliberately not required for the core product.
 
 ## Changelog
 
