@@ -137,3 +137,7 @@ The next expansion points are additive: more source adapters, richer cost/usage 
 ## License
 
 MIT
+
+### Verification gate
+
+Core generator changes are covered by the repository regression suite in `.github/workflows/test.yml`.
