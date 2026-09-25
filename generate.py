@@ -18,14 +18,26 @@ from datetime import datetime, timedelta
 
 # ---------------------------------------------------------------- helpers ---
 
+def parse_ts(value):
+    """Parse an ISO timestamp into a naive local datetime for safe comparisons."""
+    if not value:
+        return None
+    try:
+        t = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if t.tzinfo is not None:
+            t = t.astimezone().replace(tzinfo=None)
+        return t
+    except Exception:
+        return None
+
 def rel_time(iso_str):
     """Human relative timestamp: '2h ago', 'yesterday', '3d ago'."""
     if not iso_str:
         return ""
     try:
-        t = datetime.fromisoformat(str(iso_str))
-        if t.tzinfo is not None:
-            t = t.replace(tzinfo=None)  # compare naive-to-naive (local render time)
+        t = parse_ts(iso_str)
+        if t is None:
+            return str(iso_str)[:16].replace("T", " ")
         delta = datetime.now() - t
     except Exception:
         return str(iso_str)[:16].replace("T", " ")
@@ -123,6 +135,7 @@ DEFAULT_CONFIG = {
     "max_actions": 15,
     "group_by": "none",                  # "none" | "group" — group jobs by their 'group'/'project' field
     "compact": False,                    # compact density option
+    "never_run_grace_hours": 48,          # only flag explicitly dated jobs after this grace period
     "ack_db": "~/.hermes/cron/executions.db",  # sqlite for acknowledged anomalies (table: acks(key TEXT, ts))
         "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls: {"tool","ts","ok"}
 }
@@ -157,6 +170,8 @@ def load_cron_jobs(pattern):
                 sched_s = sched.get("display", "") if isinstance(sched, dict) else str(sched)
                 jobs.append({"name": j.get("name", "?"), "schedule": sched_s,
                              "enabled": bool(j.get("enabled", True)),
+                             "required": bool(j.get("required", True)),
+                             "created_at": j.get("created_at", j.get("createdAt", "")) or "",
                              "id": j.get("id", ""),
                              "group": j.get("group", j.get("project", "")) or ""})
         except Exception:
@@ -231,10 +246,10 @@ def session_activity(sessions_dir, days=7):
         pass
     return counts
 
-def anomalies(jobs, execs):
+def anomalies(jobs, execs, never_run_grace_hours=48):
     """Core panel: ONLY things needing attention. Quiet when healthy."""
     a = []
-    disabled = [j for j in jobs if not j["enabled"]]
+    disabled = [j for j in jobs if not j["enabled"] and j.get("required", True)]
     if disabled:
         a.append(("warn", f"{len(disabled)} scheduled job(s) disabled: " + ", ".join(j["name"] for j in disabled)))
 
@@ -286,15 +301,20 @@ def anomalies(jobs, execs):
         if jid and ts and jid not in latest:
             latest[jid] = ts
     for j in jobs:
-        if not j.get("enabled") or not j.get("id") or j["id"] not in latest:
+        if not j.get("enabled") or not j.get("id"):
             continue
         cadence = parse_cadence_minutes(j.get("schedule"))
         if not cadence:
             continue
-        try:
-            age_h = (datetime.now() - datetime.fromisoformat(latest[j["id"]])).total_seconds() / 3600
-        except Exception:
+        if j["id"] not in latest:
+            created = parse_ts(j.get("created_at"))
+            if created is not None and (datetime.now() - created).total_seconds() > never_run_grace_hours * 3600:
+                a.append(("warn", f"'{j['name']}' has never run — it is enabled and past its {never_run_grace_hours}h grace period."))
             continue
+        last = parse_ts(latest[j["id"]])
+        if last is None:
+            continue
+        age_h = (datetime.now() - last).total_seconds() / 3600
         expected_h = cadence / 60
         threshold_h = max(2, expected_h * 2.5)
         if age_h > threshold_h:
@@ -375,7 +395,7 @@ def build(cfg, out_path):
     execs = recent_executions(s["executions_db"]) if s.get("executions_db") else []
     leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None))) or {"total": 0, "active": 0}
     sess = session_activity(s.get("sessions_dir"), cfg["session_days"]) if s.get("sessions_dir") else {}
-    all_anom = anomalies(jobs, execs)
+    all_anom = anomalies(jobs, execs, cfg.get("never_run_grace_hours", 48))
     acks = ack_load(s.get("ack_db")) if s.get("ack_db") else set()
     anom = [x for x in all_anom if x[2] not in acks]
     ackd = [x for x in all_anom if x[2] in acks]
@@ -383,9 +403,11 @@ def build(cfg, out_path):
         anom = [("ok", f"All clear - {len(ackd)} item(s) acknowledged.", "")]
 
     enabled_n = sum(1 for j in jobs if j["enabled"])
-    day_ago = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%dT")
-    last24_fail = sum(1 for e in execs if e.get("status")=="failed" and (e.get("started_at") or "") >= day_ago)
-    last24_ok = sum(1 for e in execs if e.get("status") in ("succeeded","success","ok") and (e.get("started_at") or "") >= day_ago)
+    def within_24h(e):
+        t = parse_ts(e.get("started_at"))
+        return t is not None and (datetime.now() - t).total_seconds() <= 86400
+    last24_fail = sum(1 for e in execs if e.get("status")=="failed" and within_24h(e))
+    last24_ok = sum(1 for e in execs if e.get("status") in ("succeeded","success","ok","completed") and within_24h(e))
     names = job_names(s["cron_jobs_glob"], s["executions_db"]) if s.get("executions_db") else {}
     rates = success_rates(execs)
     mcp_rows = mcp_tool_stats(s["mcp_jsonl"]) if s.get("mcp_jsonl") else []
