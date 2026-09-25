@@ -137,3 +137,7 @@ The next expansion points are additive: more source adapters, richer cost/usage 
 ## License
 
 MIT
+
+### Verification
+
+The repository's automated regression suite is the release gate for core generator changes.
