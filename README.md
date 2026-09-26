@@ -19,8 +19,6 @@ A scan-first, supervision-only dashboard for people running multi-tool agent cre
 
 Not an orchestrator. Not distributed tracing. A supervision layer.
 
-![dashboard](docs/screenshot.png)
-
 ## Why
 
 Agent observability platforms (LangSmith, Langfuse, Braintrust) are built for ML engineers reading traces. When your *agent crew* is doing the work — scheduled jobs, campaigns, tool calls around the clock — the human need is different:
