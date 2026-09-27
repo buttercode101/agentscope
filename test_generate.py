@@ -56,6 +56,15 @@ class GenerateTests(unittest.TestCase):
             self.assertEqual(rows[0]["status"], "succeeded")
             self.assertIsNone(rows[0]["error"])
 
+    def test_web_assets_are_present_and_linked(self):
+        root = Path(__file__).resolve().parent
+        index = (root / "site" / "index.html").read_text(encoding="utf-8")
+        demo = (root / "site" / "demo.html").read_text(encoding="utf-8")
+        self.assertIn('href="/demo.html"', index)
+        self.assertIn("Sample data", demo)
+        self.assertNotIn("undefined", index.lower())
+        self.assertNotIn("undefined", demo.lower())
+
     def test_load_cron_jobs_deduplicates_by_name(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "jobs.json"
