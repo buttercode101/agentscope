@@ -89,6 +89,13 @@ class GenerateTests(unittest.TestCase):
             findings = generate.source_health({"mcp_jsonl": str(p)})
             self.assertTrue(any("UNKNOWN" in item[1] and "empty" in item[1] for item in findings))
 
+    def test_whitespace_only_mcp_source_is_unknown(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "mcp.jsonl"
+            p.write_text("   \n\t\n")
+            findings = generate.source_health({"mcp_jsonl": str(p)})
+            self.assertTrue(any("UNKNOWN" in item[1] and "empty" in item[1] for item in findings))
+
     def test_legacy_top_level_ack_db_is_migrated(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "config.json"
