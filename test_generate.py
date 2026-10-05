@@ -65,6 +65,23 @@ class GenerateTests(unittest.TestCase):
         self.assertNotIn("undefined", index.lower())
         self.assertNotIn("undefined", demo.lower())
 
+    def test_mcp_source_lives_under_sources_config(self):
+        self.assertIn("mcp_jsonl", generate.DEFAULT_CONFIG["sources"])
+        self.assertNotIn("mcp_jsonl", {k:v for k,v in generate.DEFAULT_CONFIG.items() if k != "sources"})
+
+    def test_missing_core_sources_are_unknown_not_all_clear(self):
+        with tempfile.TemporaryDirectory() as td:
+            missing = str(Path(td) / "missing")
+            findings = generate.source_health({
+                "cron_jobs_glob": missing + "*.json",
+                "executions_db": missing + ".db",
+                "sessions_dir": missing + "-sessions",
+                "mcp_jsonl": missing + ".jsonl",
+            })
+            messages = " ".join(item[1] for item in findings)
+            self.assertIn("UNKNOWN", messages)
+            self.assertEqual(len(findings), 4)
+
     def test_load_cron_jobs_deduplicates_by_name(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "jobs.json"
