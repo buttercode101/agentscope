@@ -130,6 +130,7 @@ DEFAULT_CONFIG = {
         "leads_db": None,
         "leads_query": None,
         "leads_label": "Active items",
+        "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls
     },
     "session_days": 7,
     "max_actions": 15,
@@ -137,7 +138,6 @@ DEFAULT_CONFIG = {
     "compact": False,                    # compact density option
     "never_run_grace_hours": 48,          # only flag explicitly dated jobs after this grace period
     "ack_db": "~/.hermes/cron/executions.db",  # sqlite for acknowledged anomalies (table: acks(key TEXT, ts))
-        "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls: {"tool","ts","ok"}
 }
 
 def load_config(path):
@@ -156,6 +156,24 @@ def load_config(path):
     return cfg
 
 # ------------------------------------------------------------ collectors ----
+
+def source_health(sources):
+    """Return explicit source-health anomalies so missing telemetry never looks healthy."""
+    findings = []
+    jobs_glob = sources.get("cron_jobs_glob")
+    if jobs_glob and not glob.glob(jobs_glob):
+        findings.append(("warn", "Job-definition source unavailable — scheduled-job state is UNKNOWN."))
+    exec_db = sources.get("executions_db")
+    if exec_db and not os.path.isfile(exec_db):
+        findings.append(("warn", "Execution-history source unavailable — run health is UNKNOWN."))
+    sessions = sources.get("sessions_dir")
+    if sessions and not os.path.isdir(sessions):
+        findings.append(("warn", "Session source unavailable — session activity is UNKNOWN."))
+    mcp = sources.get("mcp_jsonl")
+    if mcp and not os.path.isfile(mcp):
+        findings.append(("warn", "MCP activity source unavailable — tool-call health is UNKNOWN."))
+    return [(kind, message, ack_key(kind, message)) for kind, message in findings]
+
 
 def load_cron_jobs(pattern):
     jobs = []
@@ -395,7 +413,9 @@ def build(cfg, out_path):
     execs = recent_executions(s["executions_db"]) if s.get("executions_db") else []
     leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None))) or {"total": 0, "active": 0}
     sess = session_activity(s.get("sessions_dir"), cfg["session_days"]) if s.get("sessions_dir") else {}
-    all_anom = anomalies(jobs, execs, cfg.get("never_run_grace_hours", 48))
+    all_anom = source_health(s) + anomalies(jobs, execs, cfg.get("never_run_grace_hours", 48))
+    if len(all_anom) > 1:
+        all_anom = [item for item in all_anom if not (item[0] == "ok" and item[1].startswith("All clear"))]
     acks = ack_load(s.get("ack_db")) if s.get("ack_db") else set()
     anom = [x for x in all_anom if x[2] not in acks]
     ackd = [x for x in all_anom if x[2] in acks]
