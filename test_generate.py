@@ -82,6 +82,13 @@ class GenerateTests(unittest.TestCase):
             self.assertIn("UNKNOWN", messages)
             self.assertEqual(len(findings), 4)
 
+    def test_legacy_top_level_ack_db_is_migrated(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "config.json"
+            p.write_text(json.dumps({"ack_db": str(Path(td) / "acks.db")}))
+            cfg = generate.load_config(str(p))
+            self.assertEqual(cfg["sources"]["ack_db"], str(Path(td) / "acks.db"))
+
     def test_load_cron_jobs_deduplicates_by_name(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "jobs.json"
@@ -130,8 +137,8 @@ class GenerateTests(unittest.TestCase):
                 "leads_query": None,
                 "leads_label": "Active items",
                 "mcp_jsonl": None,
+                "ack_db": str(ack_db),
             }
-            cfg["ack_db"] = str(ack_db)
             out = root / "dashboard.html"
             generate.build(cfg, str(out))
             rendered = out.read_text(encoding="utf-8")
