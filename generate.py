@@ -179,6 +179,10 @@ def source_health(sources):
         try:
             if os.path.getsize(mcp) == 0:
                 findings.append(("warn", "MCP activity source is empty — tool-call health is UNKNOWN."))
+            else:
+                with open(mcp, "r", encoding="utf-8", errors="replace") as handle:
+                    if not handle.read().strip():
+                        findings.append(("warn", "MCP activity source is empty — tool-call health is UNKNOWN."))
         except OSError:
             findings.append(("warn", "MCP activity source could not be inspected — tool-call health is UNKNOWN."))
     return [(kind, message, ack_key(kind, message)) for kind, message in findings]
