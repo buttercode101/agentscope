@@ -413,14 +413,16 @@ def build(cfg, out_path):
     execs = recent_executions(s["executions_db"]) if s.get("executions_db") else []
     leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None))) or {"total": 0, "active": 0}
     sess = session_activity(s.get("sessions_dir"), cfg["session_days"]) if s.get("sessions_dir") else {}
-    all_anom = source_health(s) + anomalies(jobs, execs, cfg.get("never_run_grace_hours", 48))
-    if len(all_anom) > 1:
-        all_anom = [item for item in all_anom if not (item[0] == "ok" and item[1].startswith("All clear"))]
+    source_anom = source_health(s)
+    operational_anom = anomalies(jobs, execs, cfg.get("never_run_grace_hours", 48))
+    if source_anom:
+        operational_anom = [item for item in operational_anom if not (item[0] == "ok" and item[1].startswith("All clear"))]
     acks = ack_load(s.get("ack_db")) if s.get("ack_db") else set()
-    anom = [x for x in all_anom if x[2] not in acks]
-    ackd = [x for x in all_anom if x[2] in acks]
+    # Missing telemetry is an evidence state, not an alert preference. It cannot be acknowledged into health.
+    ackd = [x for x in operational_anom if x[2] in acks]
+    anom = source_anom + [x for x in operational_anom if x[2] not in acks]
     if not anom and ackd:
-        anom = [("ok", f"All clear - {len(ackd)} item(s) acknowledged.", "")]
+        anom = [("ok", f"No active operational alerts - {len(ackd)} item(s) acknowledged.", "")]
 
     enabled_n = sum(1 for j in jobs if j["enabled"])
     def within_24h(e):
