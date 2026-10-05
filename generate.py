@@ -143,7 +143,8 @@ DEFAULT_CONFIG = {
 def load_config(path):
     cfg = json.loads(json.dumps(DEFAULT_CONFIG))
     if path and os.path.exists(path):
-        user = json.load(open(path))
+        with open(path, "r", encoding="utf-8") as handle:
+            user = json.load(handle)
         for k, v in user.items():
             if k == "sources" and isinstance(v, dict):
                 cfg["sources"].update(v)
@@ -192,7 +193,8 @@ def load_cron_jobs(pattern):
     jobs = []
     for path in glob.glob(pattern):
         try:
-            data = json.load(open(path))
+            with open(path, "r", encoding="utf-8") as handle:
+                data = json.load(handle)
             items = data if isinstance(data, list) else data.get("jobs", list(data.values()) if isinstance(data, dict) else [])
             for j in items:
                 if not isinstance(j, dict):
