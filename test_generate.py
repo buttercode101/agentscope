@@ -65,6 +65,14 @@ class GenerateTests(unittest.TestCase):
         self.assertNotIn("undefined", index.lower())
         self.assertNotIn("undefined", demo.lower())
 
+    def test_landing_has_keyboard_navigation_affordances(self):
+        root = Path(__file__).resolve().parent
+        index = (root / "site" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('class="skip-link"', index)
+        self.assertIn('id="main-content"', index)
+        self.assertIn(':focus-visible', index)
+        self.assertIn('prefers-reduced-motion', index)
+
     def test_mcp_source_lives_under_sources_config(self):
         self.assertIn("mcp_jsonl", generate.DEFAULT_CONFIG["sources"])
         self.assertNotIn("mcp_jsonl", {k:v for k,v in generate.DEFAULT_CONFIG.items() if k != "sources"})
