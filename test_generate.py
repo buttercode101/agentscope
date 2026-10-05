@@ -110,5 +110,34 @@ class GenerateTests(unittest.TestCase):
         self.assertFalse(any("auth failing" in item[1] for item in anomalies))
 
 
+    def test_missing_source_cannot_be_acknowledged_into_all_clear(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            missing = str(root / "missing")
+            ack_db = root / "acks.db"
+            conn = sqlite3.connect(ack_db)
+            conn.execute("CREATE TABLE acks(key TEXT PRIMARY KEY, ts TEXT)")
+            finding = generate.source_health({"cron_jobs_glob": missing + "*.json"})[0]
+            conn.execute("INSERT INTO acks VALUES (?,?)", (finding[2], "2026-10-05T00:00:00"))
+            conn.commit()
+            conn.close()
+            cfg = json.loads(json.dumps(generate.DEFAULT_CONFIG))
+            cfg["sources"] = {
+                "cron_jobs_glob": missing + "*.json",
+                "executions_db": None,
+                "sessions_dir": None,
+                "leads_db": None,
+                "leads_query": None,
+                "leads_label": "Active items",
+                "mcp_jsonl": None,
+            }
+            cfg["ack_db"] = str(ack_db)
+            out = root / "dashboard.html"
+            generate.build(cfg, str(out))
+            rendered = out.read_text(encoding="utf-8")
+            self.assertIn("UNKNOWN", rendered)
+            self.assertNotIn("All clear", rendered)
+
+
 if __name__ == "__main__":
     unittest.main()
