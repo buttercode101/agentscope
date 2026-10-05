@@ -1,7 +1,7 @@
 # Phase 3 preview brief
 
 ## Release boundary
-Developer preview until the public deployment is reconciled with current source. Local generator is the product core.
+Developer preview. Local generator is the product core. The current Vercel project has a Git-provider linkage failure (`incorrect_git_source_info`), so hosted deployment provenance remains unverified until that external integration is repaired.
 
 ## Positioning
 Your agents worked all night. AgentScope gives you one read-only screen for what ran, what broke, what needs attention, and what is unknown.
@@ -28,3 +28,7 @@ Free local/single-user first. Validate repeat daily/weekly scanning before hoste
 
 ## Evidence log
 Do not claim hosted monitoring until deployment/source provenance is reconciled. Users/revenue: 0 verified here.
+
+## Deployment blocker evidence
+
+Vercel can read the existing project but rejects a fresh Git deployment for `buttercode101/agentscope` with `incorrect_git_source_info`. The previous failed deployment also exposed a stale output-directory configuration; the project output directory has been corrected to `site`, but the provider-link failure still prevents a provenance-backed current deployment. Do not describe the hosted surface as current until a deployment records the repository SHA.
