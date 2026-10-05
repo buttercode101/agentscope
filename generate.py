@@ -131,13 +131,13 @@ DEFAULT_CONFIG = {
         "leads_query": None,
         "leads_label": "Active items",
         "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls
+        "ack_db": "~/.hermes/cron/executions.db",  # sqlite table for acknowledged operational alerts
     },
     "session_days": 7,
     "max_actions": 15,
     "group_by": "none",                  # "none" | "group" — group jobs by their 'group'/'project' field
     "compact": False,                    # compact density option
     "never_run_grace_hours": 48,          # only flag explicitly dated jobs after this grace period
-    "ack_db": "~/.hermes/cron/executions.db",  # sqlite for acknowledged anomalies (table: acks(key TEXT, ts))
 }
 
 def load_config(path):
@@ -147,6 +147,9 @@ def load_config(path):
         for k, v in user.items():
             if k == "sources" and isinstance(v, dict):
                 cfg["sources"].update(v)
+            elif k == "ack_db":
+                # Backward compatibility for pre-v0.6 configs where ack_db was top-level.
+                cfg["sources"]["ack_db"] = v
             else:
                 cfg[k] = v
     s = cfg["sources"]
