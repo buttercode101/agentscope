@@ -134,6 +134,17 @@ The next expansion points are additive: more source adapters, richer cost/usage 
 ### v0.1
 - Initial release: auto-detect Hermes layout, config-driven sources, anomaly panel
 
+## Development and verification
+
+```bash
+python3 -m unittest -v test_generate.py
+python3 -m http.server 3000 --directory site
+```
+
+The HTTP server previews the public product/demo at http://localhost:3000; generated operational dashboards remain local files. Never publish an operational dashboard containing private agent data as a demo asset.
+
+[Fresh repository verification](REPOSITORY-VERIFICATION.md) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md)
+
 ## License
 
 MIT

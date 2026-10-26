@@ -1,1 +1,7 @@
 .vercel
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+dashboard.local.html
