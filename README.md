@@ -1,4 +1,5 @@
 ![CI](https://github.com/buttercode101/agentscope/actions/workflows/test.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
 
 <div align="center">
 
