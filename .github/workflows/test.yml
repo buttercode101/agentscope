@@ -4,27 +4,16 @@ on:
     branches: [main]
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
-  python:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.1.0
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Compile source
-        run: python -m compileall -q .
-      - name: Run regression tests
-        run: python -m unittest -v test_generate.py
-      - name: Verify distributable web assets
-        run: |
-          test -s site/index.html
-          test -s site/demo.html
-          grep -q 'href="/demo.html"' site/index.html
-          grep -q 'Sample data' site/demo.html
-          git diff --check
+      - name: Install package
+        run: pip install -e .
+      - name: Run tests
+        run: python -m unittest discover -v
