@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSS Test</title>
+    <style>
+        :root {
+            --bg: #0b0d10;
+            --card: #11151a;
+            --line: #272e37;
+            --tx: #eef1f4;
+            --mut: #89939f;
+            --acc: #7694ff;
+            --ok: #56d68b;
+            --bad: #ff7373;
+            --warn: #e6ad59
+        }
+        body {
+            background: var(--bg);
+            color: var(--tx);
+            font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+            padding: 18px;
+            width: min(1120px, calc(100% - 24px));
+            margin: 0 auto;
+        }
+        @media(max-width: 760px) {
+            body { width: calc(100% - 20px); padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Test</h1>
+</body>
+</html>

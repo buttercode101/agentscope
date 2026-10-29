@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en"><!-- InstanceBegin template="/Templates/2020-dojcd-page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="X-UA-Compatible" content="IE=10">
+<meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="author" content="Department of Justice and Constitutional Development">
+    <!-- InstanceBeginEditable name="TITLE" -->
+<meta http-equiv="Content-Type" content="text/html" />
+<meta name="description" content="List of Commissions." />
+<meta name="keywords" content="justice, courts, commissions" />
+	<title>Justice/Resources/Commissions</title>
+	<!-- InstanceEndEditable -->
+	<link rel="shortcut icon" href="../images/favicon.gif" type="image/x-icon">
+    <!-- Bootstrap Core CSS -->
+   <link href="../css/bootstrap2.css" rel="stylesheet">
+	<link href="../css/bootstrap.min2.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+	<link href="../css/style2.css?v=1.1" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5J4DT48');</script>
+<!-- End Google Tag Manager -->
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L5DF7C5XXT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L5DF7C5XXT');
+</script>	
+</head>
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5J4DT48"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <p><a class="navbar-brand" href="../index.html">DoJCD</a></p>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="cse" style="color: #000000; float: right; padding-top: 1em; padding-right: 0; padding-left: 5px; padding-bottom: 0;">
+  <form action="../results.htm" id="cse-search-box">
+  <input name="cx" type="hidden" value="015343561227489587018:wzc1thdksxm"/>
+  <input type="text" name="q" size="15" />
+  <input name="ie" type="hidden" value="ISO-8859-1"/>
+  <input type="submit" name="sa" value="Search" />
+  </form>
+  </div>
+              <ul class="nav navbar-nav">
+                    <li>
+                        <a href="../about.html">About Us</a>
+                    </li>
+					 <li>
+                        <a href="../resources.html">Resources</a>
+                    </li>
+					 <li>
+                        <a href="../media_list.htm">Newsroom</a>
+                    </li>
+					 <li>
+                        <a href="../about/sa-courts.html">Courts</a>
+                    </li>
+                    <li>
+                        <a href="../cfo_tender/tender.htm">Tenders</a>
+                    </li>
+					<li>
+                        <a href="../vacancies/vacancies.htm">Jobs</a>
+                    </li>
+					<li>
+                      <a href="../contact/contact_list.html">Contacts</a>
+                    </li>
+              </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+ <!-- Page Content -->
+ <div class="container">
+
+        <!-- Page Header -->
+        <div class="row"> 
+			<!-- Save for Web Slices (banner2019.png) -->
+			<table id="Table_01" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+			<td><a href="https://www.justice.gov.za/index.html">
+				<img src="../images/banner2020/home.gif" border="0" width="100%"  alt="Justice Home"></a></td>
+			<td><a href="https://www.justice.gov.za/constitution/index.html" target="_blank">
+				<img src="../images/banner2020/Constitution.gif?%24%7Bgs.nowDateTime()%7D=" border="0" width="100%" alt="The Constitution"></a></td>
+			<td><img src="../images/banner2020/banner2020_03.gif" width="100%" alt="Flag"></td>
+			</tr>
+		</table>
+<!-- End Save for Web Slices -->
+          <h2 class="heading-h2"><!-- InstanceBeginEditable name="heading" -->Commission Reports<!-- InstanceEndEditable --></h2>
+			<div class="crumb"><!-- InstanceBeginEditable name="breadcrumb" --><a href="../index.html">Home</a><span class="crumb-divider">&gt; </span><a href="../resources.html">Resources</a><span class="crumb-divider">&gt;</span> Commissions<!-- InstanceEndEditable --></div>
+<!-- InstanceBeginEditable name="body" -->  
+  <h3>The Nkabinde Enquiry in terms of Section 12(6) of the National Prosecuting Authority Act 32 of 1998 into the fitness of Advocate Andrew Chauke to hold the office of Director of Public Prosecutions, South Gauteng</h3>
+  <p>The President appoints the retired Justice Baaitse Elizabeth (Bess) Nkabinde as
+    Chairperson of the enquiry, assisted by Adv Elizabeth Baloyi-Mere (SC) and Ms
+    Thenjiwe Vilakazi (Attorney), as Panel Members of the Enquiry. The Panel shall inquire into, report on and make findings and/or
+    recommendations on allegations set out in paragraph 3 below. The fitness of Adv Chauke to hold office as a prosecutor in the prosecutorial
+    services, in particular, in the capacity as a Director of Public Prosecutions.</p>
+  <p>Website for the the <a href="https://www.nkabindeinquiry.org.za/" target="_blank">Nkabinde Enquiry in terms of Section 12(6) of the National Prosecuting Authority Act 32 of 1998 into the fitness of Advocate Andrew Chauke to hold the office of Director of Public Prosecutions</a>, South Gauteng. </p>
+  <ul>
+    <li><a href="../legislation/notices/2026/20260129-gg54033rg11935r7046-NPA-Chauke-Inquiry.pdf" target="_blank">National Prosecuting Authority Act (32/1998): Amendment of the terms of Reference of the Enquiry in terms of Section 12 (6) of the Act into the Fitness of Advocate Andrew Chauke (ADV Chauke) to hold the office of Director of Public Prosecutions, GG 54033, RG 11935, R. 7046</a>, 29 Jan 2026</li>
+    <li><a href="../legislation/notices/2025/20250930-gg53444-rg11889gon66860-NPA-Inquiry-Chauke.pdf" target="_blank">National Prosecuting Authority Act: Enquiry: Fitness of Advocate Andrew Chauke to hold Office of Director of Public Prosecutions, GG 53444, RG 11889, GoN 6686</a>, 30 Sep 2025. </li>
+  </ul>
+  <p>View the <a href="https://www.youtube.com/@NkabindeEnquiry" target="_blank">Nkabinde Enquiry's YouTube Channel</a>.</p>
+  <h3>The Judicial Commission of Inquiry into Alleged Criminality, Political Interference and Corruption in the Criminal Justice System, 2025</h3>
+  <p>Website for the <a href="https://criminaljusticecommission.org.za/" target="_blank">Judicial Commission of Inquiry into Alleged Criminality, Political Interference and Corruption in the Criminal Justice System</a>.</p>
+  <ul>
+    <li>The Judicial Commission of Inquiry into Alleged Criminality, Political Interference and Corruption in the Criminal Justice System was established by Presidential Proclamation (Gazette No. 53048, 23 July 2025). Justice Mbuyiseli Madlanga was appointed Chairperson, assisted by senior counsel. Its terms of reference require it to probe the infiltration of criminal syndicates into law enforcement, intelligence, prosecution authorities, the judiciary, and correctional services; assess oversight mechanisms; review legislation; and make actionable recommendations.</li>
+    <li>Gazettes:
+      <ul>
+        <li>Judicial Commission of Inquiry into Criminality, Political Interference and Corruption in the Criminal Justice System arising from the specific allegations made public By Lieutenant General Nhlanhla Mkhwanazi on 6 July 2025, <a href="../legislation/notices/2025/20250723-gg53048rg11855proc269-CJScommission.pdf" target="_blank">Terms of Reference (English / Afrikaans)</a>, GG 53048, PR 269, 23 July 2025</li>
+        <li>Commissions Act (8/1947): Judicial Commissions of Inquiry into Criminality, Political Interference and Corruption in the Criminal Justice System arising from specific allegations made by Lieutenant Nhlanhla Mkhwanazi on 6 July 2025: <a href="../legislation/notices/2026/20260609-gg54818-r318-Commission-Madlanga-Regulations-Amendment.pdf" target="_blank">Amendment Regulations</a>, GG  54818, R. 318, 09 Jun 2026 </li>
+        <li>Constitution of the Republic of South Africa: Judicial Commission of Inquiry into criminality, political interference and corruption in Criminal Justice System arising from allegations by Lt Gen Mkhwanazi: <a href="../legislation/notices/2025/20251126-gg53725pr298-CJScommission-Amendment-of-Term.pdf" target="_blank">Terms: Amendment (English / Afrikaans)</a>, GG 53725, P 298, 26 Nov 2025</li>
+        <li><a href="../legislation/notices/2026/20260312-gg54315pn312-Commission-Madlanga-TORamendment.pdf" target="_blank">Amendment of term</a>: Judicial Commission of inquiry into criminality, political interference and corruption in the Criminal Justice System arising from the specific allegations made public by Lieutenant General Nhlanhla Mkhwanazi on 6 July 2025, GG 54315, PN 312, 12 March 2026 </li>
+        <li>Commissions Act (8/1947): <a href="../legislation/notices/2026/20260609-gg54818-r320-Commission-Madlanga-Amendment-Term.pdf" target="_blank">Amendment of term</a>: Judicial Commission of Inquiry into Criminality, Political Interference and Corruption in the Criminal Justice System arising from the specific allegations made public by Lieutenant General Nhlanhla Mkhwanazi on 6 July 2025, GG  54818, R. 320, 09 Jun 2026</li>
+      </ul>
+    </li>
+    </ul>
+  <h3>Judicial Commission of Inquiry into allegations regarding efforts or attempts having been made to stop investigation or prosecution of Truth and Reconciliation Commission cases, 2025</h3>
+  <p>Website for the <a href="https://www.trc-inquiry.org.za/" target="_blank">Commission of Inquiry into allegations regarding efforts or attempts having been made to stop investigation or prosecution of Truth and Reconciliation Commission cases</a>.</p>
+  <ul>
+    <li> The Commission is
+      appointed to investigate matters of public and national interest concerning allegations
+      regarding efforts or attempts having been made to stop the investigation or prosecution of
+      Truth and Reconciliation Commission (“TRC”) cases. The Honourable Madam Justice S Khampepe is its Chairperson and the Honourable Mr Justice
+      F D Kgomo and Adv A Gabriel, SC, is members of the Commission. </li>
+    <li>Gazette: <a href="../legislation/notices/2025/20250529-gg52479rg11837proc264-Commission-TRC-Cases.pdf" target="_blank">Constitution of the Republic of South Africa, 1996: Judicial Commission of Inquiry: Allegations regarding efforts or attempts having been made to stop investigation or prosecution of Truth and Reconciliation Commission cases (English / Afrikaans), GG 52749, RG 11837, P 264</a>, 29 May 2025</li>
+    <li>Truth and Reconciliation Commission: <a href="../legislation/notices/2026/20260609-gg54818-r319-Commission-TRC-Cases-Amendment-Term.pdf" target="_blank">Amendment of term</a>: Judicial Commission of Inquiry into allegations regarding efforts or attempts have been made to stop the investigation or prosecution of Truth and Reconciliation Commission Cases, GG  54818, R. 319, 09 Jun 2026 </li>
+  </ul>
+  <h3>Commission of Inquiry into allegations for impropriety regarding Public Investment Corporation, 2018 </h3>
+  <ul>
+    <li>Website for the <a href="pic/index.html" target="_blank">Commission of Inquiry into allegations for impropriety regarding Public Investment Corporation<br>
+    </a>The Commission of inquiry into allegations of impropriety regarding Public Investment Corporation (the Commission) was appointed by the President of the Republic of South Africa on 17 October 2018, under section 84(2) (f) of the Constitution. The appointment of the Commission was published in Government Gazette No. 41979, dated 17 October 2018, under Proclamation 30 of 2018. The President further appointed Honourable Justice Lex Mpati, the former President of the Supreme Court of Appeal, as Commissioner, assisted by Gill Marcus and Emmanuel Lediga.</li>
+    <li>The Commission is mandated to look into whether a director or employee of the Public Investment Corporation has misused their position for personal gain; whether legislation or policies regarding the protection of whistle blowers reporting corrupt activities were complied with; and  whether discriminatory practices were followed with regard to the remuneration and performance awards of PIC employees, and has the mandate to examine and make recommendations on governance, structure of the PIC and any other matter that it deems warrants attention.</li>
+    <li>The Commission will consider the period between January 2015 and August 2018. The President has given the commission a deadline to submit an interim report by February 15, 2019 and to submit their final report to the President on the April 15, 2019.    </li>
+    </ul>
+  <h3>Enquiry into fitness of Adv Nomgcobo Jiba and Adv Lawrence Sithembiso Mrwebi to hold the office, 2018</h3>
+  <ul>
+    <li>Statement: <a href="http://www.thepresidency.gov.za/press-statements/president-removes-npa-advocates-jiba-and-mrwebi-office" target="_blank">President removes NPA Advocates Jiba and Mrwebi from office</a>, 26 April 2019</li>
+    <li>Report: <a href="2019-Mokgoro-EnquiryReport-UnabridgedVersion.pdf" target="_blank">Mokgoro Enquiry in terms of Section 12(6) of the National Prosecuting Authority Act 32 of 1998, Unabridged Version</a>, 1 April 2019</li>
+    <li>National Prosecuting Authority Act: Enquiry into fitness of Adv Nomgcobo Jiba and Adv Lawrence Sithembiso Mrwebi to hold the office of Deputy National Director of Public Prosecutions and Special Director of Public Prosecutions: Amendments, <a href="../legislation/notices/2019/20190118-gg42173proc1-.NPA-Enquirypdf" target="_blank">GG 42173, P 1</a>, 18 Jan 2019</li>
+    <li>National Prosecuting Authority Act: Enquiry into fitness of Adv Nomgcobo Jiba and Adv Lawrence Sithembiso Mrwebi to hold the office of Deputy National Director of Public Prosecutions and Special Director of Public Prosecutions: Comments invited by 8 Jan 2019, <a href="../legislation/notices/2018/20181129-gg42072-gen763-Enquiry-NPA.pdf" target="_blank">GG 42072, GeN 763</a>, 29 Nov 2018 </li>
+  </ul>
+  <h3>Commission of Inquiry into into Tax Administration and Governance by SARS, 2018</h3>
+  <p>The President of the Republic of South Africa has under 
+    section 84(2)(f) of the Constitution of the Republic of
+    South Africa, 1996 and in terms of Government Notice
+    17 of 2018 published in Government Gazette No 41652
+    of 24 May 2018, appointed a <a href="https://www.thepresidency.gov.za/commission-inquiry-tax-administration-and-governance-sars" target="_blank">Commission of Inquiry
+    into tax administration and governance by the South
+    African Revenue Service</a> (“Commission”). </p>
+  <ul>
+    <li>Commissions Act: Commission of Inquiry into Tax Administration and Governance by South African Revenue Service: Amendment, <a href="../legislation/notices/2018/20181203-gg42076-proc32-Commission-SARS.pdf" target="_blank">GG 42076, P 32</a>, 03 Dec 2018</li>
+    <li>Commissions Act: Commission of inquiry into tax administrative: Extension of date for submissions, <a href="../legislation/notices/2018/20180731-gg41806_gen425_Comms-Tax.pdf" target="_blank">GG 41806, GeN 425</a>, 31 Jul 2018 </li>
+    <li>Constitution of the Republic of South Africa: Commission of inquiry into tax administration and governance by South African Revenue Service (English / Afrikaans), Terms of Reference, <a href="../legislation/notices/2018/20180524-gg41652_p17-SARScomms-TOR.pdf" target="_blank">GG 41652, P 17</a>, 29 Jun 2018</li>
+    <li><a href="Comms-SARS/20180625-SARScomm-Hearings.pdf" target="_blank">Media Statement</a> by the Commission on the first public hearing of evidence, 25 Jun 2018</li>
+    <li>Constitution of the Republic of South Africa: Commission of inquiry into tax administration and governance by South African Revenue Service: Call for Submissions, Comments invited by 31 Jul 2018, <a href="../legislation/notices/2018/20180618-gg41715_gon612-SARScomms.pdf" target="_blank">GG 41715, GoN 612</a>, 18 Jun 2018</li>
+    <li>Commissions Act: Commission of Inquiry into Tax Administration and Governance by South African Revenue Service (English/Afrikaans), <a href="../legislation/notices/2018/20180615-gg41713_rg10839_gon636-SARScomms.pdf" target="_blank">GG 41713, RG 10839, P 636</a>, 15 Jun 2018</li>
+    <li>Constitution of the Republic of South Africa: Commission of inquiry into tax administration and governance by South African Revenue Service: <a href="Comms-SARS/20180615-gg41652-p17-SARScomms-TOR.pdf" target="_blank">Terms of Reference, GG 41652, P 17</a>, 24 May 2018</li>
+    <li>Commissions Act: Commission of Inquiry into Tax Administration and Governance by South African Revenue Service: Amendment, <a href="../legislation/notices/2018/20181203-gg42076-proc32-Commission-SARS.pdf" target="_blank">GG 42076, P 32</a>, 03 Dec 2018 </li>
+  </ul>
+  <h3>Commission of Inquiry into allegations of state capture, corruption and fraud in the Public Sector including organs of State, 2018</h3>
+  <ul>
+    <li>Website for the <a href="https://www.statecapture.org.za/" target="_blank"><strong>Judicial Commission of Inquiry into Allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State</strong></a>
+      <ul>
+        <li><strong><a href="STCC.htm">State Capture Commission Report V &amp; VI</a></strong></li>
+        <li>Commissions Act: Commission of Inquiry into allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Terms of Reference: Amendment, <a href="../legislation/notices/2022/20221116-gg47525proc92-StateCapture-TOR.pdf" target="_blank">GG 47525, P 92</a>, 16 Nov 2022</li>
+        <li>Commissions Act: Commission of Inquiry into Allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Terms of Reference: Amendment, <a href="../legislation/notices/2022/20221018-gg47330pr91-StateCapture-TOR.pdf" target="_blank">GG 47330, P 91</a>, 18 Oct 2022</li>
+        <li>Commissions Act: Commission of inquiry into allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Terms of Reference: Amendments, <a href="../legislation/notices/2022/20220617-gg46559proc68-StateCapture-TOR-Amendment.pdf" target="_blank">GG 46559, P 68</a>, 17 Jun 2022</li>
+        <li>Commissions Act: Commission of inquiry into allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Terms of Reference: Amendments, <a href="../legislation/notices/2022/20220602-gg46469proc64-StateCapture-TORamendment.pdf" target="_blank">GG 46469, P 64</a>, 2 Jun 2022</li>
+        <li>Commissions Act: Terms of Reference: Amendment of Commission of Inquiry into allegations of State Capture, Corruption and Fraud in Public Sector including Organs of State, <a href="../legislation/notices/2022/20220103-gg45720p46-StateCapture-TOR.pdf" target="_blank">GG 45720, P 46</a>, 3 Jan 2022</li>
+        <li>Commissions Act: Commission of Inquiry into allegations of state capture, corruption and fraud in the Public Sector including Organs of State: Terms of Reference: Amendment (English/Afrikaans), <a href="../legislation/notices/2021/20210716-gg44860pr31-StateCapture-TOR-Amendment.pdf" target="_blank">GG 44860, P 31</a>, 16 Jul 2021</li>
+        <li>Commissions Act: Commission of Inquiry into Allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Terms of Reference: Amendment (English / Afrikaans), <a href="../legislation/notices/2021/20210409-gg44434p12-CommStateCapture-TOR.pdf" target="_blank">GG 44434, P 12</a>, 9 Apr 2021<br>
+        </li>
+        <li>Commissions Act: Commission of Inquiry into allegations of State Capture: Practice Direction 1: Guidelines on media coverage of proceedings of Commission, Comments by 15 Aug 2018, <a href="../legislation/notices/2018/20180815-gg41841_gon863-Comms-StateCapture.pdf" target="_blank">GG 41841, GoN 863</a>, 15 Aug 2018 </li>
+        <li>Commissions Act: Commission of inquiry into allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Rules Governing Proceedings, <a href="../legislation/notices/2018/20180716-gg41774_gen397-SCAPcomms-Rules.pdf" target="_blank">GG 41774, GeN 397</a>, 16 Jul 2018</li>
+        <li>Commissions Act: Commission of inquiry into allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Rules Governing Proceedings, <a href="../legislation/notices/2018/20180713-gg41772_gen396-SCAPcomms-Rules.pdf" target="_blank">GG 41772, GeN 396</a>, 13 Jul 2018<br>
+        </li>
+        <li>Constitution of the Republic of South Africa: Judicial Commission of Inquiry into state capture, corruption and fraud in the Public Sector: Invitation to submit information, <a href="../legislation/notices/2018/20180622-gg41729_gen354-SCAPcomms.pdf" target="_blank">GG 41729, GeN 354</a>, 29 Jun 2018</li>
+        <li>Commissions Act: Regulations: Commission of Inquiry into allegations of state capture, corruption and fraud in the Public Sector including organs of State: Regulations Amendment (English / Afrikaans), <a href="../legislation/notices/2018/20180323-gg41522_proc8-StateCaptureCommsRegulations.pdf" target="_blank">GG 41522, P 8</a>, 23 Mar 2018 </li>
+        <li>Commissions Act (8/1947): Judicial Commission of Inquiry into Allegations of State Capture, Corruption and Fraud in the Public Sector including Organs of State: Regulations, <a href="../legislation/notices/2018/20180209-gg41436-gon105-StateCaptureCommsRegulations.pdf" target="_blank">GG 41436, GoN 105</a>, 09 February 2018</li>
+        <li>Constitution of the Republic of South Africa: Judicial Commission of Inquiry into state capture, corruption and fraud in the Public Sector: Terms of Reference (English/Afrikaans), <a href="../legislation/notices/2018/20180125-gg41403_P3-StateCaptureCommissionTOR.pdf" target="_blank">GG 41403, P 3</a>, 25 Jan 2018</li>
+  </ul>
+    </li>
+    </ul>
+  <h3>The Commission of Inquiry into Higher Education and Training, 2016</h3>
+  <p>The <a href="FeesHET/index.html" target="_blank">Commission of Inquiry into Higher Education and Training</a> was  established in terms of section 84(2)(f) of the Constitution of the Republic of  South Africa, 1996. The Honourable Justice Jonathan Arthur HEHER was appointed as  the chairperson, and Advocate Gregory ALLY and Ms Leah Thabisile KHUMALO, an attorney,  as members of the Commission. </p>
+  <ul>
+    <li><a href="FeesHET/FeesCommissionReport-Full-20171113.pdf" target="_blank">Commission of Inquiry into Higher Education Report</a> [13.6mb] &amp; <a href="FeesHET/FeesCommissionReport_ExecutiveSummary_0-20171113.pdf" target="_blank">Executive Summary</a> [989kb], 13 Nov 2017</li>
+    <li><a href="FeesHET/docs/20171113-ms-FeeCommissionReportRelease.pdf" target="_blank">Statement on the release of the Report of Commission of Inquiry into the Feasibility of making High Education and Training Fee-free</a> in South Africa, 13 Nov 2017</li>
+  </ul>
+  <h3><span class="name">Cassim  Inquiry, 2015</span></h3>
+  <p><a href="comm_cassim.htm">Cassim Inquiry</a> into the National Director of Public Prosecutions’ fitness to hold office.</p>
+  <h3>Marikana Commission, 2012</h3>
+  <ul>
+    <li><strong><a href="../comm-mrk/index.html" title="Marikana Commission" target="_blank" onClick="_gaq.push(['_trackEvent', 'PDF', 'Download', '/downloads/commission-MarikanaGG'); ">Commission
+      of Enquiry into tragic incident at or near area commonly known as Marikana
+      Mine</a></strong> in Rustenburg, North West Province: Establishment
+      and terms of reference (GG 35680, P 50), 12 September 2012  </li>
+  </ul>
+  <h2>Arms Commission, 2011 </h2>
+  <ul>
+    <li><strong><a href="../comm-sdpp/index.html" title="Arms Commission Website" target="_blank">Commission of Inquiry into allegations of fraud,  corruption, impropriety or irregularity in the Strategic Defence Procurement  Packages</a></strong>
+      <a href="http://www.armscomm.org.za/index.html"><strong>(SDPP)</strong></a><strong> </strong></li>
+  </ul>
+  <h2>Donen Commission, 2011</h2>
+  <p><strong>Release of Donen Commission Report Statement<br />
+    </strong>
+    On 17 October 2011, President Jacob Zuma indicated that he would release the Report on the Commission of inquiry to conduct an investigation into the alleged illicit activities of certain South African companies or individuals relating to the United Nations Oil – for Food Programme in Iraq commonly known as the Donen Commission on or before 7 December 2011. The report is being released today in keeping with that undertaking...<a href="http://www.thepresidency.gov.za/pebble.asp?relid=5430" title="Presidency's Website" target="_blank">read more</a></p>
+  <ul>
+    <li> The full report and the letter by Adv. Donen SC:<br />
+      </li>
+    <ul class="sub">
+      <li><a href="comm_donen/16may2006-interim-report.pdf" target="_blank">16 May 2006 Interim Report</a> - (670 KB)</li>
+      <li> <a href="comm_donen/17jun2006p1-111.pdf" target="_blank">17 June 2006 p1-111</a> - (34.8 MB)</li>
+      <li> <a href="comm_donen/report-17jun2006-0001.pdf" target="_blank">Report of 17 June 2006</a> - (3.66 MB)</li>
+      <li> <a href="comm_donen/30sept2006p1-50.pdf" target="_blank">29 September 2006 p1-50</a> - (9.81 MB)</li>
+      <li> <a href="comm_donen/30sept2006p51-99.pdf" target="_blank">30 September 2006 p51-99</a> - (8.86 MB)</li>
+      <li> <a href="comm_donen/30sept2006p100-155.pdf" target="_blank">30 September 2006 p100-155</a> - (9.57 MB)</li>
+      <li> <a href="comm_donen/report-30sep2006-0001.pdf" target="_blank">30 September 2006</a> - (1 MB)</li>
+      <li> <a href="comm_donen/2009-donen-synopsis.pdf" target="_blank">Donen Synopsis</a> - (299 KB)</li>
+      </ul>
+    <li>        
+      Additional links:
+      
+      <ul class="sub">
+        <li>2006    06 15
+          - <a href="../legislation/notices/2000-2006/n2006/gg28842-no605-2006-donen.pdf" target="_blank">GG 28942 - Notice&nbsp;R 605</a> [32kb] Commission    of inquiry to conduct an investigation into the alleged illicit activities of    certain South African companies or individual relating to the United Nations    Oil-For-Food Programme in Iraq: Extension of period to report, (G 28942, RG    8489, GoN 605), 15 June 2006, Donen Commission</li>
+        <li>2006    02 17
+          - <a href="../legislation/notices/2000-2006/n2006/gg28528-nor3-2006-donen.pdf" target="_blank">GG 28525 - Notice&nbsp;R 8405</a> [58kb] Commissions    Act: Commission of Inquiry into alleged illicit activities of certain SA    companies or individuals relating to UN Oil-for-Food Programme in Iraq, (G    28528, RG 8405, P 3), 17 February 2006, Donen Commission      </li>
+        </ul>
+      </li>
+  </ul>
+  <h3>Ginwala   Enquiry, 2008</h3>
+  <p>Report of the Enquiry into the <a href="2008_ginwala.pdf" target="_blank" onClick="_gaq.push(['_trackEvent', 'PDF', 'Download', '/downloads/commsission-ginwala'); ">fitness of Advocate VP Pikoli to hold the office</a> of National Director of Public Prosecutions (As published by the GCIS) </p>
+  <h3>Khampepe Commission, 2008</h3>
+  <p>Khampepe Commission  of Inquiry into the <a href="2008_khampempe.pdf" target="_blank" onClick="_gaq.push(['_trackEvent', 'PDF', 'Download', '/downloads/commsission-khampepe'); ">Mandate and Location of the Directorate   of Special Operations</a> (The DSO) (As published by the Presidency) </p>
+  <h3>Hefer Commission, 2004 </h3>
+  <p><a href="comm_hefer.htm">Hefer Commission</a> of Enquiry into Allegations of Spying Against the National Director of Public Prosecutions, Mr BT Ngcuka    </p>
+  <h3>Commission on the Depreciation of the Rand, 2002</h3>
+  <p>Commission of Inquiry into the Rapid <a href="comm_rand.htm">Devaluation of the External Value of the Rand</a>    </p>
+  <h3>Commission on the Ellis Park Disaster, 2001 </h3>
+  <p>Judicial Commission of Inquiry into the 11 April 2001 <a href="comm_epark.htm">Ellis Park disaster</a>    </p>
+  <h3>Nel Commission, 2001</h3>
+  <p><a href="comm_nel.htm">Nel Commission</a> of Inquiry into the Affairs of the Masterbond Group and Investor Protection in South Africa. April 2001 </p>
+  <p>&nbsp;</p>
+  
+  
+          <!-- InstanceEndEditable -->			
+ <!-- Scroller -->               
+            <div class="scroll-top-wrapper ">
+              <span class="scroll-top-inner">
+              <i class="glyphicon glyphicon-chevron-up" style="font-size: 2em"></i>
+              </span>
+</div>            
+       
+			<!-- Footer Cols-->
+ <footer>
+ 	<div class="row" style="background-color: black"> 
+    	<div class="col-sm-3" id="1"> 
+			<ul class="link-list1">
+			<li><a href="../about.html">About Us</a></li>
+			<li><a href="../links.html">Links</a></li>
+			<li><a href="../branches/branch_list.htm">Branches</a></li>
+			<li><a href="../faq.html">FAQs</a></li>
+			<li></li>
+			</ul>
+	 	</div>
+		<div class="col-sm-3" id="2"> 
+			<ul class="link-list1">
+			<li><a href="../legislation/legislation_main.htm">Legislation</a></li>
+			<li><a href="../media_list.htm">Media Statements </a></li>
+			<li><a href="../media_list.htm">Speeches</a></li>
+            <li><a href="../reportfiles/report_list.html">Reports</a></li>
+				<li></li>
+			</ul>
+	 	</div>
+		<div class="col-sm-3" id="3"> 
+			<ul class="link-list1">
+			<li><a href="../newsletter/newsletter_list.html">Newsletters</a></li>
+			<li><a href="../events/event_list.htm">Events</a></li>
+			<li><a href="../sitemap.html">Sitemap</a></li>
+			<li><a href="../about_web/terms_conditions.htm">Terms &amp; Conditions</a></li>
+			<li></li>
+			</ul>
+	 	</div>
+		<div class="col-sm-3" id="4"> 
+			
+			<p style="color: #FFF; padding-top: 1.5em">
+			  The DoJ&amp;CD: National Office, Momentum Center, 329 Pretorius Street, Pretoria
+			  <br>
+			  Presidential Hotline: 17737<br>
+			Anti-Fraud &amp; Corruption Hotline: <br>
+			0800 701 701
+			</p>
+	 	</div>
+	</div>
+<!-- Footer -->			  
+ 	<div class="row">
+		<div class="col-lg-12" id="copyright">
+                
+                  <p>Copyright &copy; <span id="year"></span> Department of Justice and Constitutional Development | <a href="../sitemap.html">Sitemap</a> | This site is best viewed  through Google Chrome </p>
+                
+        </div>
+     </div>
+          <!-- /.row -->
+</footer>
+
+   </div></div>
+    <!-- /.container -->
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+  </script>
+<!-- jQuery -->
+    <script src="../js/jquery2.js"></script>
+<script src="../js/scroll2.js"></script>
+    <script src="../js/bootstrap.min2.js"></script>
+<script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5b713b5e39f9520011ecfd5f&product=sop" async="async"></script>	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- sharethis -->
+<script type="text/javascript">stLight.options({publisher: "0eec11af-bbea-4c47-bed9-34f4e3545582", doNotHash: true, doNotCopy: true, hashAddressBar: false});</script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-3863128-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-3863128-1');
+</script>
+
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,242 @@
+{
+  "status": {
+    "asOf": "2026-09-25",
+    "latestSitting": "Day 178 \u2014 23 Sep 2026",
+    "publicEvidenceCloses": "2026-10-02",
+    "reportDeadline": "2027-01-25"
+  },
+  "commission": {
+    "title": "Judicial Commission of Inquiry into Criminality, Political Interference and Corruption in the Criminal Justice System",
+    "chair": "Justice Mbuyiseli Madlanga",
+    "commissioners": [
+      "Adv. Sesi Baloyi SC",
+      "Adv. Sandile Khumalo SC"
+    ],
+    "established": "2025-07-23",
+    "gazette": "53048 / PR 269",
+    "regulations": "53183"
+  },
+  "people": [
+    {
+      "id": "madlanga",
+      "name": "Justice Mbuyiseli Madlanga",
+      "role": "Chairperson",
+      "type": "Commission"
+    },
+    {
+      "id": "baloyi",
+      "name": "Adv. Sesi Baloyi SC",
+      "role": "Commissioner",
+      "type": "Commission"
+    },
+    {
+      "id": "khumalo",
+      "name": "Adv. Sandile Khumalo SC",
+      "role": "Commissioner",
+      "type": "Commission"
+    },
+    {
+      "id": "chaskalson",
+      "name": "Matthew Chaskalson SC",
+      "role": "Evidence Leader",
+      "type": "Evidence team"
+    },
+    {
+      "id": "sello",
+      "name": "Adv. Sello",
+      "role": "Evidence Leader",
+      "type": "Evidence team"
+    },
+    {
+      "id": "hassim",
+      "name": "Adv. Hassim",
+      "role": "Evidence Leader",
+      "type": "Evidence team"
+    },
+    {
+      "id": "mkhwanazi",
+      "name": "Lt-Gen Nhlanhla Sibusiso Mkhwanazi",
+      "role": "Witness / initiating public allegations",
+      "type": "Witness"
+    },
+    {
+      "id": "debeer",
+      "name": "Supt. Elmarie de Beer",
+      "role": "Witness \u2014 JMPD Internal Affairs",
+      "type": "Witness"
+    }
+  ],
+  "hearings": [
+    {
+      "day": 173,
+      "date": "2026-09-15",
+      "witnesses": [
+        "Supt. Elmarie de Beer",
+        "JMPD witness"
+      ],
+      "lead": "Adv. Thabang Pooe",
+      "url": "https://madlangacommission.co.za/hearings/day-173"
+    },
+    {
+      "day": 174,
+      "date": "2026-09-16",
+      "witnesses": [
+        "JMPD witness"
+      ],
+      "url": "https://madlangacommission.co.za/hearings/day-174"
+    },
+    {
+      "day": 175,
+      "date": "2026-09-17",
+      "witnesses": [
+        "Commission witness"
+      ],
+      "url": "https://madlangacommission.co.za/hearings/day-175"
+    },
+    {
+      "day": 176,
+      "date": "2026-09-18",
+      "witnesses": [
+        "Commission witness"
+      ],
+      "url": "https://madlangacommission.co.za/hearings/day-176"
+    },
+    {
+      "day": 177,
+      "date": "2026-09-21",
+      "witnesses": [
+        "Joe 'Ferrari' Sibanyoni / scheduled evidence"
+      ],
+      "url": "https://madlangacommission.co.za/hearings/day-177"
+    },
+    {
+      "day": 178,
+      "date": "2026-09-23",
+      "witnesses": [
+        "Current record"
+      ],
+      "url": "https://madlangacommission.co.za/hearings/day-178"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "tier": "PRIMARY",
+      "title": "Gazette 53048 \u2014 Proclamation 269 / Terms of Reference",
+      "url": "https://www.justice.gov.za/legislation/notices/2025/20250723-gg53048rg11855proc269-CJScommission.pdf",
+      "publisher": "Department of Justice",
+      "date": "2025-07-23"
+    },
+    {
+      "id": "s2",
+      "tier": "PRIMARY",
+      "title": "Gazette 53183 \u2014 Commission Regulations",
+      "url": "https://www.gov.za/sites/default/files/gcis_document/202508/53183rg11872pr277.pdf",
+      "publisher": "Government of South Africa",
+      "date": "2025-08-19"
+    },
+    {
+      "id": "s3",
+      "tier": "PRIMARY",
+      "title": "Department of Justice \u2014 Commissions",
+      "url": "https://www.justice.gov.za/commissions/commissions_list.htm",
+      "publisher": "Department of Justice",
+      "date": "current"
+    },
+    {
+      "id": "s4",
+      "tier": "PRIMARY",
+      "title": "Presidency \u2014 Final report deadline extension",
+      "url": "https://www.gov.za/news/media-statements/president-cyril-ramaphosa-grants-final-extension-madlanga-commission-report",
+      "publisher": "The Presidency",
+      "date": "2026-09-19"
+    },
+    {
+      "id": "s5",
+      "tier": "PUBLIC RECORD ARCHIVE",
+      "title": "Madlanga Commission Archive \u2014 current sitting",
+      "url": "https://madlangacommission.co.za/today",
+      "publisher": "Madlanga Commission Archive",
+      "date": "2026-09-25"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-001",
+      "statement": "The Commission was established by Presidential Proclamation 269 in Gazette 53048 on 23 July 2025.",
+      "classification": "FACT",
+      "sourceIds": [
+        "s1",
+        "s3"
+      ]
+    },
+    {
+      "id": "C-002",
+      "statement": "Justice Mbuyiseli Madlanga is the chairperson and Sesi Baloyi SC and Sandile Khumalo SC assist as commissioners.",
+      "classification": "FACT",
+      "sourceIds": [
+        "s1",
+        "s2"
+      ]
+    },
+    {
+      "id": "C-003",
+      "statement": "The Commission's mandate concerns alleged criminality, political interference and corruption in the criminal justice system arising from allegations made by Lt-Gen Mkhwanazi on 6 July 2025.",
+      "classification": "MANDATE",
+      "sourceIds": [
+        "s1",
+        "s2"
+      ]
+    },
+    {
+      "id": "C-004",
+      "statement": "The Presidency announced on 19 September 2026 that the final report deadline is 25 January 2027.",
+      "classification": "FACT",
+      "sourceIds": [
+        "s4",
+        "s1"
+      ]
+    },
+    {
+      "id": "C-005",
+      "statement": "The latest sitting in the public archive is Day 178 on 23 September 2026.",
+      "classification": "RECORD",
+      "sourceIds": [
+        "s5",
+        "s3"
+      ]
+    }
+  ],
+  "agentRoles": [
+    {
+      "id": "chair",
+      "name": "Chair Agent",
+      "mission": "Test scope, procedural fairness, admissibility and sufficiency of evidence. Never invent findings."
+    },
+    {
+      "id": "evidence",
+      "name": "Evidence Agent",
+      "mission": "Build claim-to-source-to-transcript chains and identify missing primary evidence."
+    },
+    {
+      "id": "contradiction",
+      "name": "Contradiction Agent",
+      "mission": "Find incompatible testimony, dates, records and explanations; present both sides with citations."
+    },
+    {
+      "id": "timeline",
+      "name": "Chronology Agent",
+      "mission": "Normalize events and expose sequence gaps without inferring causation."
+    },
+    {
+      "id": "network",
+      "name": "Network Agent",
+      "mission": "Map people, institutions, companies and events only when the relationship is source-supported."
+    },
+    {
+      "id": "verification",
+      "name": "Independent Verification Agent",
+      "mission": "Challenge every material claim, classify source quality and block unsupported assertions."
+    }
+  ]
+}
