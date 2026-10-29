@@ -1,3 +1,5 @@
+![CI](https://github.com/buttercode101/agentscope/actions/workflows/test.yml/badge.svg)
+
 <div align="center">
 
 # agentscope
