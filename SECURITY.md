@@ -1,26 +1,10 @@
 # Security Policy
 
-## Supported versions
+We take security seriously. If you discover a vulnerability in any of our repositories, please follow these steps:
 
-The latest release on the default branch is the supported version.
+1. **Do not** publicly disclose the issue.
+2. Send a detailed report to **security@buttercode101.com** (or open a private issue if you prefer).
+3. Include steps to reproduce, the impact, and any suggested fixes.
+4. We will acknowledge receipt within 48 hours and aim to resolve the issue promptly.
 
-AgentScope is designed to run locally and read existing agent state. It does not intentionally transmit source data, execution history, credentials, prompts, or tool payloads to a hosted AgentScope service.
-
-## Reporting a vulnerability
-
-Please report security vulnerabilities privately through GitHub's repository security advisory / private vulnerability reporting flow rather than opening a public issue.
-
-Include:
-- affected version or commit
-- reproducible steps
-- expected and actual behavior
-- impact and any relevant logs or proof of concept
-
-Do not include real API keys, access tokens, passwords, personal data, or private agent transcripts in a report.
-
-## Security principles
-
-- Read-only supervision; no operational controls are exposed by the generated dashboard.
-- Local files are read directly and the dashboard is generated locally.
-- HTML output escapes collected values before rendering.
-- Optional integrations should be configured with the minimum filesystem/database access required.
+Our goal is to keep all projects safe for users and contributors.
