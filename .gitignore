@@ -5,3 +5,10 @@ __pycache__/
 .env.*
 !.env.example
 dashboard.local.html
+# P0: keep commission evidence / local data out of the public repo
+*.db
+data/*.bin
+data/snapshots/
+data/*.json
+!data/.gitkeep
+!data/README.md
