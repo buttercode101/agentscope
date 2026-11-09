@@ -49,3 +49,19 @@ In scope: `generate.py` and the published demo page.
 Out of scope: hosted AI-agent platforms (Hermes Agent, LangSmith,
 and similar) except as data sources, and third-party hosts
 (Vercel, GitHub) except as they deliver this repository's artifacts.
+
+## P0 note — commission evidence removed from public repo
+
+Commission evidence (the Madlanga commission evidence API previously
+mixed into this dashboard repo: `api/`, `data/commission.json`,
+`evidence.db`, `data/snapshots/*.bin`, `data/*.bin`) has been moved
+out of this public repository and removed from the current HEAD.
+
+**Residual risk:** earlier commits still contain this evidence.
+Removing files from HEAD does **not** purge git history. A full history
+purge would require a force-push, which was **not** performed as part
+of this change. Anyone with access to an old commit, mirror, fork, or
+GitHub cache can still retrieve the previously exposed files. Treat
+previously public evidence as exposed, rotate/revoke anything that
+was secret in it, and consider a history purge (e.g. `git filter-repo`
++ force-push) as a separate, explicitly approved decision.
