@@ -16,6 +16,8 @@ Hermes Agent layout under ~/.hermes/.
 import argparse, json, sqlite3, os, glob, html, re
 from datetime import datetime, timedelta
 
+from agentscope_habitat import load_habitat_snapshot, render_habitat_panel
+
 # ---------------------------------------------------------------- helpers ---
 
 def parse_ts(value):
@@ -131,6 +133,7 @@ DEFAULT_CONFIG = {
         "leads_query": None,
         "leads_label": "Active items",
         "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls
+        "habitat_db": None,                # optional read-only Habitat SQLite database
         "ack_db": "~/.hermes/cron/executions.db",  # sqlite table for acknowledged operational alerts
     },
     "session_days": 7,
@@ -428,7 +431,12 @@ def build(cfg, out_path):
     execs = recent_executions(s["executions_db"]) if s.get("executions_db") else []
     leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None))) or {"total": 0, "active": 0}
     sess = session_activity(s.get("sessions_dir"), cfg["session_days"]) if s.get("sessions_dir") else {}
+    habitat_snapshot = load_habitat_snapshot(s.get("habitat_db"))
     source_anom = source_health(s)
+    if habitat_snapshot and not habitat_snapshot.get("available"):
+        source_anom.append(("warn", "Habitat evidence runtime unavailable — assurance state is UNKNOWN.", ack_key("warn", "Habitat evidence runtime unavailable")))
+    elif habitat_snapshot and habitat_snapshot.get("ledger_integrity") == "failed":
+        source_anom.append(("fail", "Habitat action ledger integrity check FAILED.", ack_key("fail", "Habitat action ledger integrity check FAILED")))
     operational_anom = anomalies(jobs, execs, cfg.get("never_run_grace_hours", 48))
     if source_anom:
         operational_anom = [item for item in operational_anom if not (item[0] == "ok" and item[1].startswith("All clear"))]
@@ -448,6 +456,7 @@ def build(cfg, out_path):
     names = job_names(s["cron_jobs_glob"], s["executions_db"]) if s.get("executions_db") else {}
     rates = success_rates(execs)
     mcp_rows = mcp_tool_stats(s["mcp_jsonl"]) if s.get("mcp_jsonl") else []
+    habitat_panel = render_habitat_panel(habitat_snapshot)
 
     job_rows = "".join(
         f'<tr><td>{esc(j["name"])}</td><td class="mut">{esc(j["schedule"])}</td>'
@@ -596,7 +605,7 @@ def build(cfg, out_path):
   }}catch(e){{}}
 }})();
 </script>
-{mcp_panel}<div class="panel"><h2>Agent sessions ({cfg['session_days']}d)</h2><div style="font-size:13.5px">{esc(sess_spark)}</div></div>
+{mcp_panel}{habitat_panel}<div class="panel"><h2>Agent sessions ({cfg['session_days']}d)</h2><div style="font-size:13.5px">{esc(sess_spark)}</div></div>
 
 <div style="text-align:center;margin:6px 0 14px">
 <button id="sharebtn" class="chip" title="Copy a clean text summary">Copy status summary</button>
