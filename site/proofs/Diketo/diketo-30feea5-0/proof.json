@@ -1,0 +1,46 @@
+{
+  "proof_version": "1",
+  "generated_at": "2026-09-24T22:25:10.769186+00:00",
+  "claim": {
+    "id": "claim-diketo-30feea5-0",
+    "habitat_id": "hermes-local",
+    "job_id": "hermes-job",
+    "claim": "Deployed commit 30feea5: Add files via upload",
+    "action": "run_job",
+    "expected_status": "ok",
+    "created_at": "2026-09-24T22:25:10.759897+00:00",
+    "verified_at": "2026-09-24T22:25:10.767097+00:00",
+    "status": "verified",
+    "evidence": {
+      "source": "habitat_trusted_ledger",
+      "action_id": "act-diketo-30feea5-0",
+      "action": "run_job",
+      "status": "ok",
+      "timestamp": "2026-09-24T22:25:10.759897+00:00",
+      "run_id": "diketo-30feea5-0",
+      "details": {
+        "source": "hermes_hmac_adapter"
+      }
+    },
+    "run_id": "diketo-30feea5-0"
+  },
+  "ledger": {
+    "integrity": "intact",
+    "actions": [
+      {
+        "id": "act-diketo-30feea5-0",
+        "habitat_id": "hermes-local",
+        "job_id": "hermes-job",
+        "timestamp": "2026-09-24T22:25:10.759897+00:00",
+        "actor": "agent",
+        "action": "run_job",
+        "status": "ok",
+        "details": {
+          "source": "hermes_hmac_adapter"
+        },
+        "run_id": "diketo-30feea5-0"
+      }
+    ]
+  },
+  "content_sha256": "10c0bd36495d6cc4fb93da55c5d33e315170cc23a7f6bb476c3875bd6094f6ed"
+}
