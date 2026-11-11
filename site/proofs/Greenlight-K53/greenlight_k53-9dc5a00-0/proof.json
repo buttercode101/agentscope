@@ -1,0 +1,46 @@
+{
+  "proof_version": "1",
+  "generated_at": "2026-09-24T22:25:06.994797+00:00",
+  "claim": {
+    "id": "claim-greenlight_k53-9dc5a00-0",
+    "habitat_id": "hermes-local",
+    "job_id": "hermes-job",
+    "claim": "Deployed commit 9dc5a00: fix: refresh K53 database cache when online",
+    "action": "run_job",
+    "expected_status": "ok",
+    "created_at": "2026-09-24T22:25:06.985061+00:00",
+    "verified_at": "2026-09-24T22:25:06.992541+00:00",
+    "status": "verified",
+    "evidence": {
+      "source": "habitat_trusted_ledger",
+      "action_id": "act-greenlight_k53-9dc5a00-0",
+      "action": "run_job",
+      "status": "ok",
+      "timestamp": "2026-09-24T22:25:06.985061+00:00",
+      "run_id": "greenlight_k53-9dc5a00-0",
+      "details": {
+        "source": "hermes_hmac_adapter"
+      }
+    },
+    "run_id": "greenlight_k53-9dc5a00-0"
+  },
+  "ledger": {
+    "integrity": "intact",
+    "actions": [
+      {
+        "id": "act-greenlight_k53-9dc5a00-0",
+        "habitat_id": "hermes-local",
+        "job_id": "hermes-job",
+        "timestamp": "2026-09-24T22:25:06.985061+00:00",
+        "actor": "agent",
+        "action": "run_job",
+        "status": "ok",
+        "details": {
+          "source": "hermes_hmac_adapter"
+        },
+        "run_id": "greenlight_k53-9dc5a00-0"
+      }
+    ]
+  },
+  "content_sha256": "faaa6dfb4453224294a8b8a3e192acc2b1d96f41d08f260919c19fcf732b45b2"
+}
