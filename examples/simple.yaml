@@ -1,0 +1,19 @@
+id: demo
+name: Demo Crew
+model: local
+jobs:
+  - id: repo-sync
+    name: Repository sync
+    schedule: every 30 sec
+    enabled: true
+    command: python -c "print('repo sync ok')"
+  - id: weekly-audit
+    name: Weekly audit
+    schedule: every 1 hour
+    enabled: false
+    command: python -c "print('audit')"
+  - id: health-check
+    name: Health check
+    schedule: every 1 min
+    enabled: true
+    command: python -c "print('healthy')"
