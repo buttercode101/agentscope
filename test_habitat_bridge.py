@@ -1,9 +1,11 @@
+import sqlite3
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 
 from agentscope_habitat import load_habitat_snapshot, render_habitat_panel
-from habitat.schema import Habitat, Job
+from habitat.schema import Action, Habitat, Job
 from habitat.store import Store
 
 
@@ -33,6 +35,27 @@ class HabitatBridgeTests(unittest.TestCase):
         self.assertEqual(result["jobs_enabled"], 1)
         self.assertEqual(result["ledger_integrity"], "intact")
         self.assertEqual(before, after)
+
+    def test_tampered_action_ledger_is_reported_as_failed(self):
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "habitat.db"
+            store = Store(db)
+            store.save_habitat(Habitat("h1", "Crew Alpha"))
+            store.save_action(Action(
+                "a1", "h1", datetime.now(timezone.utc), "agent",
+                "completed_task", "ok",
+            ))
+            store.close()
+
+            with sqlite3.connect(db) as conn:
+                conn.execute("UPDATE action_integrity SET hash=?", ("0" * 64,))
+                conn.commit()
+
+            result = load_habitat_snapshot(str(db))
+
+        self.assertTrue(result["available"])
+        self.assertEqual(result["ledger_integrity"], "failed")
+        self.assertIn("FAILED", render_habitat_panel(result))
 
     def test_dashboard_escapes_habitat_name(self):
         panel = render_habitat_panel({
