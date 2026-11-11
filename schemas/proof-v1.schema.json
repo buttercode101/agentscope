@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/buttercode101/Habitat/blob/main/schemas/proof-v1.schema.json",
+  "title": "Habitat Proof Bundle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["proof_version", "generated_at", "claim", "ledger", "content_sha256"],
+  "properties": {
+    "proof_version": {"const": "1"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "key_id", "agent_id", "public_key", "signature"],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "key_id": {"type": ["string", "null"]},
+        "agent_id": {"type": ["string", "null"]},
+        "public_key": {"type": "string", "minLength": 1},
+        "signature": {"type": "string", "minLength": 1}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "habitat_id", "job_id", "claim", "action", "expected_status", "created_at", "verified_at", "status", "evidence", "run_id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "habitat_id": {"type": "string", "minLength": 1},
+        "job_id": {"type": ["string", "null"]},
+        "claim": {"type": "string"},
+        "action": {"type": ["string", "null"]},
+        "expected_status": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "verified_at": {"type": ["string", "null"]},
+        "status": {"type": "string"},
+        "evidence": {"type": "object"},
+        "run_id": {"type": ["string", "null"]}
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["integrity", "actions"],
+      "properties": {
+        "integrity": {"enum": ["intact", "failed"]},
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "habitat_id", "job_id", "timestamp", "actor", "action", "status", "details", "run_id"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "habitat_id": {"type": "string", "minLength": 1},
+              "job_id": {"type": ["string", "null"]},
+              "timestamp": {"type": "string", "format": "date-time"},
+              "actor": {"type": "string", "minLength": 1},
+              "action": {"type": "string"},
+              "status": {"type": "string"},
+              "details": {"type": "object"},
+              "run_id": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}
