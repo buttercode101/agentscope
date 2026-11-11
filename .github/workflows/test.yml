@@ -14,6 +14,6 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install package
-        run: pip install -e .
+        run: pip install -e ".[test]"
       - name: Run tests
-        run: python -m unittest discover -v
+        run: python -m pytest -q
