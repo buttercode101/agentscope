@@ -9,7 +9,8 @@
     "leads_query": [
       "SELECT count(*) FROM leads",
       "SELECT count(*) FROM leads WHERE status NOT IN ('completed','closed','lost')"
-    ]
+    ],
+    "habitat_db": null
   },
   "session_days": 7,
   "max_actions": 15,
