@@ -59,7 +59,7 @@ python3 generate.py --config myconfig.json -o dashboard.html
 
 Open `dashboard.html` in any browser. Done.
 
-Requirements: Python 3.8+, stdlib only. Zero dependencies.
+Requirements: Python 3.11+. The default runtime has no third-party dependencies; proof signing is an optional extra.
 
 ### Daily digest (optional)
 
@@ -92,6 +92,26 @@ AgentScope can read an existing local [Habitat](https://github.com/buttercode101
 Set `sources.habitat_db` in your config to the initialized Habitat SQLite database path. Leave it `null` to keep the existing AgentScope-only mode. The bridge opens the database read-only. Missing or unreadable evidence is shown as **UNKNOWN**, and a failed action-ledger integrity check is surfaced as a failure. Stored claim verdicts are displayed as stored records, not freshly re-verified claims.
 
 See [the integration boundary and validation checklist](docs/INTEGRATION-HABITAT.md).
+
+## Habitat runtime and portable proofs
+
+The integrated Habitat runtime is available through the same installation. It records agent actions, correlates claims to runs, checks the action-ledger hash chain, applies evidence policies, and exports portable proof bundles.
+
+```bash
+pip install -e .
+
+# Initialize a local Habitat database
+habitat init --config examples/simple.yaml
+
+# Record explicitly labelled sample data
+habitat demo
+
+# Create and verify a portable proof for the sample run
+habitat prove --run-id run-42 --claim "sample run completed" -o proof.json --card
+python tools/verify_proof.py proof.json
+```
+
+The demo run is sample data, not a live verification of an external system. A valid proof establishes properties of the recorded evidence bundle; it does not establish external truth by itself. See [the integration architecture and trust boundaries](docs/INTEGRATION-HABITAT.md).
 
 ## Scope
 
