@@ -26,7 +26,7 @@ def test_external_evidence_predicate(tmp_path):
 
 
 def test_package_metadata_and_entrypoint():
-    assert metadata.version('habitat') == '1.3.0'
+    assert metadata.version('agentscope') == '0.1.0'
     entry_points = metadata.entry_points(group='console_scripts')
     habitat = next(ep for ep in entry_points if ep.name == 'habitat')
     assert habitat.value == 'habitat.__main__:main'
