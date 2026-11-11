@@ -85,6 +85,14 @@ Copy `config.example.json`:
 
 Any source may be `null` to skip it. Job definitions can optionally provide `required: false` for intentionally disabled jobs and `created_at` for reliable never-run detection. Timestamp parsing accepts timezone-aware ISO-8601 values and normalizes them before comparisons. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
 
+## Habitat evidence runtime (optional)
+
+AgentScope can read an existing local [Habitat](https://github.com/buttercode101/Habitat) database and include its operational evidence summary in the generated dashboard. Habitat supplies the local action ledger, claims, policy gates, and portable proof workflow; AgentScope remains the read-only supervision surface.
+
+Set `sources.habitat_db` in your config to the initialized Habitat SQLite database path. Leave it `null` to keep the existing AgentScope-only mode. The bridge opens the database read-only. Missing or unreadable evidence is shown as **UNKNOWN**, and a failed action-ledger integrity check is surfaced as a failure. Stored claim verdicts are displayed as stored records, not freshly re-verified claims.
+
+See [the integration boundary and validation checklist](docs/INTEGRATION-HABITAT.md).
+
 ## Scope
 
 **In:** supervision of scheduled agent work, anomaly surfacing, one-page scanning.
