@@ -1,0 +1,48 @@
+{
+  "claim": {
+    "action": "deploy",
+    "claim": "deployed v1.2.3 to production",
+    "created_at": "2026-09-15T12:00:00+00:00",
+    "evidence": {
+      "action": "deploy",
+      "action_id": "act-001",
+      "details": {
+        "target": "production",
+        "version": "1.2.3"
+      },
+      "run_id": "run-42",
+      "source": "habitat_trusted_ledger",
+      "status": "ok",
+      "timestamp": "2026-09-15T12:00:00+00:00"
+    },
+    "expected_status": "ok",
+    "habitat_id": "demo",
+    "id": "00000000-0000-4000-8000-000000000001",
+    "job_id": "deploy",
+    "run_id": "run-42",
+    "status": "verified",
+    "verified_at": "2026-09-15T12:00:00+00:00"
+  },
+  "content_sha256": "23b25bef77af9b58f56e7a774cf655f1dd627f1dad137f5dc242c9e6ebd8dd43",
+  "generated_at": "2026-09-15T12:00:00+00:00",
+  "ledger": {
+    "actions": [
+      {
+        "action": "deploy",
+        "actor": "agent",
+        "details": {
+          "target": "production",
+          "version": "1.2.3"
+        },
+        "habitat_id": "demo",
+        "id": "act-001",
+        "job_id": "deploy",
+        "run_id": "run-42",
+        "status": "ok",
+        "timestamp": "2026-09-15T12:00:00+00:00"
+      }
+    ],
+    "integrity": "intact"
+  },
+  "proof_version": "1"
+}
