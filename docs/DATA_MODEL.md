@@ -1,21 +1,54 @@
-# Evidence data model
+# AgentScope + Habitat data boundaries
 
-The runtime uses SQLite for the local production foundation. The same logical model can move to Postgres without changing the evidence contract.
+## AgentScope operational inputs
 
-## Core objects
+AgentScope's existing generator reads configured local sources:
 
-- **source** — canonical publisher, URL, tier and publication/retrieval metadata.
-- **snapshot** — immutable byte capture identified by SHA-256. A source can have many snapshots over time.
-- **claim** — a bounded statement with an explicit classification and verification state.
-- **claim_sources** — many-to-many provenance mapping; a claim cannot pass the gate without at least one source.
-- **hearing** — sitting-day index. `index_only` means the day is known to exist in the indexed sequence but detailed material has not been ingested into this build. `detailed` means a source-backed hearing record is present.
-- **audit** — append-only operational record of ingestion actions.
+- Job definition JSON files.
+- Execution-history SQLite database.
+- Session directory metadata.
+- Optional business counters.
+- Optional MCP/tool-call JSONL.
+- Optional acknowledgement state.
 
-## Integrity invariants
+The generated HTML contains a snapshot of the data read at generation time. It is not a live query interface.
 
-1. Claims never store source prose as if it were a source record.
-2. A claim must reference one or more source IDs before it can pass verification.
-3. A source snapshot is content-addressed by SHA-256.
-4. Re-fetching changed source content creates a new snapshot; old snapshots are retained.
-5. Missing hearing detail is represented explicitly rather than synthesized.
-6. Agent output is not persisted as factual evidence unless a human/controlled ingestion process promotes it into a sourced claim.
+## Habitat runtime records
+
+Habitat owns its local SQLite schema. AgentScope does not migrate or write this schema.
+
+| Record | Purpose |
+|---|---|
+| habitat | Runtime identity, model and overall status |
+| job | Scheduled work and latest observed execution state |
+| signal | Active/resolved anomaly signals with severity |
+| action | Trusted action ledger entries |
+| action_integrity | Hash-chain links for tamper detection |
+| claim | Bounded assertion and its stored verification verdict |
+| event | Ingested structured agent event |
+| agent | Registered agent identity and permissions |
+
+## AgentScope projection
+
+The bridge reads only:
+
+- Habitat identity and status.
+- Enabled/total job counts.
+- Counts of active signals by severity.
+- Counts of claims by stored verdict.
+- Action-ledger integrity result.
+
+It deliberately excludes agent secrets, permissions, raw event payloads, action details, claim evidence bodies, and proof contents from the dashboard summary.
+
+## Trust semantics
+
+- `available=false`: source missing, uninitialized, unreadable, or structurally incomplete; display UNKNOWN.
+- `ledger_integrity=intact`: the current action rows match the stored hash chain.
+- `ledger_integrity=failed`: the hash chain is incomplete or does not match; surface FAIL.
+- `ledger_integrity=unknown`: integrity metadata is absent or uninitialized; never treat as intact.
+- Claim counts represent stored Habitat verdicts only. They are not a fresh verification of each claim.
+- A valid proof bundle proves properties of the recorded evidence bundle, not that the external world necessarily matches the claim.
+
+## Retention and migration
+
+Habitat remains the system of record for its evidence and proof data. Preserve the original Habitat database and repository until backup/restore, schema migration, and proof-verification tests pass against the unified build. Never rewrite or deduplicate historical proof records during this integration.

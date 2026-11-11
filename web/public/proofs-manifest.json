@@ -1,0 +1,24 @@
+{
+  "base_url": "https://habitat-za.vercel.app",
+  "generated": "2026-10-21",
+  "status": "reconciled-subset",
+  "note": "Only artifacts whose checked-in path, run ID and claim were reconciled are listed. Historical paths are excluded until provenance is repaired.",
+  "projects": {
+    "Greenlight-K53": [
+      {
+        "run_id": "greenlight_k53-9dc5a00-0",
+        "proof_url": "https://habitat-za.vercel.app/proofs/Greenlight-K53/greenlight_k53-9dc5a00-0/proof.json",
+        "claim": "Deployed commit 9dc5a00: fix: refresh K53 database cache when online",
+        "content_sha256": "faaa6dfb4453224294a8b8a3e192acc2b1d96f41d08f260919c19fcf732b45b2"
+      }
+    ],
+    "Diketo": [
+      {
+        "run_id": "diketo-30feea5-0",
+        "proof_url": "https://habitat-za.vercel.app/proofs/Diketo/diketo-30feea5-0/proof.json",
+        "claim": "Deployed commit 30feea5: Add files via upload",
+        "content_sha256": "10c0bd36495d6cc4fb93da55c5d33e315170cc23a7f6bb476c3875bd6094f6ed"
+      }
+    ]
+  }
+}
