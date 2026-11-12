@@ -235,5 +235,17 @@ class GenerateTests(unittest.TestCase):
         self.assertIn("Proof could not be verified:", proofs)
 
 
+    def test_browser_proof_assurance_matches_habitat_verifier_boundaries(self):
+        root = Path(__file__).resolve().parent
+        proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
+        self.assertIn("function validateStructure(bundle,errors)", proofs)
+        self.assertIn("claim evidence status does not match claim.expected_status", proofs)
+        self.assertIn("ledger.actions[", proofs)
+        self.assertIn("MAX_PROOF_ACTIONS", proofs) if "MAX_PROOF_ACTIONS" in proofs else self.assertIn("ledger.actions exceeds maximum of 10000", proofs)
+        self.assertIn("LEDGER EXPORT:", proofs)
+        self.assertIn("does not recompute the underlying SQLite action hash chain", proofs)
+        self.assertIn("new TextEncoder().encode(raw).length>16*1024*1024", proofs)
+
+
 if __name__ == "__main__":
     unittest.main()
