@@ -1,5 +1,7 @@
 import json
 import sqlite3
+import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -227,12 +229,78 @@ class GenerateTests(unittest.TestCase):
     def test_proof_explorer_checks_manifest_pinned_digest_and_handles_bad_ledger(self):
         root = Path(__file__).resolve().parent
         proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
-        self.assertIn("async function verify(bundle,expectedDigest)", proofs)
+        self.assertIn("async function verify(bundle,manifestDigest)", proofs)
         self.assertIn("Manifest-pinned content hash mismatch", proofs)
         self.assertIn("Embedded content hash mismatch", proofs)
         self.assertIn('bundle.ledger&&bundle.ledger.integrity', proofs)
         self.assertIn("Proof URL must remain on this site", proofs)
         self.assertIn("Proof could not be verified:", proofs)
+
+
+    def test_browser_proof_assurance_matches_habitat_verifier_boundaries(self):
+        root = Path(__file__).resolve().parent
+        proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
+        self.assertIn("function validateStructure(bundle,errors)", proofs)
+        self.assertIn("claim evidence status does not match claim.expected_status", proofs)
+        self.assertIn("ledger.actions[", proofs)
+        self.assertIn("MAX_PROOF_ACTIONS", proofs) if "MAX_PROOF_ACTIONS" in proofs else self.assertIn("ledger.actions exceeds maximum of 10000", proofs)
+        self.assertIn("LEDGER EXPORT:", proofs)
+        self.assertIn("does not recompute the underlying SQLite action hash chain", proofs)
+        self.assertIn("new TextEncoder().encode(raw).length>16*1024*1024", proofs)
+
+
+    def test_browser_proof_verifier_executes_against_habitat_export_fixtures(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("Node.js is not installed")
+        root = Path(__file__).resolve().parent
+        page = (root / "site" / "proofs.html").read_text(encoding="utf-8")
+        script = page.split("<script>", 1)[1].split("</script>", 1)[0]
+        verifier = script[:script.index("function el(")]
+        runtime_test = r"""
+const {webcrypto}=require("crypto");
+globalThis.crypto=webcrypto;
+const fs=require("fs");
+const manifest=JSON.parse(fs.readFileSync("site/proofs-manifest.json","utf8"));
+const fixtures=[
+ ["Greenlight-K53","greenlight_k53-9dc5a00-0"],
+ ["Diketo","diketo-30feea5-0"]
+];
+async function digest(bundle){
+ const input={...bundle};
+ delete input.generated_at;delete input.content_sha256;delete input.signature;
+ return [...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(canonical(input))))].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+(async()=>{
+ for(const [project,run] of fixtures){
+  const entry=manifest.projects[project].find(x=>x.run_id===run);
+  const bundle=JSON.parse(fs.readFileSync("site/proofs/"+project+"/"+run+"/proof.json","utf8"));
+  const valid=await verify(bundle,entry.content_sha256);
+  if(!valid.ok)throw new Error(project+" fixture rejected: "+valid.errors.join("; "));
+  const wrongPin=await verify(bundle,"0".repeat(64));
+  if(wrongPin.ok||!wrongPin.errors.some(x=>x.includes("Manifest-pinned")))throw new Error("wrong manifest digest was accepted");
+  const tampered=JSON.parse(JSON.stringify(bundle));tampered.claim.claim+=" tampered";
+  const changed=await verify(tampered,entry.content_sha256);
+  if(changed.ok)throw new Error("tampered proof was accepted");
+  const broken=JSON.parse(JSON.stringify(bundle));delete broken.ledger.actions;
+  const malformed=await verify(broken,entry.content_sha256);
+  if(malformed.ok)throw new Error("malformed ledger was accepted");
+  const crossRun=JSON.parse(JSON.stringify(bundle));crossRun.ledger.actions[0].run_id="other-run";crossRun.content_sha256=await digest(crossRun);
+  const relationship=await verify(crossRun,crossRun.content_sha256);
+  if(relationship.ok||!relationship.errors.some(x=>x.includes("run_id does not match claim")))throw new Error("cross-run action was accepted");
+ }
+ console.log("Browser proof verifier: 2 Habitat fixtures valid; bad pin, tampering, malformed ledger and cross-run action rejected.");
+})().catch(error=>{console.error(error);process.exit(1)});
+"""
+        result = subprocess.run(
+            [node, "-e", verifier + "\n" + runtime_test],
+            cwd=root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("2 Habitat fixtures valid", result.stdout)
 
 
 if __name__ == "__main__":
