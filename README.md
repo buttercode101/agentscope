@@ -59,7 +59,7 @@ python3 generate.py --config myconfig.json -o dashboard.html
 
 Open `dashboard.html` in any browser. Done.
 
-Requirements: Python 3.11+. The default runtime has no third-party dependencies; proof signing is an optional extra.
+Requirements: Python 3.11+. The default runtime has no third-party dependencies. Optional Ed25519 proof signing is installed with `pip install 'agentscope[signing]'`.
 
 ### Daily digest (optional)
 
