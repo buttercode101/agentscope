@@ -38,44 +38,63 @@ Use the actual database path configured for the local Habitat installation; the 
 2. A dashboard snapshot is observational, not an external attestation.
 3. A stored `verified` claim is displayed as a stored verdict. Re-verification requires the Habitat verification flow and its original evidence adapters.
 4. A proof bundle's content integrity, signature validity, publisher trust, and truth in the outside world remain distinct questions.
-5. The original Habitat repository remains intact as the upstream source until this integration passes CI, regression, security, and live-deployment acceptance.
+5. Habitat remains independently maintained in its upstream repository; this vendored integration does not modify the upstream repository.
 
 ## Production release verification — 12 November 2026
 
-The following checks were completed against the merged release commit
-`93a05a5b28922ab15cd2fb27246eb562ee99658c`:
+The following checks were completed against the current production release:
 
-- GitHub Actions installed the package on Python 3.11 and completed the full
-  pytest suite: **138 passed**.
-- Vercel production deployment `dpl_25ng9u5izXcVpZ5T2BCexzqvhYrH`
-  reached `READY` from `main` at that exact commit.
-- The production homepage, demo, proof index, manifest, and both published
-  proof JSON resources returned HTTP 200.
-- Both historical proof digests were checked against Habitat's proof
-  canonicalization and their embedded claim/action references were inspected.
-- The production site remains a static product/demo surface. It is not a
-  hosted Habitat database or an online agent control plane.
+- Production source commit: `4879db33edad4ed27d31ef0df0065edd62342c15`.
+- GitHub Actions completed the full Python 3.11 pytest suite with **146 passed
+  in 4.09s** on the pull-request head that was merged into this release:
+  [workflow run 43210369263](https://github.com/buttercode101/agentscope/actions/runs/43210369263).
+- Vercel production deployment `dpl_9oEPruG849FTqmWzzro13s2kv4vH` reached
+  `READY` from `main` at the production source commit above.
+- The homepage, demo, proof index, manifest, and both published proof JSON
+  resources returned HTTP 200 after the latest production deployment.
+- Both historical proof digests were recomputed using Habitat's canonical
+  JSON rules. Both ledgers reported `intact`, both verified claims resolved
+  to their matching evidence actions, and both bundles were unsigned.
+- Regression tests now cover Unicode proof canonicalization, read-only
+  snapshots of a healthy Habitat database, unchanged database bytes after
+  bridge reads, tampered action-integrity hashes, missing/incomplete database
+  states, SQLite backup/restore of a populated fixture, Unicode Ed25519
+  signing, and signature tamper rejection.
+- The optional signing extra is declared as
+  `pip install 'agentscope[signing]'`; the missing-dependency hint matches.
+- Vercel deployment protection is configured for previews only. Production
+  remains public while preview deployments retain SSO protection.
+- Vercel reported no runtime errors in the 24 hours preceding this check.
+- The public site is a static product/demo surface, not a hosted Habitat
+  database or an online agent control plane.
 - The proof bundles are unsigned historical snapshots. Digest validity does
   not establish publisher identity or external truth.
-- The browser proof page's JavaScript was inspected, but a real-browser
-  execution was not part of this verification.
+- The proof page JavaScript was inspected, but was not executed in a real
+  browser during this verification.
 
 ## Remaining validation
 
-The release checks above do not replace the following engineering work:
+The release checks above do not establish complete product acceptance:
 
-- Add and execute fixture coverage for malformed, migrated, and tampered
-  Habitat databases.
-- Verify no read-only bridge path writes, migrates, or locks the source
-  database, including under concurrent access.
-- Exercise the dashboard with no Habitat DB, a healthy DB, active signals,
-  failed ledger integrity, and recorded claims.
-- Exercise backup/restore against populated and migrated databases, including
-  recovery after an interrupted backup.
-- Add real-browser tests for the proof index and responsive demo interactions.
+- Expand bridge fixtures for malformed and legacy/migrated databases. Current
+  tests cover healthy, missing, incomplete-schema, and tampered-ledger states.
+- Exercise read-only bridge access under concurrent load and verify no locks
+  or writes across the full dashboard-generation flow. The current byte-level
+  immutability test covers a healthy single-reader fixture.
+- Exercise the generated dashboard end-to-end with no Habitat DB, healthy
+  data, active signals, failed ledger integrity, and stored claims. Snapshot
+  tests do not replace rendered-dashboard acceptance.
+- Expand backup/restore coverage to migrated databases, existing destinations,
+  and recovery after an interrupted backup. The current test covers a
+  populated database and verifies recovered action-ledger integrity.
+- Add real-browser tests for proof-index rendering, proof-link navigation,
+  keyboard interactions, and the responsive demo at narrow mobile widths.
+- AgentScope currently has no Android wrapper or PWA/service-worker assets.
+  The Python CLI and generated HTML are local-first, but native Android
+  installation and a browser-installable offline PWA are not implemented.
 - Decide whether to keep Habitat as an independently installable CLI
-  distribution or expose the runtime through an optional extra after
-  packaging and release tests.
+  distribution or expose the runtime through a separately documented package
+  boundary.
 
 ## Upstream provenance
 
