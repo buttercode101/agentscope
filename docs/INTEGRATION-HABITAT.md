@@ -40,14 +40,42 @@ Use the actual database path configured for the local Habitat installation; the 
 4. A proof bundle's content integrity, signature validity, publisher trust, and truth in the outside world remain distinct questions.
 5. The original Habitat repository remains intact as the upstream source until this integration passes CI, regression, security, and live-deployment acceptance.
 
-## Validation still required before release
+## Production release verification — 12 November 2026
 
-- Run the full AgentScope unittest suite and Habitat test suite in the unified repository.
-- Add fixture coverage for malformed, migrated, and tampered Habitat databases.
-- Verify no read-only bridge path writes, migrates, or locks the source database.
-- Exercise the dashboard with no Habitat DB, a healthy DB, active signals, failed ledger integrity, and recorded claims.
-- Inspect the live Vercel deployment and verify the intended runtime mode. The public AgentScope website is currently a static product/demo surface; it must not be mistaken for a hosted Habitat database.
-- Decide whether to keep Habitat as an independently installable CLI distribution or expose the runtime through an optional extra after packaging and release tests.
+The following checks were completed against the merged release commit
+`93a05a5b28922ab15cd2fb27246eb562ee99658c`:
+
+- GitHub Actions installed the package on Python 3.11 and completed the full
+  pytest suite: **138 passed**.
+- Vercel production deployment `dpl_25ng9u5izXcVpZ5T2BCexzqvhYrH`
+  reached `READY` from `main` at that exact commit.
+- The production homepage, demo, proof index, manifest, and both published
+  proof JSON resources returned HTTP 200.
+- Both historical proof digests were checked against Habitat's proof
+  canonicalization and their embedded claim/action references were inspected.
+- The production site remains a static product/demo surface. It is not a
+  hosted Habitat database or an online agent control plane.
+- The proof bundles are unsigned historical snapshots. Digest validity does
+  not establish publisher identity or external truth.
+- The browser proof page's JavaScript was inspected, but a real-browser
+  execution was not part of this verification.
+
+## Remaining validation
+
+The release checks above do not replace the following engineering work:
+
+- Add and execute fixture coverage for malformed, migrated, and tampered
+  Habitat databases.
+- Verify no read-only bridge path writes, migrates, or locks the source
+  database, including under concurrent access.
+- Exercise the dashboard with no Habitat DB, a healthy DB, active signals,
+  failed ledger integrity, and recorded claims.
+- Exercise backup/restore against populated and migrated databases, including
+  recovery after an interrupted backup.
+- Add real-browser tests for the proof index and responsive demo interactions.
+- Decide whether to keep Habitat as an independently installable CLI
+  distribution or expose the runtime through an optional extra after
+  packaging and release tests.
 
 ## Upstream provenance
 
