@@ -32,30 +32,113 @@ a:focus-visible{outline:3px solid #789579;outline-offset:3px}
 
 .skip-link{position:fixed;left:12px;top:12px;z-index:1000;transform:translateY(-160%);background:#fff;color:#172019;padding:10px 12px;border:2px solid currentColor;border-radius:6px;font:600 12px Inter,ui-sans-serif,system-ui,sans-serif}.skip-link:focus{transform:translateY(0)}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
-</style></head><body><a class="skip-link" href="#proof-main">Skip to main content</a><div class="wrap"><nav><a href="/">agentscope /</a><a href="/demo.html">Demo ↗</a></nav><main id="proof-main" tabindex="-1"><p class="mono">Habitat · portable evidence</p><h1>Proof snapshots.</h1><p class="lede">Historical Habitat proof exports copied into AgentScope. Each bundle is checked in your browser for its embedded SHA-256 content digest and claim/action consistency.</p><div class="notice"><strong>Important:</strong> a matching content hash detects changes to the exported bundle, but does not authenticate who published it. These are historical records, not live status. An unsigned proof does not independently establish that the claimed work happened in the outside world.</div><div id="proof-list" class="list" aria-live="polite"><div class="empty">Loading proof index…</div></div></main><footer>AgentScope · Evidence is labelled by what can actually be checked. <a href="/">Back to AgentScope</a></footer></div>
+</style></head><body><a class="skip-link" href="#proof-main">Skip to main content</a><div class="wrap"><nav><a href="/">agentscope /</a><a href="/demo.html">Demo ↗</a></nav><main id="proof-main" tabindex="-1"><p class="mono">Habitat · portable evidence</p><h1>Proof snapshots.</h1><p class="lede">Historical Habitat proof exports copied into AgentScope. Each bundle is checked in your browser for structure, its SHA-256 digest, a separately pinned manifest digest and claim/action consistency.</p><div class="notice"><strong>Important:</strong> a matching content hash detects changes to the exported bundle, but does not authenticate who published it. These are historical records, not live status. An unsigned proof does not independently establish that the claimed work happened in the outside world. The ledger integrity value is the result recorded by Habitat at export time; this page does not recompute the underlying SQLite action hash chain.</div><div id="proof-list" class="list" aria-live="polite"><div class="empty">Loading proof index…</div></div></main><footer>AgentScope · Evidence is labelled by what can actually be checked. <a href="/">Back to AgentScope</a></footer></div>
 <script>
 function canonical(v){if(Array.isArray(v))return "["+v.map(canonical).join(",")+"]";if(v&&typeof v==="object")return "{"+Object.keys(v).sort().map(k=>JSON.stringify(k)+":"+canonical(v[k])).join(",")+"}";return JSON.stringify(v)}
-async function verify(bundle,expectedDigest){
- const errors=[];
- if(!bundle||typeof bundle!=="object"||Array.isArray(bundle))return{ok:false,errors:["Proof bundle is not an object"],signature:"absent"};
- for(const key of ["proof_version","generated_at","claim","ledger","content_sha256"])if(!(key in bundle))errors.push("Missing "+key);
+function isObject(value){return value!==null&&typeof value==="object"&&!Array.isArray(value)}
+function isDateTime(value){return typeof value==="string"&&/T.*(?:Z|[+-]\\d{2}:\\d{2})$/.test(value)&&!Number.isNaN(Date.parse(value))}
+function finiteNumbers(value){if(typeof value==="number")return Number.isFinite(value);if(Array.isArray(value))return value.every(finiteNumbers);if(isObject(value))return Object.values(value).every(finiteNumbers);return true}
+function validateStructure(bundle,errors){
+ const allowed=["proof_version","generated_at","claim","ledger","content_sha256","signature"];
+ const required=["proof_version","generated_at","claim","ledger","content_sha256"];
+ const unknown=Object.keys(bundle).filter(key=>!allowed.includes(key)).sort();
+ const missing=required.filter(key=>!(key in bundle));
+ if(unknown.length)errors.push("Unknown fields: "+unknown.join(", "));
+ if(missing.length)errors.push("Missing fields: "+missing.join(", "));
+ if(!finiteNumbers(bundle))errors.push("Non-finite JSON numbers are not allowed");
  if(bundle.proof_version!=="1")errors.push("Unsupported proof version");
- if(!bundle.claim||typeof bundle.claim!=="object")errors.push("Claim object missing");
- if(!bundle.ledger||!Array.isArray(bundle.ledger.actions))errors.push("Ledger actions missing");
- if(bundle.ledger&&bundle.ledger.integrity!=="intact")errors.push("Ledger integrity is not intact");
- if(errors.some(x=>x.startsWith("Missing ")||x==="Unsupported proof version"||x==="Claim object missing"||x==="Ledger actions missing"))return{ok:false,errors,signature:bundle.signature?"present":"absent"};
- const input={...bundle};delete input.generated_at;delete input.content_sha256;delete input.signature;
- const digest=[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(canonical(input))))].map(x=>x.toString(16).padStart(2,"0")).join("");
- if(digest!==bundle.content_sha256)errors.push("Embedded content hash mismatch");
- if(!expectedDigest||digest!==expectedDigest)errors.push("Manifest-pinned content hash mismatch");
- const claim=bundle.claim,evidence=claim.evidence||{};
- if(claim.status==="verified"){
-  if(!evidence.action_id)errors.push("Verified claim lacks evidence action ID");
-  const action=bundle.ledger.actions.find(x=>x.id===evidence.action_id);
-  if(!action)errors.push("Evidence action absent from ledger");
-  else if(action.status!==claim.expected_status||action.action!==claim.action)errors.push("Evidence action does not match claim");
+ if(!isDateTime(bundle.generated_at))errors.push("generated_at must be an ISO-8601 date-time with timezone");
+ if(typeof bundle.content_sha256!=="string"||!/^[0-9a-f]{64}$/.test(bundle.content_sha256))errors.push("content_sha256 must be 64 lowercase hexadecimal characters");
+ const claim=bundle.claim,ledger=bundle.ledger;
+ const claimFields=["id","habitat_id","job_id","claim","action","expected_status","created_at","verified_at","status","evidence","run_id"];
+ if(!isObject(claim))errors.push("claim must be an object");
+ else{
+  if(Object.keys(claim).some(key=>!claimFields.includes(key)))errors.push("claim contains unknown fields");
+  if(claimFields.some(key=>!(key in claim)))errors.push("claim is missing required fields");
+  for(const key of ["id","habitat_id","claim","expected_status","status"])if(typeof claim[key]!=="string")errors.push("claim."+key+" must be a string");
+  if(!isObject(claim.evidence))errors.push("claim.evidence must be an object");
+  for(const key of ["job_id","action","run_id"])if(claim[key]!==null&&claim[key]!==undefined&&typeof claim[key]!=="string")errors.push("claim."+key+" must be a string or null");
+  if(!isDateTime(claim.created_at))errors.push("claim.created_at must be an ISO-8601 date-time with timezone");
+  if(claim.verified_at!==null&&!isDateTime(claim.verified_at))errors.push("claim.verified_at must be an ISO-8601 date-time with timezone or null");
  }
- return{ok:errors.length===0,errors,digest,signature:bundle.signature?"present":"absent"};
+ if(!isObject(ledger))errors.push("ledger must be an object");
+ else{
+  if(Object.keys(ledger).sort().join(",")!=="actions,integrity")errors.push("ledger must contain exactly integrity and actions");
+  if(!["intact","failed"].includes(ledger.integrity))errors.push("ledger.integrity must be intact or failed");
+  if(!Array.isArray(ledger.actions))errors.push("ledger.actions must be an array");
+  else{
+   if(ledger.actions.length>10000)errors.push("ledger.actions exceeds maximum of 10000");
+   const actionFields=["id","habitat_id","job_id","timestamp","actor","action","status","details","run_id"];
+   ledger.actions.slice(0,10000).forEach((action,index)=>{
+    if(!isObject(action)){errors.push("ledger.actions["+index+"] must be an object");return}
+    if(Object.keys(action).sort().join(",")!==actionFields.slice().sort().join(","))errors.push("ledger.actions["+index+"] has invalid fields");
+    for(const key of ["id","habitat_id","actor","action","status"])if(typeof action[key]!=="string")errors.push("ledger.actions["+index+"]."+key+" must be a string");
+    if(!isObject(action.details))errors.push("ledger.actions["+index+"].details must be an object");
+    for(const key of ["job_id","run_id"])if(action[key]!==null&&action[key]!==undefined&&typeof action[key]!=="string")errors.push("ledger.actions["+index+"]."+key+" must be a string or null");
+    if(!isDateTime(action.timestamp))errors.push("ledger.actions["+index+"].timestamp must be an ISO-8601 date-time with timezone");
+   });
+  }
+ }
+ if("signature" in bundle){
+  const signature=bundle.signature;
+  if(!isObject(signature))errors.push("signature must be an object");
+  else{
+   const fields=["algorithm","key_id","agent_id","public_key","signature"];
+   if(Object.keys(signature).sort().join(",")!==fields.slice().sort().join(","))errors.push("signature has invalid fields");
+   if(signature.algorithm!=="Ed25519")errors.push("signature.algorithm must be Ed25519");
+   for(const key of ["key_id","agent_id"])if(signature[key]!==null&&signature[key]!==undefined&&typeof signature[key]!=="string")errors.push("signature."+key+" must be a string or null");
+   for(const key of ["public_key","signature"])if(typeof signature[key]!=="string"||!signature[key])errors.push("signature."+key+" must be a non-empty string");
+  }
+ }
+}
+async function verify(bundle,manifestDigest){
+ const errors=[];
+ if(!isObject(bundle))return{ok:false,errors:["Proof bundle must be a JSON object"],signature:"absent"};
+ const structural=[];
+ validateStructure(bundle,structural);errors.push(...structural);
+ let actual=null;
+ if(typeof bundle.content_sha256==="string"){
+  try{
+   const input={...bundle};delete input.generated_at;delete input.content_sha256;delete input.signature;
+   actual=[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(canonical(input))))].map(x=>x.toString(16).padStart(2,"0")).join("");
+  }catch(error){errors.push("Content hash computation failed");}
+  if(actual!==null&&actual!==bundle.content_sha256)errors.push("Embedded content hash mismatch");
+ }
+ if(!manifestDigest||actual!==manifestDigest)errors.push("Manifest-pinned content hash mismatch");
+ const beforeRelationships=errors.length;
+ const claim=bundle.claim,ledger=bundle.ledger;
+ if(isObject(claim)&&isObject(ledger)&&Array.isArray(ledger.actions)){
+  for(const [index,action] of ledger.actions.entries()){
+   if(!isObject(action))continue;
+   if(action.habitat_id!==claim.habitat_id)errors.push("ledger.actions["+index+"] habitat_id does not match claim");
+   if(claim.job_id!==null&&claim.job_id!==undefined&&action.job_id!==claim.job_id)errors.push("ledger.actions["+index+"] job_id does not match claim");
+   if(claim.run_id!==null&&claim.run_id!==undefined&&action.run_id!==claim.run_id)errors.push("ledger.actions["+index+"] run_id does not match claim");
+  }
+  const evidence=claim.evidence;
+  if(isObject(evidence)){
+   if(claim.status==="verified"){
+    if(!Object.keys(evidence).length)errors.push("verified claim must include evidence");
+    else{
+     if(typeof evidence.source!=="string"||!evidence.source)errors.push("verified claim evidence must identify a source");
+     if(evidence.status!==claim.expected_status)errors.push("verified claim evidence status does not match claim.expected_status");
+     if(evidence.source==="habitat_trusted_ledger"&&!evidence.action_id)errors.push("trusted-ledger verification must identify evidence.action_id");
+    }
+   }
+   if(evidence.action_id!==undefined&&evidence.action_id!==null){
+    const matched=ledger.actions.find(action=>isObject(action)&&action.id===evidence.action_id);
+    if(!matched)errors.push("claim evidence action_id is absent from ledger.actions");
+    else{
+     if(claim.action!==null&&claim.action!==undefined&&matched.action!==claim.action)errors.push("claim evidence action does not match claim.action");
+     if(claim.expected_status!==null&&claim.expected_status!==undefined&&matched.status!==claim.expected_status)errors.push("claim evidence action status does not match claim.expected_status");
+     if(claim.run_id!==null&&claim.run_id!==undefined&&matched.run_id!==claim.run_id)errors.push("claim evidence action run_id does not match claim.run_id");
+    }
+   }
+  }
+ }
+ if(claim&&claim.status==="verified"&&(!ledger||ledger.integrity!=="intact"))errors.push("verified claim cannot have failed ledger integrity");
+ const relationshipsValid=errors.length===beforeRelationships;
+ const contentValid=typeof actual==="string"&&actual===bundle.content_sha256;
+ return{ok:structural.length===0&&contentValid&&relationshipsValid&&actual===manifestDigest,errors,digest:actual,signature:bundle.signature?"present":"absent",ledgerIntegrity:ledger&&ledger.integrity||"unknown"};
 }
 function el(t,c,s){const n=document.createElement(t);if(c)n.className=c;if(s!==undefined)n.textContent=s;return n}
 async function main(){
@@ -77,13 +160,13 @@ async function main(){
      if(proofUrl.origin!==location.origin)throw Error("Proof URL must remain on this site");
      const proofResponse=await fetch(proofUrl.href,{cache:"no-store"});
      if(!proofResponse.ok)throw Error("Could not load proof ("+proofResponse.status+")");
-     const bundle=await proofResponse.json();
+     const raw=await proofResponse.text();\n     if(new TextEncoder().encode(raw).length>16*1024*1024)throw Error("Proof bundle exceeds 16 MiB");\n     const bundle=JSON.parse(raw);
      const result=await verify(bundle,item.content_sha256);
      card.append(el("p","claim",bundle.claim&&bundle.claim.claim?bundle.claim.claim:"Claim text unavailable"));
      const checks=el("div","checks");
      checks.append(
       el("span","check "+(result.ok?"ok":"bad"),result.ok?"PROOF VERIFIED":"PROOF CHECK FAILED"),
-      el("span","check "+(bundle.ledger&&bundle.ledger.integrity==="intact"?"ok":"bad"),"LEDGER: "+String(bundle.ledger&&bundle.ledger.integrity||"unknown").toUpperCase()),
+      el("span","check "+(bundle.ledger&&bundle.ledger.integrity==="intact"?"ok":"bad"),"LEDGER EXPORT: "+String(bundle.ledger&&bundle.ledger.integrity||"unknown").toUpperCase()),
       el("span","check warn","SIGNATURE: "+(result.signature==="present"?"PRESENT · UNVERIFIED":"ABSENT")),
       el("span","check","CLAIM: "+String(bundle.claim&&bundle.claim.status||"unknown").toUpperCase())
      );
