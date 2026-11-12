@@ -553,7 +553,54 @@ def build(cfg, out_path):
 *{{box-sizing:border-box;margin:0;padding:0}}html{{scroll-behavior:smooth}}body{{background:var(--bg);color:var(--tx);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:18px;width:min(1120px,calc(100% - 24px));margin:0 auto;-webkit-font-smoothing:antialiased}}h1{{font:800 15px ui-monospace,SFMono-Regular,monospace;letter-spacing:.06em;text-transform:uppercase;margin:2px 0}}.sub{{color:var(--mut);font:11px ui-monospace,monospace;margin:6px 0 18px}}.grid{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}}.kpi,.panel{{background:var(--card);border:1px solid var(--line);border-radius:11px}}.kpi{{padding:15px}}.kpi .v{{font:800 28px ui-monospace,monospace;color:var(--acc);font-variant-numeric:tabular-nums}}.vsub{{font-size:13px;color:var(--mut);font-weight:500}}.kpi .l{{color:var(--mut);font:800 9px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}}.panel{{padding:15px;margin-bottom:10px;overflow-x:auto}}.panel h2{{font:800 10px ui-monospace,monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.11em;margin-bottom:10px}}.panel.attn{{border-color:#5e3438}}.panel.attn h2{{color:#ff9c9c}}.panel.calm{{opacity:.9}}.anom{{padding:11px 0;border-top:1px solid var(--line);font-size:12px}}.anom:first-of-type{{border-top:0}}.badge{{font:800 9px ui-monospace;padding:4px 7px;border-radius:5px;margin-right:7px}}.nowrap{{white-space:nowrap}}table{{width:100%;min-width:620px;border-collapse:collapse;font-size:12px}}td{{padding:10px 8px;border-top:1px solid var(--line);vertical-align:top}}tr:first-child td{{border-top:0}}.mut{{color:var(--mut)}}.pill{{font:800 9px ui-monospace;padding:4px 7px;border-radius:999px}}.pill.on{{background:#143323;color:#7de3a6}}.pill.off{{border:1px solid var(--line);color:#77818c}}.st{{font-weight:600}}.st.f{{color:var(--bad)}}.st.s{{color:var(--ok)}}.chips{{display:flex;gap:6px;margin-bottom:8px}}.chip{{font:800 10px ui-monospace;padding:6px 10px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}.chip.active{{background:#252e43;border-color:#3d4f80;color:#dce4ff}}.hlth{{font:800 10px ui-monospace;padding:3px 7px;border-radius:999px}}.hlth.ok{{color:var(--ok);background:#143323}}.hlth.warn{{color:var(--warn);background:#3d2e18}}.hlth.bad{{color:var(--bad);background:#4a2024}}.ackbtn{{float:right;font:800 9px ui-monospace;padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}}.ackbtn:hover{{border-color:#56606c}}.ackbtn:disabled{{cursor:default;opacity:.65}}tr.grp td{{background:#151a20;color:var(--mut);font:800 9px ui-monospace;text-transform:uppercase;letter-spacing:.1em}}footer{{color:#66717d;font:10px ui-monospace;text-align:center;margin-top:14px}}
 @media(max-width:760px){{body{{width:calc(100% - 20px);padding:12px}}.grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}.kpi .v{{font-size:23px}}.panel{{padding:12px}}}}@media(max-width:420px){{.grid{{grid-template-columns:1fr}}.kpi .v{{font-size:25px}}}}
 @media(prefers-reduced-motion:reduce){{*{{transition:none!important}}}}
+
+/* AgentScope shared product UI — generated local dashboard */
+.skip-link{{position:fixed;left:12px;top:12px;z-index:1000;transform:translateY(-160%);background:#fff;color:#172019;padding:10px 12px;border:2px solid currentColor;border-radius:6px;font:600 12px Inter,ui-sans-serif,system-ui,sans-serif}}.skip-link:focus{{transform:translateY(0)}}
+:root{{--bg:#f4f5f1;--card:#fff;--line:#dce2d9;--tx:#172019;--mut:#68736b;--acc:#536f59;--ok:#32704b;--bad:#a8453d;--warn:#94651e}}
+body{{background:var(--bg);color:var(--tx);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.012em;padding:28px;width:min(1200px,calc(100% - 48px))}}
+h1{{font:750 clamp(25px,3vw,32px)/1.15 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.055em;text-transform:none;margin:4px 0}}
+.sub{{font:13px/1.5 Inter,ui-sans-serif,system-ui,sans-serif;color:var(--mut);margin:8px 0 24px}}
+.grid{{gap:12px;margin-bottom:14px}}
+.kpi,.panel{{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:0 2px 10px #17201905}}
+.kpi{{padding:19px}}
+.kpi .v{{font:740 30px/1.1 Inter,ui-sans-serif,system-ui,sans-serif;color:var(--acc);letter-spacing:-.05em;font-variant-numeric:tabular-nums}}
+.vsub{{font:500 12px Inter,ui-sans-serif,system-ui,sans-serif;color:var(--mut)}}
+.kpi .l{{font:650 10px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin-top:7px}}
+.panel{{padding:18px;margin-bottom:12px;overflow-x:auto}}
+.panel h2{{font:700 12px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.02em;text-transform:none;color:var(--tx);margin-bottom:12px}}
+.panel.attn{{border-color:#e5d1c6;background:#fff}}
+.panel.attn h2{{color:#8b4b3b}}
+.panel.calm{{opacity:1}}
+.anom{{padding:12px 0;border-color:#edf0eb;font-size:13px;line-height:1.6}}
+.badge{{font:700 9px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.05em;padding:5px 8px;border-radius:5px}}
+table{{font-size:13px;min-width:600px}}
+td{{padding:12px 10px;border-color:#edf0eb}}
+.mut{{color:var(--mut)}}
+.pill{{font:700 9px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.04em;padding:5px 8px}}
+.pill.on{{background:#e8f0e8;color:#376344}}
+.pill.off{{border-color:var(--line);color:#79837a}}
+.st{{font-weight:650}}
+.st.f{{color:var(--bad)}}
+.st.s{{color:var(--ok)}}
+.chips{{gap:7px;margin:0 0 12px}}
+.chip{{font:600 11px Inter,ui-sans-serif,system-ui,sans-serif;padding:8px 12px;border-radius:5px;border-color:var(--line);background:#fff;color:var(--mut);transition:background .18s ease,border-color .18s ease}}
+.chip:hover{{border-color:#b9c9b8}}
+.chip.active{{background:#e8eee7;border-color:#cbd9ca;color:#38543e}}
+.hlth{{font:700 10px Inter,ui-sans-serif,system-ui,sans-serif;padding:4px 8px}}
+.hlth.ok{{color:#376344;background:#e8f0e8}}
+.hlth.warn{{color:#8b621d;background:#f6f0e1}}
+.hlth.bad{{color:#93433c;background:#f8eae7}}
+.ackbtn{{font:600 10px Inter,ui-sans-serif,system-ui,sans-serif;padding:6px 10px;border-radius:5px;border-color:var(--line);color:#536f59;background:#fff}}
+.ackbtn:hover{{border-color:#9eaf9d;background:#f4f7f2}}
+tr.grp td{{background:#f3f5f1;color:#536f59;font:700 10px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase}}
+footer{{color:#7d887e;font:12px Inter,ui-sans-serif,system-ui,sans-serif;margin-top:20px}}
+button:focus-visible{{outline:3px solid #789579;outline-offset:3px}}
+@media(max-width:760px){{body{{width:calc(100% - 32px);padding:18px 0}}.grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}.kpi{{padding:15px}}.kpi .v{{font-size:25px}}.panel{{padding:14px}}}}
+@media(max-width:420px){{body{{width:calc(100% - 24px);padding:14px 0}}.grid{{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}.kpi{{padding:12px}}.kpi .v{{font-size:22px}}.kpi .l{{font-size:9px;line-height:1.4}}.panel{{padding:12px}}.panel h2{{font-size:12px}}}}
+@media(prefers-reduced-motion:reduce){{html{{scroll-behavior:auto}}*,*::before,*::after{{transition:none!important;animation:none!important}}}}
+
 </style></head><body class="{'compact' if cfg.get('compact') else ''}">
+<a class="skip-link" href="#dashboard-main">Skip to main content</a><main id="dashboard-main" tabindex="-1">
 <h1>{esc(cfg['title'])}</h1>
 <div class="sub">{esc(now)} — supervision view · read-only</div>
 
@@ -631,7 +678,7 @@ def build(cfg, out_path):
 }})();
 </script>
 
-</body></html>"""
+</main></body></html>"""
     d = os.path.dirname(out_path)
     if d:
         os.makedirs(d, exist_ok=True)

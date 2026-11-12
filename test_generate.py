@@ -174,5 +174,45 @@ class GenerateTests(unittest.TestCase):
         self.assertIn(".meta{color:var(--mut);font-size:12px;overflow-wrap:anywhere}", proofs)
 
 
+    def test_public_pages_share_the_product_design_system_and_accessibility(self):
+        root = Path(__file__).resolve().parent
+        index = (root / "site" / "index.html").read_text(encoding="utf-8")
+        demo = (root / "site" / "demo.html").read_text(encoding="utf-8")
+        proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
+
+        for page in (index, demo, proofs):
+            self.assertIn("--bg:#f4f5f1", page)
+            self.assertIn("#536f59", page)
+            self.assertIn("Inter,ui-sans-serif,system-ui", page)
+            self.assertIn("prefers-reduced-motion", page)
+            self.assertIn(":focus-visible", page)
+
+        self.assertIn('href="#dashboard-main"', demo)
+        self.assertIn('id="dashboard-main"', demo)
+        self.assertIn('href="#proof-main"', proofs)
+        self.assertIn('id="proof-main"', proofs)
+        self.assertIn("data-days", demo)
+        self.assertIn("document.querySelectorAll('.filter')", demo)
+        self.assertIn("crypto.subtle.digest", proofs)
+
+    def test_generated_dashboard_uses_shared_ui_and_keyboard_landmarks(self):
+        with tempfile.TemporaryDirectory() as td:
+            cfg = json.loads(json.dumps(generate.DEFAULT_CONFIG))
+            cfg["sources"] = {key: None for key in cfg["sources"]}
+            cfg["sources"]["leads_label"] = "Active items"
+            output = Path(td) / "dashboard.html"
+
+            generate.build(cfg, str(output))
+            rendered = output.read_text(encoding="utf-8")
+
+            self.assertIn("--bg:#f4f5f1", rendered)
+            self.assertIn("--acc:#536f59", rendered)
+            self.assertIn('class="skip-link"', rendered)
+            self.assertIn('id="dashboard-main"', rendered)
+            self.assertIn('role="group" aria-label="Time range filter"', rendered)
+            self.assertIn("Copy status summary", rendered)
+            self.assertIn("prefers-reduced-motion", rendered)
+
+
 if __name__ == "__main__":
     unittest.main()
