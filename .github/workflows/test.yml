@@ -17,3 +17,26 @@ jobs:
         run: pip install -e ".[test]"
       - name: Run tests
         run: python -m pytest -q
+
+  ui-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run responsive browser acceptance
+        run: node tests/ui_browser_test.cjs
+      - name: Upload UI screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentscope-ui-browser-screenshots
+          path: artifacts/*.png
+          if-no-files-found: ignore
