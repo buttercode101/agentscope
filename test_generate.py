@@ -170,3 +170,9 @@ class GenerateTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_proof_index_wraps_long_digest_metadata(self):
+        root = Path(__file__).resolve().parent
+        proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
+        self.assertIn(".meta{color:var(--mut);font-size:12px;overflow-wrap:anywhere}", proofs)
