@@ -4,6 +4,7 @@ const path = require("node:path");
 const { chromium } = require("playwright");
 
 const root = path.resolve(__dirname, "..");
+const siteRoot = path.join(root, "site");
 const artifacts = path.join(root, "artifacts");
 fs.mkdirSync(artifacts, { recursive: true });
 
@@ -23,8 +24,8 @@ const server = http.createServer((req, res) => {
     return;
   }
   if (pathname.endsWith("/")) pathname += "index.html";
-  const file = path.resolve(root, "." + pathname);
-  if (!file.startsWith(root + path.sep)) {
+  const file = path.resolve(siteRoot, "." + pathname);
+  if (!file.startsWith(siteRoot + path.sep)) {
     res.writeHead(403).end("Forbidden");
     return;
   }
