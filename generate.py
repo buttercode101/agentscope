@@ -555,6 +555,7 @@ def build(cfg, out_path):
 @media(prefers-reduced-motion:reduce){{*{{transition:none!important}}}}
 
 /* AgentScope shared product UI — generated local dashboard */
+.skip-link{{position:fixed;left:12px;top:12px;z-index:1000;transform:translateY(-160%);background:#fff;color:#172019;padding:10px 12px;border:2px solid currentColor;border-radius:6px;font:600 12px Inter,ui-sans-serif,system-ui,sans-serif}}.skip-link:focus{{transform:translateY(0)}}
 :root{{--bg:#f4f5f1;--card:#fff;--line:#dce2d9;--tx:#172019;--mut:#68736b;--acc:#536f59;--ok:#32704b;--bad:#a8453d;--warn:#94651e}}
 body{{background:var(--bg);color:var(--tx);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.012em;padding:28px;width:min(1200px,calc(100% - 48px))}}
 h1{{font:750 clamp(25px,3vw,32px)/1.15 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.055em;text-transform:none;margin:4px 0}}
@@ -599,6 +600,7 @@ button:focus-visible{{outline:3px solid #789579;outline-offset:3px}}
 @media(prefers-reduced-motion:reduce){{html{{scroll-behavior:auto}}*,*::before,*::after{{transition:none!important;animation:none!important}}}}
 
 </style></head><body class="{'compact' if cfg.get('compact') else ''}">
+<a class="skip-link" href="#dashboard-main">Skip to main content</a><main id="dashboard-main" tabindex="-1">
 <h1>{esc(cfg['title'])}</h1>
 <div class="sub">{esc(now)} — supervision view · read-only</div>
 
@@ -676,7 +678,7 @@ button:focus-visible{{outline:3px solid #789579;outline-offset:3px}}
 }})();
 </script>
 
-</body></html>"""
+</main></body></html>"""
     d = os.path.dirname(out_path)
     if d:
         os.makedirs(d, exist_ok=True)
