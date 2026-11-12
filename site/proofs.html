@@ -35,7 +35,67 @@ a:focus-visible{outline:3px solid #789579;outline-offset:3px}
 </style></head><body><a class="skip-link" href="#proof-main">Skip to main content</a><div class="wrap"><nav><a href="/">agentscope /</a><a href="/demo.html">Demo ↗</a></nav><main id="proof-main" tabindex="-1"><p class="mono">Habitat · portable evidence</p><h1>Proof snapshots.</h1><p class="lede">Historical Habitat proof exports copied into AgentScope. Each bundle is checked in your browser for its embedded SHA-256 content digest and claim/action consistency.</p><div class="notice"><strong>Important:</strong> a matching content hash detects changes to the exported bundle, but does not authenticate who published it. These are historical records, not live status. An unsigned proof does not independently establish that the claimed work happened in the outside world.</div><div id="proof-list" class="list" aria-live="polite"><div class="empty">Loading proof index…</div></div></main><footer>AgentScope · Evidence is labelled by what can actually be checked. <a href="/">Back to AgentScope</a></footer></div>
 <script>
 function canonical(v){if(Array.isArray(v))return "["+v.map(canonical).join(",")+"]";if(v&&typeof v==="object")return "{"+Object.keys(v).sort().map(k=>JSON.stringify(k)+":"+canonical(v[k])).join(",")+"}";return JSON.stringify(v)}
-async function verify(b){const e=[];for(const k of ["proof_version","generated_at","claim","ledger","content_sha256"])if(!(k in b))e.push("Missing "+k);if(b.proof_version!=="1")e.push("Unsupported proof version");if(!b.claim||typeof b.claim!=="object")e.push("Claim object missing");if(!b.ledger||!Array.isArray(b.ledger.actions))e.push("Ledger actions missing");if(b.ledger&&!["intact","failed"].includes(b.ledger.integrity))e.push("Invalid ledger integrity");if(e.length)return{ok:false,errors:e};const input={...b};delete input.generated_at;delete input.content_sha256;delete input.signature;const digest=[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(canonical(input))))].map(x=>x.toString(16).padStart(2,"0")).join("");if(digest!==b.content_sha256)e.push("Content hash mismatch");const c=b.claim,ev=c.evidence||{};if(c.status==="verified"){if(!ev.action_id)e.push("Verified claim lacks evidence action ID");const action=b.ledger.actions.find(x=>x.id===ev.action_id);if(!action)e.push("Evidence action absent from ledger");else if(action.status!==c.expected_status||action.action!==c.action)e.push("Evidence action does not match claim")}return{ok:!e.length,errors:e,digest,signature:b.signature?"present":"absent"}}
+async function verify(bundle,expectedDigest){
+ const errors=[];
+ if(!bundle||typeof bundle!=="object"||Array.isArray(bundle))return{ok:false,errors:["Proof bundle is not an object"],signature:"absent"};
+ for(const key of ["proof_version","generated_at","claim","ledger","content_sha256"])if(!(key in bundle))errors.push("Missing "+key);
+ if(bundle.proof_version!=="1")errors.push("Unsupported proof version");
+ if(!bundle.claim||typeof bundle.claim!=="object")errors.push("Claim object missing");
+ if(!bundle.ledger||!Array.isArray(bundle.ledger.actions))errors.push("Ledger actions missing");
+ if(bundle.ledger&&bundle.ledger.integrity!=="intact")errors.push("Ledger integrity is not intact");
+ if(errors.some(x=>x.startsWith("Missing ")||x==="Unsupported proof version"||x==="Claim object missing"||x==="Ledger actions missing"))return{ok:false,errors,signature:bundle.signature?"present":"absent"};
+ const input={...bundle};delete input.generated_at;delete input.content_sha256;delete input.signature;
+ const digest=[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(canonical(input))))].map(x=>x.toString(16).padStart(2,"0")).join("");
+ if(digest!==bundle.content_sha256)errors.push("Embedded content hash mismatch");
+ if(!expectedDigest||digest!==expectedDigest)errors.push("Manifest-pinned content hash mismatch");
+ const claim=bundle.claim,evidence=claim.evidence||{};
+ if(claim.status==="verified"){
+  if(!evidence.action_id)errors.push("Verified claim lacks evidence action ID");
+  const action=bundle.ledger.actions.find(x=>x.id===evidence.action_id);
+  if(!action)errors.push("Evidence action absent from ledger");
+  else if(action.status!==claim.expected_status||action.action!==claim.action)errors.push("Evidence action does not match claim");
+ }
+ return{ok:errors.length===0,errors,digest,signature:bundle.signature?"present":"absent"};
+}
 function el(t,c,s){const n=document.createElement(t);if(c)n.className=c;if(s!==undefined)n.textContent=s;return n}
-async function main(){const host=document.getElementById("proof-list");try{const r=await fetch("/proofs-manifest.json",{cache:"no-store"});if(!r.ok)throw Error("Proof manifest unavailable ("+r.status+")");const m=await r.json();host.replaceChildren();for(const [project,items]of Object.entries(m.projects||{}))for(const item of items){const card=el("article","proof");card.append(el("h2","",project+" / "+item.run_id),el("div","meta",item.claim+" · "+item.source));const response=await fetch(item.proof_url,{cache:"no-store"});if(!response.ok){card.append(el("p","check bad","Could not load proof ("+response.status+")"));host.append(card);continue}const b=await response.json(),v=await verify(b),checks=el("div","checks");card.append(el("p","claim",b.claim?.claim||"Claim text unavailable"));checks.append(el("span","check "+(v.ok?"ok":"bad"),v.ok?"CONTENT HASH MATCH":"INTEGRITY CHECK FAILED"),el("span","check "+(b.ledger.integrity==="intact"?"ok":"bad"),"LEDGER: "+b.ledger.integrity.toUpperCase()),el("span","check warn","SIGNATURE: "+(v.signature||"absent").toUpperCase()),el("span","check","CLAIM: "+String(b.claim.status||"unknown").toUpperCase()));card.append(checks);if(v.errors.length)card.append(el("p","meta",v.errors.join("; ")));card.append(el("p","meta","Generated "+b.generated_at+" · SHA-256 "+(v.digest||"unavailable")));const a=el("a","","Open raw proof JSON ↗");a.href=item.proof_url;a.target="_blank";a.rel="noopener noreferrer";card.append(a);host.append(card)}if(!host.children.length)host.append(el("div","empty","No proof snapshots published."))}catch(e){host.replaceChildren(el("div","empty",e.message))}}main();
+async function main(){
+ const host=document.getElementById("proof-list");
+ try{
+  const response=await fetch("/proofs-manifest.json",{cache:"no-store"});
+  if(!response.ok)throw Error("Proof manifest unavailable ("+response.status+")");
+  const manifest=await response.json();
+  if(!manifest||typeof manifest.projects!=="object"||!manifest.projects)throw Error("Proof manifest has an invalid projects index");
+  host.replaceChildren();
+  for(const [project,items] of Object.entries(manifest.projects)){
+   if(!Array.isArray(items))continue;
+   for(const item of items){
+    const card=el("article","proof");
+    card.append(el("h2","",project+" / "+String(item.run_id||"unnamed proof")),el("div","meta",String(item.claim||"Claim unavailable")+" · "+String(item.source||"source unspecified")));
+    host.append(card);
+    try{
+     const proofUrl=new URL(item.proof_url,location.origin);
+     if(proofUrl.origin!==location.origin)throw Error("Proof URL must remain on this site");
+     const proofResponse=await fetch(proofUrl.href,{cache:"no-store"});
+     if(!proofResponse.ok)throw Error("Could not load proof ("+proofResponse.status+")");
+     const bundle=await proofResponse.json();
+     const result=await verify(bundle,item.content_sha256);
+     card.append(el("p","claim",bundle.claim&&bundle.claim.claim?bundle.claim.claim:"Claim text unavailable"));
+     const checks=el("div","checks");
+     checks.append(
+      el("span","check "+(result.ok?"ok":"bad"),result.ok?"PROOF VERIFIED":"PROOF CHECK FAILED"),
+      el("span","check "+(bundle.ledger&&bundle.ledger.integrity==="intact"?"ok":"bad"),"LEDGER: "+String(bundle.ledger&&bundle.ledger.integrity||"unknown").toUpperCase()),
+      el("span","check warn","SIGNATURE: "+(result.signature==="present"?"PRESENT · UNVERIFIED":"ABSENT")),
+      el("span","check","CLAIM: "+String(bundle.claim&&bundle.claim.status||"unknown").toUpperCase())
+     );
+     card.append(checks);
+     if(result.errors.length)card.append(el("p","meta",result.errors.join("; ")));
+     card.append(el("p","meta","Generated "+String(bundle.generated_at||"unknown")+" · SHA-256 "+(result.digest||"unavailable")));
+     const link=el("a","","Open raw proof JSON ↗");link.href=proofUrl.href;link.target="_blank";link.rel="noopener noreferrer";card.append(link);
+    }catch(error){card.append(el("p","check bad","Proof could not be verified: "+error.message));}
+   }
+  }
+  if(!host.children.length)host.append(el("div","empty","No proof snapshots published."));
+ }catch(error){host.replaceChildren(el("div","empty","Proof index unavailable: "+error.message));}
+}
+main();
 </script></body></html>
