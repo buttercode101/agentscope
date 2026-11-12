@@ -55,6 +55,7 @@ async function main() {
     { path: "/", name: "home" },
     { path: "/demo.html", name: "demo" },
     { path: "/proofs.html", name: "proofs" },
+    { path: "/generated-dashboard-test.html", name: "generated-dashboard" },
   ];
 
   try {
@@ -122,13 +123,48 @@ async function main() {
           assert(focused, "proof explorer: keyboard Tab does not focus the skip link");
         }
 
+
+        if (item.name === "generated-dashboard" && width === 320) {
+          await page.keyboard.press("Tab");
+          const focused = await page.evaluate(() => document.activeElement?.classList.contains("skip-link"));
+          assert(focused, "generated dashboard: keyboard Tab does not focus the skip link");
+          const last24 = page.locator('.chip[data-range="1"]');
+          await last24.click();
+          assert(await last24.getAttribute("aria-pressed") === "true", "generated dashboard: 24-hour filter state missing");
+          const rows = page.locator("#actions-table tr[data-ts]");
+          assert(await rows.count() === 2, "generated dashboard: expected recent and historical actions");
+          assert(await rows.nth(1).evaluate(el => getComputedStyle(el).display === "none"),
+            "generated dashboard: 24-hour filter did not hide historical action");
+          const last7 = page.locator('.chip[data-range="7"]');
+          await last7.click();
+          assert(await last7.getAttribute("aria-pressed") === "true", "generated dashboard: 7-day filter state missing");
+          assert(await rows.nth(1).evaluate(el => getComputedStyle(el).display !== "none"),
+            "generated dashboard: 7-day filter did not restore historical action");
+          const ack = page.locator(".ackbtn");
+          assert(await ack.count() === 1, "generated dashboard: expected one acknowledge control");
+          await ack.click();
+          assert((await ack.textContent()).trim() === "Seen" && await ack.isDisabled(),
+            "generated dashboard: acknowledge action did not update state");
+          await page.reload({ waitUntil: "networkidle" });
+          const persistedAck = page.locator(".ackbtn");
+          assert((await persistedAck.textContent()).trim() === "Seen" && await persistedAck.isDisabled(),
+            "generated dashboard: acknowledgement did not persist locally");
+          await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+          const copy = page.locator("#sharebtn");
+          await copy.click();
+          await page.waitForFunction(() => document.getElementById("sharebtn")?.textContent === "Copied");
+          const copied = await page.evaluate(() => navigator.clipboard.readText());
+          assert(copied.includes("Browser acceptance dashboard"), "generated dashboard: copied summary omitted title");
+          assert(copied.includes("Disabled required job"), "generated dashboard: copied summary omitted alert");
+        }
+
         await page.close();
       }
     }
 
     assert(errors.length === 0, "browser runtime errors:\n" + errors.join("\n"));
-    console.log("Browser UI acceptance passed: 3 pages × 5 widths; mobile filters, table visibility, keyboard navigation and both Habitat proof bundles verified.");
-    console.log("Screenshots: artifacts/{home,demo,proofs}-{320,1440}.png");
+    console.log("Browser UI acceptance passed: 4 pages × 5 widths; public-page navigation, generated-dashboard filters/acknowledgement/copy, mobile table visibility, keyboard navigation and both Habitat proof bundles verified.");
+    console.log("Screenshots: artifacts/{home,demo,proofs,generated-dashboard}-{320,1440}.png");
   } finally {
     await browser.close();
     await new Promise(resolve => server.close(resolve));

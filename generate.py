@@ -616,16 +616,16 @@ button:focus-visible{{outline:3px solid #789579;outline-offset:3px}}
 <div class="panel"><h2>Scheduled jobs &amp; health</h2><table><tbody>{job_rows}</tbody></table></div>
 <div class="panel"><h2>Recent agent actions</h2>
 <div class="chips" role="group" aria-label="Time range filter">
-<button class="chip active" data-range="7">Last 7 days</button>
-<button class="chip" data-range="1">Last 24h</button>
+<button class="chip active" data-range="7" aria-pressed="true">Last 7 days</button>
+<button class="chip" data-range="1" aria-pressed="false">Last 24h</button>
 </div>
 <table id="actions-table"><tbody>{act_rows}</tbody></table></div>
 <script>
 (function(){{
   var chips=document.querySelectorAll('.chip');
   chips.forEach(function(c){{c.addEventListener('click',function(){{
-    chips.forEach(function(x){{x.classList.remove('active')}});
-    c.classList.add('active');
+    chips.forEach(function(x){{x.classList.remove('active');x.setAttribute('aria-pressed','false')}});
+    c.classList.add('active');c.setAttribute('aria-pressed','true');
     var cutoff=Date.now()-(parseInt(c.dataset.range)*864e5);
     document.querySelectorAll('#actions-table tr[data-ts]').forEach(function(tr){{
       var ts=Date.parse(tr.dataset.ts);
