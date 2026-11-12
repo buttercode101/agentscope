@@ -229,7 +229,7 @@ class GenerateTests(unittest.TestCase):
     def test_proof_explorer_checks_manifest_pinned_digest_and_handles_bad_ledger(self):
         root = Path(__file__).resolve().parent
         proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
-        self.assertIn("async function verify(bundle,expectedDigest)", proofs)
+        self.assertIn("async function verify(bundle,manifestDigest)", proofs)
         self.assertIn("Manifest-pinned content hash mismatch", proofs)
         self.assertIn("Embedded content hash mismatch", proofs)
         self.assertIn('bundle.ledger&&bundle.ledger.integrity', proofs)
