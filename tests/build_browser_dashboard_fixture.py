@@ -2,10 +2,11 @@ from datetime import datetime, timedelta, timezone
 import json
 import sqlite3
 from pathlib import Path
-
-import generate
+import sys
 
 root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(root))
+import generate
 site = root / "site"
 fixtures = root / ".browser-fixtures"
 fixtures.mkdir(exist_ok=True)
