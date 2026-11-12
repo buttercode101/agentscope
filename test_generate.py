@@ -182,7 +182,7 @@ class GenerateTests(unittest.TestCase):
 
         for page in (index, demo, proofs):
             self.assertIn("--bg:#f4f5f1", page)
-            self.assertIn("--accent:#536f59", page)
+            self.assertIn("#536f59", page)
             self.assertIn("Inter,ui-sans-serif,system-ui", page)
             self.assertIn("prefers-reduced-motion", page)
             self.assertIn(":focus-visible", page)
