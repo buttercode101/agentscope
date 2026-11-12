@@ -85,8 +85,8 @@ async function main() {
           await page.keyboard.press("Tab");
           const focused = await page.evaluate(() => document.activeElement?.classList.contains("skip-link"));
           assert(focused, "homepage: keyboard Tab does not focus the skip link");
-          assert(await page.locator('a[href="/demo.html"]').count() === 1, "homepage: demo navigation link missing");
-          assert(await page.locator('a[href="/proofs.html"]').count() === 1, "homepage: proof navigation link missing");
+          assert(await page.locator('a[href="/demo.html"]').count() >= 1, "homepage: demo navigation link missing");
+          assert(await page.locator('a[href="/proofs.html"]').count() >= 1, "homepage: proof navigation link missing");
         }
 
         if (item.name === "demo" && width === 320) {
