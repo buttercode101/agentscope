@@ -21,6 +21,55 @@ section{padding:88px 0;border-top:1px solid var(--line)}h2{font:800 clamp(28px,4
 @media(max-width:850px){header{grid-template-columns:1fr;gap:42px;padding-top:70px}.cards{grid-template-columns:1fr}.wrap{width:min(100% - 28px,1160px)}}@media(max-width:640px){nav .links a:not(.navcta){display:none}header{padding:58px 0 52px}h1{font-size:42px}section{padding:64px 0}.footer{display:block}.footer>*{display:block;margin:8px 0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .skip-link{position:fixed;left:12px;top:12px;z-index:1000;transform:translateY(-160%);background:#fff;color:#0b0d10;padding:9px 12px;border:2px solid currentColor;border-radius:8px}.skip-link:focus{transform:translateY(0)}
 a:focus-visible,button:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+
+/* AgentScope design system refresh */
+:root{--bg:#f4f5f1;--ink:#172019;--mut:#68736b;--line:#dce2d9;--card:#fff;--accent:#536f59;--dark:#172019;--good:#32704b}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.012em}
+.wrap{width:min(1200px,calc(100% - 48px))}
+nav{height:72px;border-bottom-color:var(--line)}
+.wordmark{font:750 18px/1.1 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.055em}
+.wordmark i{width:10px;height:10px;background:var(--accent);box-shadow:0 0 0 4px #536f5918}
+nav .links{gap:28px}
+nav .links a{font:600 13px/1.2 Inter,ui-sans-serif,system-ui,sans-serif;color:#59655d;transition:color .18s ease}
+nav .links a:hover{color:var(--accent)}
+.links .navcta{background:var(--ink);border-radius:7px;padding:10px 15px;color:#fff}
+header{padding:94px 0 82px;gap:72px}
+.tag,.kicker{font:700 11px/1.3 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.13em;color:var(--accent)}
+h1{font:750 clamp(44px,5.5vw,72px)/1.045 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.067em}
+h1 em{color:var(--accent)}
+.hero-sub{font-size:18px;line-height:1.65;color:#667168;max-width:590px}
+.btn{font:650 13px/1 Inter,ui-sans-serif,system-ui,sans-serif;padding:14px 18px;border-radius:7px;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+.btn:hover{background:#2b3a2e}
+.btn-ghost{background:transparent;border-color:#cbd4ca;color:var(--ink)}
+.btn-ghost:hover{background:#e9ede7;border-color:#aebcaf}
+.microline{font-size:12px;color:#7b857d}
+.stage{border-radius:12px;padding:17px;box-shadow:0 26px 70px #17201920}
+.stage-kpis>div{border-radius:6px}
+.stage-alert{border-radius:6px}
+.stage-table{border-radius:6px}
+section{padding:82px 0}
+h2{font:720 clamp(30px,3.7vw,44px)/1.12 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.055em}
+.lede{font-size:16px;line-height:1.7;color:#68736b}
+.cards{gap:16px;margin-top:34px}
+.card{border-radius:9px;padding:25px 24px;border-color:#dfe4dc;box-shadow:0 2px 8px #17201905}
+.card h3{font:680 16px/1.35 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.025em;margin:26px 0 9px}
+.card p{font-size:14px;line-height:1.7}
+.story{border-left-color:#77917a}
+.story p{font:500 clamp(20px,2.8vw,27px)/1.45 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.025em}
+.story .who{font:12px Inter,ui-sans-serif,system-ui,sans-serif}
+.spec{font-size:14px}
+.spec td:first-child{font:700 11px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.07em;color:#536f59}
+pre{border-radius:8px;background:#18221b;border-color:#27382b;font-size:12px}
+.dark{background:#172019;color:#f5f7f3;border-color:#26352a}
+.dark .kicker{color:#a6c2a9}
+.dark .lede{color:#b7c2b8}
+.dark .card{background:#f8faf6;border-color:#e1e7df}
+.end{padding-bottom:88px}
+.footer{font-size:12px}
+@media(max-width:850px){header{gap:38px;padding-top:66px}.wrap{width:min(100% - 32px,1200px)}}
+@media(max-width:640px){header{padding:54px 0 50px}h1{font-size:clamp(39px,10vw,48px)}section{padding:60px 0}.cta-row .btn{flex:1 1 auto;justify-content:center}}
+@media(max-width:360px){.wrap{width:calc(100% - 24px)}nav .wordmark{font-size:16px}.links .navcta{padding:9px 10px}.btn{padding:12px 13px;font-size:12px}}
+
 </style>
 </head>
 <body>
