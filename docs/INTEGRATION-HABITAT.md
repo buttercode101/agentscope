@@ -44,12 +44,12 @@ Use the actual database path configured for the local Habitat installation; the 
 
 The following checks were completed against the current production release:
 
-- Production source commit: `4879db33edad4ed27d31ef0df0065edd62342c15`.
-- GitHub Actions completed the full Python 3.11 pytest suite with **146 passed
-  in 4.09s** on the pull-request head that was merged into this release:
-  [workflow run 43210369263](https://github.com/buttercode101/agentscope/actions/runs/43210369263).
-- Vercel production deployment `dpl_9oEPruG849FTqmWzzro13s2kv4vH` reached
-  `READY` from `main` at the production source commit above.
+- Production source commit: `89fe2adc9b974741ecbf1f08bd3024495c7d3740` (the product-code commit verified for this report).
+- GitHub Actions completed the full Python 3.11 pytest suite with **147 passed
+  in 3.25s** on the pull-request head that was merged into this release:
+  [workflow run 43210791363](https://github.com/buttercode101/agentscope/actions/runs/43210791363).
+- Vercel production deployment `dpl_971KVFq4H7z5ViQEWmHV1SNp6CSn` reached
+  `READY` from `main` at the product-code commit above.
 - The homepage, demo, proof index, manifest, and both published proof JSON
   resources returned HTTP 200 after the latest production deployment.
 - Both historical proof digests were recomputed using Habitat's canonical
@@ -59,7 +59,7 @@ The following checks were completed against the current production release:
   snapshots of a healthy Habitat database, unchanged database bytes after
   bridge reads, tampered action-integrity hashes, missing/incomplete database
   states, SQLite backup/restore of a populated fixture, Unicode Ed25519
-  signing, and signature tamper rejection.
+  signing, signature tamper rejection, and a mobile-layout regression guard for unbroken SHA-256 digest strings.
 - The optional signing extra is declared as
   `pip install 'agentscope[signing]'`; the missing-dependency hint matches.
 - Vercel deployment protection is configured for previews only. Production
@@ -87,8 +87,10 @@ The release checks above do not establish complete product acceptance:
 - Expand backup/restore coverage to migrated databases, existing destinations,
   and recovery after an interrupted backup. The current test covers a
   populated database and verifies recovered action-ledger integrity.
-- Add real-browser tests for proof-index rendering, proof-link navigation,
-  keyboard interactions, and the responsive demo at narrow mobile widths.
+- Execute real-browser tests for proof-index rendering, proof-link navigation,
+  keyboard interactions, and the responsive demo at narrow mobile widths. The
+  mobile digest wrapping fix is source- and CI-verified, not visually verified
+  in a real browser.
 - AgentScope currently has no Android wrapper or PWA/service-worker assets.
   The Python CLI and generated HTML are local-first, but native Android
   installation and a browser-installable offline PWA are not implemented.
