@@ -160,7 +160,9 @@ async function main(){
      if(proofUrl.origin!==location.origin)throw Error("Proof URL must remain on this site");
      const proofResponse=await fetch(proofUrl.href,{cache:"no-store"});
      if(!proofResponse.ok)throw Error("Could not load proof ("+proofResponse.status+")");
-     const raw=await proofResponse.text();\n     if(new TextEncoder().encode(raw).length>16*1024*1024)throw Error("Proof bundle exceeds 16 MiB");\n     const bundle=JSON.parse(raw);
+     const raw=await proofResponse.text();
+     if(new TextEncoder().encode(raw).length>16*1024*1024)throw Error("Proof bundle exceeds 16 MiB");
+     const bundle=JSON.parse(raw);
      const result=await verify(bundle,item.content_sha256);
      card.append(el("p","claim",bundle.claim&&bundle.claim.claim?bundle.claim.claim:"Claim text unavailable"));
      const checks=el("div","checks");
