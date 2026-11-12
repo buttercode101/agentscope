@@ -214,5 +214,26 @@ class GenerateTests(unittest.TestCase):
             self.assertIn("prefers-reduced-motion", rendered)
 
 
+    def test_demo_mobile_tables_keep_cadence_and_action_status_visible(self):
+        root = Path(__file__).resolve().parent
+        demo = (root / "site" / "demo.html").read_text(encoding="utf-8")
+        self.assertIn('class="table-scroll" role="region"', demo)
+        self.assertNotIn(".table th:nth-child(2),.table td:nth-child(2){display:none}", demo)
+        self.assertNotIn(".act span:last-child{display:none}", demo)
+        self.assertIn('aria-pressed="true"', demo)
+        self.assertIn("setAttribute('aria-pressed','false')", demo)
+        self.assertIn("setAttribute('aria-pressed','true')", demo)
+
+    def test_proof_explorer_checks_manifest_pinned_digest_and_handles_bad_ledger(self):
+        root = Path(__file__).resolve().parent
+        proofs = (root / "site" / "proofs.html").read_text(encoding="utf-8")
+        self.assertIn("async function verify(bundle,expectedDigest)", proofs)
+        self.assertIn("Manifest-pinned content hash mismatch", proofs)
+        self.assertIn("Embedded content hash mismatch", proofs)
+        self.assertIn('bundle.ledger&&bundle.ledger.integrity', proofs)
+        self.assertIn("Proof URL must remain on this site", proofs)
+        self.assertIn("Proof could not be verified:", proofs)
+
+
 if __name__ == "__main__":
     unittest.main()
