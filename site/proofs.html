@@ -165,7 +165,7 @@ async function main(){
      card.append(el("p","claim",bundle.claim&&bundle.claim.claim?bundle.claim.claim:"Claim text unavailable"));
      const checks=el("div","checks");
      checks.append(
-      el("span","check "+(result.ok?"ok":"bad"),result.ok?"PROOF VERIFIED":"PROOF CHECK FAILED"),
+      el("span","check "+(result.ok?"ok":"bad"),result.ok?"BUNDLE CHECKS PASSED":"BUNDLE CHECK FAILED"),
       el("span","check "+(bundle.ledger&&bundle.ledger.integrity==="intact"?"ok":"bad"),"LEDGER EXPORT: "+String(bundle.ledger&&bundle.ledger.integrity||"unknown").toUpperCase()),
       el("span","check warn","SIGNATURE: "+(result.signature==="present"?"PRESENT · UNVERIFIED":"ABSENT")),
       el("span","check","CLAIM: "+String(bundle.claim&&bundle.claim.status||"unknown").toUpperCase())
