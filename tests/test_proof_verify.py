@@ -219,3 +219,16 @@ def test_builder_rejects_too_many_actions():
 
 def test_proof_size_limit_is_shared_with_verifier():
     assert MAX_PROOF_BYTES == 16 * 1024 * 1024
+
+
+def test_verifier_accepts_unicode_bundle_using_generator_canonicalization():
+    bundle = _bundle()
+    bundle["claim"]["claim"] = "Déploiement réussi — 東京"
+    bundle["claim"]["evidence"]["data"] = {"summary": "café"}
+    bundle["content_sha256"] = _digest(bundle)
+
+    result = verify_proof(bundle)
+
+    assert result["valid"] is True
+    assert result["assurance"]["content_integrity"] is True
+    assert result["assurance"]["internal_consistency"] is True
