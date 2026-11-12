@@ -36,7 +36,7 @@ a:focus-visible{outline:3px solid #789579;outline-offset:3px}
 <script>
 function canonical(v){if(Array.isArray(v))return "["+v.map(canonical).join(",")+"]";if(v&&typeof v==="object")return "{"+Object.keys(v).sort().map(k=>JSON.stringify(k)+":"+canonical(v[k])).join(",")+"}";return JSON.stringify(v)}
 function isObject(value){return value!==null&&typeof value==="object"&&!Array.isArray(value)}
-function isDateTime(value){return typeof value==="string"&&/T.*(?:Z|[+-]\\d{2}:\\d{2})$/.test(value)&&!Number.isNaN(Date.parse(value))}
+function isDateTime(value){return typeof value==="string"&&/T.*(?:Z|[+-]\d{2}:\d{2})$/.test(value)&&!Number.isNaN(Date.parse(value))}
 function finiteNumbers(value){if(typeof value==="number")return Number.isFinite(value);if(Array.isArray(value))return value.every(finiteNumbers);if(isObject(value))return Object.values(value).every(finiteNumbers);return true}
 function validateStructure(bundle,errors){
  const allowed=["proof_version","generated_at","claim","ledger","content_sha256","signature"];
