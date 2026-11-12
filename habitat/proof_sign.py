@@ -25,7 +25,7 @@ def _crypto():
         from cryptography.hazmat.primitives import serialization
         return Ed25519PrivateKey, Ed25519PublicKey, serialization
     except ImportError as exc:
-        raise RuntimeError("Proof signing requires the optional 'signing' dependency: pip install 'habitat[signing]'") from exc
+        raise RuntimeError("Proof signing requires the optional 'signing' dependency: pip install 'agentscope[signing]'") from exc
 
 
 def generate_keypair() -> tuple[str, str]:
