@@ -644,6 +644,26 @@ a:focus-visible,button:focus-visible,[tabindex="0"]:focus-visible{{scroll-margin
   *,*::before,*::after{{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 }}
 
+
+/* Respect the user's system appearance without changing the product's sage identity */
+@media(prefers-color-scheme:dark){{
+  :root{{color-scheme:dark;--bg:#111812;--ink:#edf2eb;--tx:#edf2eb;--mut:#a5b0a5;--line:#303c32;--card:#1b251d;--blue:#a5c0a3;--green:#8ec49a;--good:#8ec49a;--bad:#ef9a8f;--warn:#e8c17a;--acc:#a5c0a3;--ok:#8ec49a;--red:#ef9a8f;--amber:#e8c17a;--accent:#a5c0a3}}
+  body{{background:var(--bg);color:var(--ink,var(--tx))}}
+  .card,.proof,.kpi,.panel{{background:var(--card);color:var(--ink,var(--tx));border-color:var(--line)}}
+  .dark{{background:#0c130e;color:#edf2eb;border-color:#26352a}}
+  .dark .card{{background:#1b251d;color:#edf2eb;border-color:#303c32}}
+  .lede,.hero p,.hero-sub{{color:var(--mut)}}
+  .notice{{background:#28251b;color:#e7dcb9;border-color:#51472c}}
+  .attention .head,.panel.attention .head{{background:#2b211e;color:#efb4a8}}
+  .fail,.bad{{color:#ffb0a7;background:#3a2421;border-color:#67403a}}
+  .warn{{color:#f0d18e;background:#352d1d;border-color:#5a4a2d}}
+  .ok,.good{{color:#9cdbab}}
+  .btn-ghost,.filter,.chip,.ackbtn{{background:#1b251d;color:#dce7dc;border-color:#3b4a3d}}
+  .filter.active,.chip.active{{background:#2a3a2d;color:#e1eee1;border-color:#536f59}}
+  .table th,.table td,td{{border-color:#303c32}}
+  tr.grp td{{background:#202b22;color:#b8d0b8}}
+  .skip-link{{background:#edf2eb;color:#172019}}
+}}
 </style></head><body class="{'compact' if cfg.get('compact') else ''}">
 <a class="skip-link" href="#dashboard-main">Skip to main content</a><main id="dashboard-main" tabindex="-1">
 <h1>{esc(cfg['title'])}</h1>
