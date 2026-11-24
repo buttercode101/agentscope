@@ -76,6 +76,26 @@ a:focus-visible,button:focus-visible,[tabindex="0"]:focus-visible{scroll-margin:
   html{scroll-behavior:auto}
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* Respect the user's system appearance without changing the product's sage identity */
+@media(prefers-color-scheme:dark){
+  :root{color-scheme:dark;--bg:#111812;--ink:#edf2eb;--tx:#edf2eb;--mut:#a5b0a5;--line:#303c32;--card:#1b251d;--blue:#a5c0a3;--green:#8ec49a;--good:#8ec49a;--bad:#ef9a8f;--warn:#e8c17a;--acc:#a5c0a3;--ok:#8ec49a;--red:#ef9a8f;--amber:#e8c17a;--accent:#a5c0a3}
+  body{background:var(--bg);color:var(--ink,var(--tx))}
+  .card,.proof,.kpi,.panel{background:var(--card);color:var(--ink,var(--tx));border-color:var(--line)}
+  .dark{background:#0c130e;color:#edf2eb;border-color:#26352a}
+  .dark .card{background:#1b251d;color:#edf2eb;border-color:#303c32}
+  .lede,.hero p,.hero-sub{color:var(--mut)}
+  .notice{background:#28251b;color:#e7dcb9;border-color:#51472c}
+  .attention .head,.panel.attention .head{background:#2b211e;color:#efb4a8}
+  .fail,.bad{color:#ffb0a7;background:#3a2421;border-color:#67403a}
+  .warn{color:#f0d18e;background:#352d1d;border-color:#5a4a2d}
+  .ok,.good{color:#9cdbab}
+  .btn-ghost,.filter,.chip,.ackbtn{background:#1b251d;color:#dce7dc;border-color:#3b4a3d}
+  .filter.active,.chip.active{background:#2a3a2d;color:#e1eee1;border-color:#536f59}
+  .table th,.table td,td{border-color:#303c32}
+  tr.grp td{background:#202b22;color:#b8d0b8}
+  .skip-link{background:#edf2eb;color:#172019}
+}
 </style></head><body><a class="skip-link" href="#proof-main">Skip to main content</a><div class="wrap"><nav><a href="/">agentscope /</a><a href="/demo.html">Demo ↗</a></nav><main id="proof-main" tabindex="-1"><p class="mono">Habitat · portable evidence</p><h1>Proof snapshots.</h1><p class="lede">Historical Habitat proof exports copied into AgentScope. Each bundle is checked in your browser for structure, its SHA-256 digest, a separately pinned manifest digest and claim/action consistency.</p><div class="notice"><strong>Important:</strong> a matching content hash detects changes to the exported bundle, but does not authenticate who published it. These are historical records, not live status. An unsigned proof does not independently establish that the claimed work happened in the outside world. The ledger integrity value is the result recorded by Habitat at export time; this page does not recompute the underlying SQLite action hash chain.</div><div id="proof-list" class="list" aria-live="polite"><div class="empty">Loading proof index…</div></div></main><footer>AgentScope · Evidence is labelled by what can actually be checked. <a href="/">Back to AgentScope</a></footer></div>
 <script>
 function canonical(v){if(Array.isArray(v))return "["+v.map(canonical).join(",")+"]";if(v&&typeof v==="object")return "{"+Object.keys(v).sort().map(k=>JSON.stringify(k)+":"+canonical(v[k])).join(",")+"}";return JSON.stringify(v)}
