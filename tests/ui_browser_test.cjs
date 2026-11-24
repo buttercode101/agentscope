@@ -150,7 +150,7 @@ async function main() {
         if (item.name === "demo" && width === 320) {
           const cadenceVisible = await page.locator(".table th").nth(1).evaluate(el => getComputedStyle(el).display !== "none");
           const statusVisible = await page.locator(".act span:last-child").first().evaluate(el => getComputedStyle(el).display !== "none");
-          const tableScroll = await page.locator(".table-scroll").evaluate(el => el.scrollWidth > el.clientWidth);
+          const tableScroll = await page.locator(".table-scroll").first().evaluate(el => el.scrollWidth > el.clientWidth);
           assert(cadenceVisible, "demo@320: cadence column is hidden");
           assert(statusVisible, "demo@320: action outcome is hidden");
           assert(tableScroll, "demo@320: narrow table has no contained horizontal scroll");
