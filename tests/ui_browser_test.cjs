@@ -66,6 +66,63 @@ async function main() {
         await page.goto("http://127.0.0.1:4173" + item.path, { waitUntil: "networkidle" });
         await page.waitForTimeout(100);
 
+        const lightBackground = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+        await page.emulateMedia({ colorScheme: "dark" });
+        const darkBackground = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+        assert(darkBackground !== lightBackground,
+          item.name + "@" + width + ": system dark appearance did not change the surface palette");
+        await page.emulateMedia({ colorScheme: "light" });
+
+        const stress = await page.evaluate(() => {
+          const host = document.createElement("section");
+          host.setAttribute("aria-label", "Responsive containment stress fixture");
+          host.style.cssText = "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:100%;margin:16px 0;padding:8px;border:1px solid";
+          const text = document.createElement("p");
+          text.textContent = "unbroken-identifier-" + "X".repeat(320);
+          host.append(text);
+          const actions = document.createElement("div");
+          actions.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;min-width:0";
+          const button = document.createElement("button");
+          button.textContent = "Action-" + "Y".repeat(120);
+          actions.append(button);
+          host.append(actions);
+          const tableScroll = document.createElement("div");
+          tableScroll.className = "table-scroll";
+          tableScroll.setAttribute("role", "region");
+          tableScroll.style.cssText = "max-width:100%;overflow-x:auto";
+          const table = document.createElement("table");
+          table.style.cssText = "width:900px;min-width:900px";
+          const cell = document.createElement("td");
+          cell.textContent = "table-cell-" + "Z".repeat(160);
+          const row = document.createElement("tr");
+          row.append(cell);
+          table.append(row);
+          tableScroll.append(table);
+          host.append(tableScroll);
+          const modal = document.createElement("div");
+          modal.className = "modal";
+          modal.setAttribute("role", "dialog");
+          modal.style.cssText = "width:900px;padding:8px;border:1px solid";
+          modal.textContent = "modal-content-" + "M".repeat(180);
+          host.append(modal);
+          document.body.append(host);
+          return {
+            viewport: document.documentElement.clientWidth,
+            document: document.documentElement.scrollWidth,
+            tableClient: tableScroll.clientWidth,
+            tableScroll: tableScroll.scrollWidth,
+            modalWidth: modal.getBoundingClientRect().width
+          };
+        });
+        assert(stress.document <= stress.viewport + 1,
+          item.name + ": long text/flex/grid/table/modal stress caused page overflow");
+        assert(stress.modalWidth <= stress.viewport - 20,
+          item.name + ": modal exceeded the viewport containment boundary");
+        if (width <= 768) {
+          assert(stress.tableScroll > stress.tableClient,
+            item.name + ": wide table did not remain inside its scroll container");
+        }
+
         const metrics = await page.evaluate(() => ({
           viewport: document.documentElement.clientWidth,
           document: document.documentElement.scrollWidth,
