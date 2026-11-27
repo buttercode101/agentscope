@@ -11,6 +11,8 @@
 
 > **Deployment note:** the public site is a static product/demo surface. Operational AgentScope dashboards are generated locally from your own configured sources and are not uploaded by the generator.
 
+> **Latest acceptance:** [current product verification and remaining boundaries](PRODUCT_ACCEPTANCE.md).
+
 </div>
 
 ---
