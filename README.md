@@ -82,7 +82,7 @@ Copy `config.example.json`:
 | `group_by` | `"none"` or `"group"` — group jobs by their group/project field |
 | `compact` | `true` for compact density |
 | `never_run_grace_hours` | Grace period before an explicitly dated, enabled job with no runs is flagged |
-| `ack_db` | SQLite file holding the `acks(key, ts)` table for acknowledged anomalies |
+| `ack_db` | Optional legacy acknowledgement source, read-only; browser acknowledgements persist in localStorage |
 | `sources.mcp_jsonl` | Optional JSONL of MCP/tool calls (`tool`, `ts`, `ok`) → per-tool success panel |
 
 Any source may be `null` to skip it; if a core supervision source is disconnected, its state is shown as **UNKNOWN**, never healthy by default. Job definitions can optionally provide `required: false` for intentionally disabled jobs and `created_at` for reliable never-run detection. Timestamp parsing accepts timezone-aware ISO-8601 values and normalizes them before comparisons. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
