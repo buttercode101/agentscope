@@ -56,6 +56,7 @@ async function main() {
     { path: "/demo.html", name: "demo" },
     { path: "/proofs.html", name: "proofs" },
     { path: "/generated-dashboard-test.html", name: "generated-dashboard" },
+    { path: "/generated-dashboard-unknown-test.html", name: "generated-unknown" },
   ];
 
   try {
@@ -215,13 +216,28 @@ async function main() {
           assert(copied.includes("Disabled required job"), "generated dashboard: copied summary omitted alert");
         }
 
+        if (item.name === "generated-unknown" && width === 320) {
+          const values = await page.locator(".kpi .v").allTextContents();
+          assert(values.length >= 3 && values.slice(0, 3).every(value => value.trim() === "UNKNOWN"),
+            "unknown-state dashboard: disconnected source KPIs must not show zero");
+          const text = await page.locator("body").innerText();
+          assert(text.includes("Scheduled job source UNKNOWN"), "unknown-state dashboard: scheduled jobs not marked unknown");
+          assert(text.includes("Execution history UNKNOWN"), "unknown-state dashboard: executions not marked unknown");
+          assert(text.includes("Session source UNKNOWN"), "unknown-state dashboard: sessions not marked unknown");
+          assert(!text.includes("All clear"), "unknown-state dashboard: missing sources were presented as healthy");
+          assert(!text.includes("No runs recorded in the connected source"),
+            "unknown-state dashboard: missing execution source was presented as an empty connected source");
+          assert(await page.locator(".ackbtn").count() === 0,
+            "unknown-state dashboard: source warnings must not be acknowledgeable");
+        }
+
         await page.close();
       }
     }
 
     assert(errors.length === 0, "browser runtime errors:\n" + errors.join("\n"));
-    console.log("Browser UI acceptance passed: 4 pages × 5 widths; public-page navigation, generated-dashboard filters/acknowledgement/copy, mobile table visibility, keyboard navigation and both Habitat proof bundles verified.");
-    console.log("Screenshots: artifacts/{home,demo,proofs,generated-dashboard}-{320,1440}.png");
+    console.log("Browser UI acceptance passed: 5 pages × 5 widths; public-page navigation, generated-dashboard filters/acknowledgement/copy, mobile table visibility, keyboard navigation and both Habitat proof bundles verified.");
+    console.log("Screenshots: artifacts/{home,demo,proofs,generated-dashboard,generated-unknown}-{320,1440}.png");
   } finally {
     await browser.close();
     await new Promise(resolve => server.close(resolve));
