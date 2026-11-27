@@ -580,14 +580,19 @@ def esc(s): return html.escape(str(s))
 def build(cfg, out_path):
     now = datetime.now().strftime("%a %d %b %Y · %H:%M")
     s = cfg["sources"]
+    source_diagnostic_rows = source_diagnostics(s)
+    source_status = {row["key"]: row["status"] for row in source_diagnostic_rows}
+    jobs_known = source_status.get("cron_jobs_glob") == "ready"
+    execs_known = source_status.get("executions_db") == "ready"
+    sessions_known = source_status.get("sessions_dir") == "ready"
     light = cfg.get("theme", "dark") == "light"
     badge = BADGE_LIGHT if light else BADGE
     jobs = load_cron_jobs(s["cron_jobs_glob"]) if s.get("cron_jobs_glob") else []
     execs = recent_executions(s["executions_db"]) if s.get("executions_db") else []
-    leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None))) or {"total": 0, "active": 0}
+    leads = counter_summary(s.get("leads_db"), *(s.get("leads_query") or (None, None)))
     sess = session_activity(s.get("sessions_dir"), cfg["session_days"]) if s.get("sessions_dir") else {}
     habitat_snapshot = load_habitat_snapshot(s.get("habitat_db"))
-    source_anom = source_health(s)
+    source_anom = source_health(s, source_diagnostic_rows)
     if habitat_snapshot and not habitat_snapshot.get("available"):
         source_anom.append(("warn", "Habitat evidence runtime unavailable — assurance state is UNKNOWN.", ack_key("warn", "Habitat evidence runtime unavailable")))
     elif habitat_snapshot and habitat_snapshot.get("ledger_integrity") == "failed":
@@ -603,11 +608,15 @@ def build(cfg, out_path):
         anom = [("ok", f"No active operational alerts - {len(ackd)} item(s) acknowledged.", "")]
 
     enabled_n = sum(1 for j in jobs if j["enabled"])
+    jobs_kpi = f'{enabled_n}<span class="vsub">/{len(jobs)}</span>' if jobs_known else "UNKNOWN"
     def within_24h(e):
         t = parse_ts(e.get("started_at"))
         return t is not None and (datetime.now() - t).total_seconds() <= 86400
     last24_fail = sum(1 for e in execs if e.get("status")=="failed" and within_24h(e))
     last24_ok = sum(1 for e in execs if e.get("status") in ("succeeded","success","ok","completed") and within_24h(e))
+    failed_kpi = str(last24_fail) if execs_known else "UNKNOWN"
+    ok_kpi = str(last24_ok) if execs_known else "UNKNOWN"
+    failed_kpi_color = "var(--bad)" if execs_known and last24_fail else ("var(--warn)" if not execs_known else "var(--acc)")
     names = job_names(s["cron_jobs_glob"], s["executions_db"]) if s.get("executions_db") else {}
     rates = success_rates(execs)
     mcp_rows = mcp_tool_stats(s["mcp_jsonl"]) if s.get("mcp_jsonl") else []
@@ -627,7 +636,10 @@ def build(cfg, out_path):
         ts = rel_time(e.get("started_at"))
         # data-age attr powers the client-side time filter
         act_rows += f'<tr data-ts="{esc(e.get("started_at") or "")}"><td class="mut nowrap">{esc(ts)}</td><td>{esc(jn)}</td><td><span class="st {cls}">{outcome}</span></td></tr>'
-    act_rows = act_rows or '<tr><td class="mut">No runs recorded yet.</td></tr>'
+    if not execs_known:
+        act_rows = '<tr><td class="mut">Execution history UNKNOWN — connect a readable executions database.</td></tr>'
+    else:
+        act_rows = act_rows or '<tr><td class="mut">No runs recorded in the connected source.</td></tr>'
 
     def _anom_row(item, with_ack=False):
         k, m = item[0], item[1]
@@ -684,8 +696,12 @@ def build(cfg, out_path):
         job_rows = "".join(parts)
     else:
         job_rows = "".join(_job_row(j) for j in jobs) or '<tr><td class="mut" colspan="4">No scheduled jobs found.</td></tr>'
+    if not jobs_known:
+        job_rows = '<tr><td class="mut" colspan="4">Scheduled job source UNKNOWN — connect readable job-definition files.</td></tr>'
+    elif not jobs:
+        job_rows = '<tr><td class="mut" colspan="4">No scheduled jobs in the connected source.</td></tr>'
 
-    sess_spark = " · ".join(f"{d}: {n}" for d, n in sorted(sess.items())) or "no recent activity"
+    sess_spark = (" · ".join(f"{d}: {n}" for d, n in sorted(sess.items())) or "No recent activity in the connected session source.") if sessions_known else "Session source UNKNOWN — connect a readable session directory."
 
     if mcp_rows:
         mrows = "".join(
@@ -697,8 +713,14 @@ def build(cfg, out_path):
                      '<table><tbody>' + mrows + '</tbody></table></div>')
     else:
         mcp_panel = ""
-    kpi_leads = (f'<div class="kpi"><div class="v">{leads["active"]}<span class="vsub">/{leads["total"]}</span></div>'
-                 f'<div class="l">{esc(s.get("leads_label","Active items"))}</div></div>') if s.get("leads_db") else ""
+    if s.get("leads_db"):
+        if leads is None:
+            kpi_leads = f'<div class="kpi"><div class="v">UNKNOWN</div><div class="l">{esc(s.get("leads_label","Active items"))}</div></div>'
+        else:
+            kpi_leads = (f'<div class="kpi"><div class="v">{leads["active"]}<span class="vsub">/{leads["total"]}</span></div>'
+                          f'<div class="l">{esc(s.get("leads_label","Active items"))}</div></div>')
+    else:
+        kpi_leads = ""
 
     doc = f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
@@ -826,9 +848,9 @@ a:focus-visible,button:focus-visible,[tabindex="0"]:focus-visible{{scroll-margin
 <div class="sub">{esc(now)} — supervision view · read-only</div>
 
 <div class="grid">
-<div class="kpi"><div class="v">{enabled_n}<span class="vsub">/{len(jobs)}</span></div><div class="l">Scheduled jobs on</div></div>
-<div class="kpi"><div class="v" style="color:{'var(--bad)' if last24_fail else 'var(--acc)'}">{last24_fail}</div><div class="l">Failed runs (24h)</div></div>
-<div class="kpi"><div class="v">{last24_ok}</div><div class="l">OK runs (24h)</div></div>
+<div class="kpi"><div class="v">{jobs_kpi}</div><div class="l">Scheduled jobs on</div></div>
+<div class="kpi"><div class="v" style="color:{failed_kpi_color}">{failed_kpi}</div><div class="l">Failed runs (24h)</div></div>
+<div class="kpi"><div class="v">{ok_kpi}</div><div class="l">OK runs (24h)</div></div>
 {kpi_leads}
 </div>
 
@@ -906,7 +928,9 @@ a:focus-visible,button:focus-visible,[tabindex="0"]:focus-visible{{scroll-margin
     with open(out_path, "w") as f:
         f.write(doc)
     print(f"Wrote {out_path} ({len(doc)} bytes)")
-    print(f"Jobs: {len(jobs)} ({enabled_n} on) | 24h: {last24_ok} ok / {last24_fail} failed")
+    jobs_summary = f"{len(jobs)} ({enabled_n} on)" if jobs_known else "UNKNOWN"
+    runs_summary = f"{last24_ok} ok / {last24_fail} failed" if execs_known else "UNKNOWN"
+    print(f"Jobs: {jobs_summary} | 24h: {runs_summary}")
     for item in anom:
         k, m = item[0], item[1]
         print(f"  [{badge[k][0]}] {m}")
