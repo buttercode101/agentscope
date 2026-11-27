@@ -83,7 +83,7 @@ Copy `config.example.json`:
 | `ack_db` | SQLite file holding the `acks(key, ts)` table for acknowledged anomalies |
 | `sources.mcp_jsonl` | Optional JSONL of MCP/tool calls (`tool`, `ts`, `ok`) → per-tool success panel |
 
-Any source may be `null` to skip it. Job definitions can optionally provide `required: false` for intentionally disabled jobs and `created_at` for reliable never-run detection. Timestamp parsing accepts timezone-aware ISO-8601 values and normalizes them before comparisons. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
+Any source may be `null` to skip it; if a core supervision source is disconnected, its state is shown as **UNKNOWN**, never healthy by default. Job definitions can optionally provide `required: false` for intentionally disabled jobs and `created_at` for reliable never-run detection. Timestamp parsing accepts timezone-aware ISO-8601 values and normalizes them before comparisons. The anomaly logic lives in `anomalies()` — extend the signature list for your own stack's failure modes.
 
 ## Habitat evidence runtime (optional)
 
