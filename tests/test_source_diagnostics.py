@@ -73,6 +73,18 @@ class SourceDiagnosticsTests(unittest.TestCase):
             self.assertEqual(row["status"], "invalid")
             self.assertIn("valid job-definition JSON", row["detail"])
 
+    def test_mcp_jsonl_requires_tool_record_shape(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "tools.jsonl"
+            path.write_text('{"ok":true}\\n', encoding="utf-8")
+            rows = generate.source_diagnostics({"mcp_jsonl": str(path)})
+            row = next(item for item in rows if item["key"] == "mcp_jsonl")
+            self.assertEqual(row["status"], "invalid")
+            path.write_text('{"ok":true}\\n{"tool":"search","ok":true}\\n', encoding="utf-8")
+            rows = generate.source_diagnostics({"mcp_jsonl": str(path)})
+            row = next(item for item in rows if item["key"] == "mcp_jsonl")
+            self.assertEqual(row["status"], "degraded")
+
     def test_empty_and_invalid_mcp_jsonl_are_not_reported_ready(self):
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "tools.jsonl"
