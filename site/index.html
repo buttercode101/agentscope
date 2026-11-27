@@ -70,6 +70,70 @@ pre{border-radius:8px;background:#18221b;border-color:#27382b;font-size:12px}
 @media(max-width:640px){header{padding:54px 0 50px}h1{font-size:clamp(39px,10vw,48px)}section{padding:60px 0}.cta-row .btn{flex:1 1 auto;justify-content:center}}
 @media(max-width:360px){.wrap{width:calc(100% - 24px)}nav .wordmark{font-size:16px}.links .navcta{padding:9px 10px}.btn{padding:12px 13px;font-size:12px}}
 
+
+/* Responsive containment hardening — preserve local table scrolling, never page overflow */
+html{max-width:100%;overflow-x:clip}
+body{max-width:100%;min-width:0;overflow-x:clip;overflow-wrap:anywhere}
+*,*::before,*::after{box-sizing:border-box;min-width:0}
+img,svg,video,canvas,iframe{max-width:100%}
+main,header,footer,nav,section,article,aside,figure,.wrap,.shell,.grid,.hero,.hero-copy,.stage,.panel,.card,.proof,.kpi,.issue,.anom,.act,.head,.top,.footer,.story,.cards,.kpis,.stage-kpis,.table-scroll{min-width:0;max-width:100%}
+h1,h2,h3,h4,p,li,label,small,strong,em,span,a,td,th,figcaption,code,pre{overflow-wrap:anywhere;word-break:normal}
+pre,code{white-space:pre-wrap;max-width:100%}
+button,a.btn,.filter,.chip,.ackbtn{max-width:100%;white-space:normal;overflow-wrap:anywhere;min-height:40px}
+input,select,textarea{max-width:100%;min-width:0}
+.top,.hero,.head,.issue,.footer,.cta-row,.links,.controls,.chips,.checks{min-width:0}
+.top,.hero,.head,.issue,.footer,.cta-row,.links,.controls,.chips,.checks{flex-wrap:wrap}
+.top>* ,.hero>* ,.head>* ,.issue>* ,.footer>* ,.cta-row>* ,.links>*{min-width:0;max-width:100%}
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.cards,.stage-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid{min-width:0}
+.table-scroll{display:block;width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.table-scroll table{width:100%;min-width:560px;max-width:none}
+table{max-width:100%;border-collapse:collapse}
+td,th{overflow-wrap:anywhere;word-break:normal}
+.nowrap{white-space:normal;overflow-wrap:anywhere}
+.stage-table>div{grid-template-columns:minmax(0,1fr) 60px 42px}
+[role="dialog"],dialog,.modal{box-sizing:border-box;max-width:min(100%,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}
+a:focus-visible,button:focus-visible,[tabindex="0"]:focus-visible{scroll-margin:12px}
+@media(max-width:850px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .top,.hero,.head{align-items:flex-start}
+  .cta-row>*{flex:1 1 100%}
+  .links{gap:8px}
+}
+@media(max-width:380px){
+  .kpis,.stage-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stage-table>div{grid-template-columns:minmax(0,1fr) 44px 34px;gap:5px;padding:8px 6px}
+  .sample{white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
+/* Respect the user's system appearance without changing the product's sage identity */
+@media(prefers-color-scheme:dark){
+  :root{color-scheme:dark;--bg:#111812;--ink:#edf2eb;--tx:#edf2eb;--mut:#a5b0a5;--line:#303c32;--card:#1b251d;--blue:#a5c0a3;--green:#8ec49a;--good:#8ec49a;--bad:#ef9a8f;--warn:#e8c17a;--acc:#a5c0a3;--ok:#8ec49a;--red:#ef9a8f;--amber:#e8c17a;--accent:#a5c0a3}
+  body{background:var(--bg);color:var(--ink,var(--tx))}
+  .card,.proof,.kpi,.panel{background:var(--card);color:var(--ink,var(--tx));border-color:var(--line)}
+  .dark{background:#0c130e;color:#edf2eb;border-color:#26352a}
+  .dark .card{background:#1b251d;color:#edf2eb;border-color:#303c32}
+  .lede,.hero p,.hero-sub{color:var(--mut)}
+  .notice{background:#28251b;color:#e7dcb9;border-color:#51472c}
+  .attention .head,.panel.attention .head{background:#2b211e;color:#efb4a8}
+  .fail,.bad{color:#ffb0a7;background:#3a2421;border-color:#67403a}
+  .warn{color:#f0d18e;background:#352d1d;border-color:#5a4a2d}
+  .ok,.good{color:#9cdbab}
+  .btn-ghost,.filter,.chip,.ackbtn{background:#1b251d;color:#dce7dc;border-color:#3b4a3d}
+  .filter.active,.chip.active{background:#2a3a2d;color:#e1eee1;border-color:#536f59}
+  .table th,.table td,td{border-color:#303c32}
+  tr.grp td{background:#202b22;color:#b8d0b8}
+  .skip-link{background:#edf2eb;color:#172019}
+}
 </style>
 </head>
 <body>
@@ -86,7 +150,7 @@ pre{border-radius:8px;background:#18221b;border-color:#27382b;font-size:12px}
   </div>
 </nav>
 
-<header id="main-content" tabindex="-1">
+<main id="main-content" tabindex="-1"><header>
   <div class="hero-copy">
     <p class="tag">open source · stdlib-only · MIT</p>
     <h1>Your agents worked all night. <em>Know if anything went wrong.</em></h1>
@@ -122,7 +186,7 @@ pre{border-radius:8px;background:#18221b;border-color:#27382b;font-size:12px}
 # or point it at your own stack
 python3 generate.py --config myconfig.json -o dashboard.html</pre></section>
 
-<section class="end"><p class="kicker">Try it</p><h2>See the supervision screen before installing anything.</h2><p class="lede">The demo uses clearly labelled sample data. Your real dashboard stays local.</p><a class="btn" href="/demo.html">Open live demo ↗</a></section><footer><div class="footer"><span>© agentscope · MIT licensed</span><span><a href="https://github.com/buttercode101/agentscope">GitHub</a> · <a href="/demo.html">Demo</a></span></div></footer>
+<section class="end"><p class="kicker">Try it</p><h2>See the supervision screen before installing anything.</h2><p class="lede">The demo uses clearly labelled sample data. Your real dashboard stays local.</p><a class="btn" href="/demo.html">Open live demo ↗</a></section></main><footer><div class="footer"><span>© agentscope · MIT licensed</span><span><a href="https://github.com/buttercode101/agentscope">GitHub</a> · <a href="/demo.html">Demo</a></span></div></footer>
 
 </div>
 </body>

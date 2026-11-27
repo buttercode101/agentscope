@@ -599,6 +599,71 @@ button:focus-visible{{outline:3px solid #789579;outline-offset:3px}}
 @media(max-width:420px){{body{{width:calc(100% - 24px);padding:14px 0}}.grid{{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}.kpi{{padding:12px}}.kpi .v{{font-size:22px}}.kpi .l{{font-size:9px;line-height:1.4}}.panel{{padding:12px}}.panel h2{{font-size:12px}}}}
 @media(prefers-reduced-motion:reduce){{html{{scroll-behavior:auto}}*,*::before,*::after{{transition:none!important;animation:none!important}}}}
 
+
+/* Responsive containment hardening — preserve local table scrolling, never page overflow */
+html{{max-width:100%;overflow-x:clip}}
+body{{max-width:100%;min-width:0;overflow-x:clip;overflow-wrap:anywhere}}
+*,*::before,*::after{{box-sizing:border-box;min-width:0}}
+img,svg,video,canvas,iframe{{max-width:100%}}
+main,header,footer,nav,section,article,aside,figure,.wrap,.shell,.grid,.hero,.hero-copy,.stage,.panel,.card,.proof,.kpi,.issue,.anom,.act,.head,.top,.footer,.story,.cards,.kpis,.stage-kpis,.table-scroll{{min-width:0;max-width:100%}}
+h1,h2,h3,h4,p,li,label,small,strong,em,span,a,td,th,figcaption,code,pre{{overflow-wrap:anywhere;word-break:normal}}
+pre,code{{white-space:pre-wrap;max-width:100%}}
+button,a.btn,.filter,.chip,.ackbtn{{max-width:100%;white-space:normal;overflow-wrap:anywhere;min-height:40px}}
+input,select,textarea{{max-width:100%;min-width:0}}
+.top,.hero,.head,.issue,.footer,.cta-row,.links,.controls,.chips,.checks{{min-width:0}}
+.top,.hero,.head,.issue,.footer,.cta-row,.links,.controls,.chips,.checks{{flex-wrap:wrap}}
+.top>* ,.hero>* ,.head>* ,.issue>* ,.footer>* ,.cta-row>* ,.links>*{{min-width:0;max-width:100%}}
+.kpis{{grid-template-columns:repeat(4,minmax(0,1fr))}}.cards,.stage-kpis{{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.grid{{min-width:0}}
+.table-scroll{{display:block;width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}}
+.table-scroll table{{width:100%;min-width:560px;max-width:none}}
+table{{max-width:100%;border-collapse:collapse}}
+td,th{{overflow-wrap:anywhere;word-break:normal}}
+.nowrap{{white-space:normal;overflow-wrap:anywhere}}
+.stage-table>div{{grid-template-columns:minmax(0,1fr) 60px 42px}}
+[role="dialog"],dialog,.modal{{box-sizing:border-box;max-width:min(100%,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}}
+a:focus-visible,button:focus-visible,[tabindex="0"]:focus-visible{{scroll-margin:12px}}
+@media(max-width:850px){{
+  .cards{{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .kpis{{grid-template-columns:repeat(2,minmax(0,1fr))}}
+}}
+@media(max-width:640px){{
+  .cards{{grid-template-columns:minmax(0,1fr)}}
+  .kpis{{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .top,.hero,.head{{align-items:flex-start}}
+  .cta-row>*{{flex:1 1 100%}}
+  .links{{gap:8px}}
+}}
+@media(max-width:380px){{
+  .kpis,.stage-kpis{{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .stage-table>div{{grid-template-columns:minmax(0,1fr) 44px 34px;gap:5px;padding:8px 6px}}
+  .sample{{white-space:normal}}
+}}
+@media(prefers-reduced-motion:reduce){{
+  html{{scroll-behavior:auto}}
+  *,*::before,*::after{{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+}}
+
+
+/* Respect the user's system appearance without changing the product's sage identity */
+@media(prefers-color-scheme:dark){{
+  :root{{color-scheme:dark;--bg:#111812;--ink:#edf2eb;--tx:#edf2eb;--mut:#a5b0a5;--line:#303c32;--card:#1b251d;--blue:#a5c0a3;--green:#8ec49a;--good:#8ec49a;--bad:#ef9a8f;--warn:#e8c17a;--acc:#a5c0a3;--ok:#8ec49a;--red:#ef9a8f;--amber:#e8c17a;--accent:#a5c0a3}}
+  body{{background:var(--bg);color:var(--ink,var(--tx))}}
+  .card,.proof,.kpi,.panel{{background:var(--card);color:var(--ink,var(--tx));border-color:var(--line)}}
+  .dark{{background:#0c130e;color:#edf2eb;border-color:#26352a}}
+  .dark .card{{background:#1b251d;color:#edf2eb;border-color:#303c32}}
+  .lede,.hero p,.hero-sub{{color:var(--mut)}}
+  .notice{{background:#28251b;color:#e7dcb9;border-color:#51472c}}
+  .attention .head,.panel.attention .head{{background:#2b211e;color:#efb4a8}}
+  .fail,.bad{{color:#ffb0a7;background:#3a2421;border-color:#67403a}}
+  .warn{{color:#f0d18e;background:#352d1d;border-color:#5a4a2d}}
+  .ok,.good{{color:#9cdbab}}
+  .btn-ghost,.filter,.chip,.ackbtn{{background:#1b251d;color:#dce7dc;border-color:#3b4a3d}}
+  .filter.active,.chip.active{{background:#2a3a2d;color:#e1eee1;border-color:#536f59}}
+  .table th,.table td,td{{border-color:#303c32}}
+  tr.grp td{{background:#202b22;color:#b8d0b8}}
+  .skip-link{{background:#edf2eb;color:#172019}}
+}}
 </style></head><body class="{'compact' if cfg.get('compact') else ''}">
 <a class="skip-link" href="#dashboard-main">Skip to main content</a><main id="dashboard-main" tabindex="-1">
 <h1>{esc(cfg['title'])}</h1>
@@ -613,13 +678,13 @@ button:focus-visible{{outline:3px solid #789579;outline-offset:3px}}
 
 <div class="panel {'attn' if not anom[0][0] == 'ok' else 'calm'}"><h2>&#9888; Needs attention</h2>{an_html}</div>
 
-<div class="panel"><h2>Scheduled jobs &amp; health</h2><table><tbody>{job_rows}</tbody></table></div>
+<div class="panel"><h2>Scheduled jobs &amp; health</h2><div class="table-scroll" role="region" aria-label="Scheduled jobs and health" tabindex="0"><table><tbody>{job_rows}</tbody></table></div></div>
 <div class="panel"><h2>Recent agent actions</h2>
 <div class="chips" role="group" aria-label="Time range filter">
 <button class="chip active" data-range="7" aria-pressed="true">Last 7 days</button>
 <button class="chip" data-range="1" aria-pressed="false">Last 24h</button>
 </div>
-<table id="actions-table"><tbody>{act_rows}</tbody></table></div>
+<div class="table-scroll" role="region" aria-label="Recent agent actions" tabindex="0"><table id="actions-table"><tbody>{act_rows}</tbody></table></div></div>
 <script>
 (function(){{
   var chips=document.querySelectorAll('.chip');
