@@ -142,6 +142,43 @@ class GenerateTests(unittest.TestCase):
             self.assertIn("No runs recorded in the connected source", rendered)
             self.assertNotIn("UNKNOWN", rendered)
 
+    def test_dashboard_generation_never_mutates_execution_or_lead_sources(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            jobs = root / "jobs.json"
+            jobs.write_text(json.dumps({"jobs": [{"id": "job-1", "name": "One job", "enabled": True}]}), encoding="utf-8")
+            db = root / "sources.db"
+            with sqlite3.connect(db) as connection:
+                connection.execute("CREATE TABLE executions (job_id TEXT, status TEXT, started_at TEXT, finished_at TEXT, error TEXT)")
+                connection.execute("INSERT INTO executions VALUES ('job-1', 'succeeded', '2026-11-27T10:00:00', NULL, NULL)")
+                connection.execute("CREATE TABLE leads (active INTEGER)")
+                connection.execute("INSERT INTO leads VALUES (1)")
+            sessions = root / "sessions"
+            sessions.mkdir()
+            (sessions / "session.json").write_text("{}", encoding="utf-8")
+            before = hashlib.sha256(db.read_bytes()).hexdigest()
+
+            cfg = json.loads(json.dumps(generate.DEFAULT_CONFIG))
+            cfg["sources"] = {key: None for key in cfg["sources"]}
+            cfg["sources"].update({
+                "cron_jobs_glob": str(jobs),
+                "executions_db": str(db),
+                "sessions_dir": str(sessions),
+                "leads_db": str(db),
+                "leads_query": ["SELECT count(*) FROM leads", "SELECT count(*) FROM leads WHERE active=1"],
+                "ack_db": str(db),
+            })
+            output = root / "dashboard.html"
+            generate.build(cfg, str(output))
+            rendered = output.read_text(encoding="utf-8")
+
+            self.assertEqual(hashlib.sha256(db.read_bytes()).hexdigest(), before)
+            with sqlite3.connect(db) as connection:
+                tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            self.assertEqual(tables, {"executions", "leads"})
+            self.assertIn('1<span class="vsub">/1</span>', rendered)
+
     def test_empty_mcp_source_is_unknown(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "mcp.jsonl"
