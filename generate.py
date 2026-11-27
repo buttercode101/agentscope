@@ -164,40 +164,42 @@ def load_config(path):
 
 # ------------------------------------------------------------ collectors ----
 
-def source_health(sources):
-    """Return explicit source-health anomalies so missing telemetry never looks healthy."""
+def source_health(sources, diagnostics=None):
+    """Return actionable UNKNOWN findings for disconnected or unusable telemetry."""
+    rows = diagnostics if diagnostics is not None else source_diagnostics(sources)
+    by_key = {row["key"]: row for row in rows}
     findings = []
-    core_sources = [
+    core = [
         ("cron_jobs_glob", "Job-definition source", "scheduled-job state"),
         ("executions_db", "Execution-history source", "run health"),
         ("sessions_dir", "Session source", "session activity"),
     ]
-    for key, label, state in core_sources:
-        raw = sources.get(key)
-        if not raw:
-            findings.append(("warn", f"{label} not configured — {state} is UNKNOWN."))
-        elif key == "cron_jobs_glob" and not glob.glob(raw):
-            findings.append(("warn", "Job-definition source unavailable — scheduled-job state is UNKNOWN."))
-        elif key == "executions_db" and not os.path.isfile(raw):
-            findings.append(("warn", "Execution-history source unavailable — run health is UNKNOWN."))
-        elif key == "sessions_dir" and not os.path.isdir(raw):
-            findings.append(("warn", "Session source unavailable — session activity is UNKNOWN."))
-    mcp = sources.get("mcp_jsonl")
-    if mcp and not os.path.isfile(mcp):
-        findings.append(("warn", "MCP activity source unavailable — tool-call health is UNKNOWN."))
-    elif mcp and os.path.isfile(mcp):
-        try:
-            if os.path.getsize(mcp) == 0:
-                findings.append(("warn", "MCP activity source is empty — tool-call health is UNKNOWN."))
-            else:
-                with open(mcp, "r", encoding="utf-8", errors="replace") as handle:
-                    if not handle.read().strip():
-                        findings.append(("warn", "MCP activity source is empty — tool-call health is UNKNOWN."))
-        except OSError:
-            findings.append(("warn", "MCP activity source could not be inspected — tool-call health is UNKNOWN."))
+    for key, label, state in core:
+        row = by_key.get(key, {"status": "not configured"})
+        status = row.get("status", "unknown")
+        if status == "ready":
+            continue
+        if status == "not configured":
+            message = f"{label} not configured — {state} is UNKNOWN."
+        elif status == "missing":
+            message = f"{label} unavailable — {state} is UNKNOWN."
+        else:
+            message = f"{label} {status} — {state} is UNKNOWN."
+        findings.append(("warn", message))
+
+    for key, label, state in (
+        ("mcp_jsonl", "MCP activity source", "tool-call health"),
+        ("leads_db", "Lead activity source", "lead counts"),
+    ):
+        if not sources.get(key):
+            continue
+        row = by_key.get(key, {"status": "unknown"})
+        status = row.get("status", "unknown")
+        if status != "ready":
+            findings.append(("warn", f"{label} {status} — {state} is UNKNOWN."))
+    if sources.get("leads_db") and not sources.get("leads_query"):
+        findings.append(("warn", "Lead count queries not configured — lead counts are UNKNOWN."))
     return [(kind, message, ack_key(kind, message)) for kind, message in findings]
-
-
 
 def source_diagnostics(sources):
     """Inspect configured inputs without mutating them; return safe, actionable status rows."""
