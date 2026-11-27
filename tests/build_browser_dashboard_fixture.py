@@ -44,3 +44,8 @@ cfg["sources"] = {key: None for key in cfg["sources"]}
 cfg["sources"]["cron_jobs_glob"] = str(jobs_path)
 cfg["sources"]["executions_db"] = str(db_path)
 generate.build(cfg, str(site / "generated-dashboard-test.html"))
+
+unknown_cfg = json.loads(json.dumps(generate.DEFAULT_CONFIG))
+unknown_cfg["title"] = "Unknown-state dashboard"
+unknown_cfg["sources"] = {key: None for key in unknown_cfg["sources"]}
+generate.build(unknown_cfg, str(site / "generated-dashboard-unknown-test.html"))
