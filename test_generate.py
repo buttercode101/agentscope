@@ -110,6 +110,37 @@ class GenerateTests(unittest.TestCase):
             self.assertIn("UNKNOWN", rendered)
             self.assertNotIn("All clear", rendered)
             self.assertNotIn('class="ackbtn"', rendered, "missing-source evidence must not be acknowledgeable")
+            self.assertIn("Scheduled job source UNKNOWN", rendered)
+            self.assertIn("Execution history UNKNOWN", rendered)
+            self.assertIn("Session source UNKNOWN", rendered)
+            self.assertNotIn("No runs recorded in the connected source", rendered)
+            self.assertNotIn("no recent activity", rendered)
+
+    def test_connected_empty_sources_show_real_zero_not_unknown(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            jobs = root / "jobs.json"
+            jobs.write_text(json.dumps({"jobs": []}), encoding="utf-8")
+            db = root / "executions.db"
+            with sqlite3.connect(db) as connection:
+                connection.execute("CREATE TABLE executions (job_id TEXT, status TEXT, started_at TEXT, finished_at TEXT, error TEXT)")
+            sessions = root / "sessions"
+            sessions.mkdir()
+            (sessions / "session.json").write_text("{}", encoding="utf-8")
+            cfg = json.loads(json.dumps(generate.DEFAULT_CONFIG))
+            cfg["sources"] = {key: None for key in cfg["sources"]}
+            cfg["sources"].update({
+                "cron_jobs_glob": str(jobs),
+                "executions_db": str(db),
+                "sessions_dir": str(sessions),
+            })
+            output = root / "dashboard.html"
+            generate.build(cfg, str(output))
+            rendered = output.read_text(encoding="utf-8")
+            self.assertIn('0<span class="vsub">/0</span>', rendered)
+            self.assertIn("No scheduled jobs in the connected source", rendered)
+            self.assertIn("No runs recorded in the connected source", rendered)
+            self.assertNotIn("UNKNOWN", rendered)
 
     def test_empty_mcp_source_is_unknown(self):
         with tempfile.TemporaryDirectory() as td:
