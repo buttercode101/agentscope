@@ -134,7 +134,7 @@ DEFAULT_CONFIG = {
         "leads_label": "Active items",
         "mcp_jsonl": None,                 # optional JSONL of MCP/tool calls
         "habitat_db": None,                # optional read-only Habitat SQLite database
-        "ack_db": "~/.hermes/cron/executions.db",  # sqlite table for acknowledged operational alerts
+        "ack_db": None,                        # optional legacy read-only acknowledgement source
     },
     "session_days": 7,
     "max_actions": 15,
@@ -351,52 +351,68 @@ def load_cron_jobs(pattern):
     return sorted(out, key=lambda x: (not x["enabled"], x["name"].lower()))
 
 def recent_executions(db_path, limit=40):
-    """Load recent execution rows without assuming every optional column exists."""
+    """Read recent execution rows without creating or mutating the source database."""
     wanted = ["job_id", "status", "started_at", "finished_at", "error"]
     try:
-        conn = sqlite3.connect(db_path)
-        cols = {row[1] for row in conn.execute("PRAGMA table_info(executions)")}
-        selected = [name for name in wanted if name in cols]
-        if not selected:
-            return []
-        sql = "SELECT " + ", ".join(selected) + " FROM executions ORDER BY rowid DESC LIMIT ?"
-        rows = []
-        for values in conn.execute(sql, (limit,)):
-            row = {name: None for name in wanted}
-            row.update(dict(zip(selected, values)))
-            rows.append(row)
-        conn.close()
-        return rows
+        uri = "file:" + os.path.abspath(os.path.expanduser(db_path)).replace("?", "%3f") + "?mode=ro"
+        conn = sqlite3.connect(uri, uri=True, timeout=2)
+        try:
+            cols = {row[1] for row in conn.execute("PRAGMA table_info(executions)")}
+            selected = [name for name in wanted if name in cols]
+            if not selected:
+                return []
+            sql = "SELECT " + ", ".join(selected) + " FROM executions ORDER BY rowid DESC LIMIT ?"
+            rows = []
+            for values in conn.execute(sql, (limit,)):
+                row = {name: None for name in wanted}
+                row.update(dict(zip(selected, values)))
+                rows.append(row)
+            return rows
+        finally:
+            conn.close()
     except Exception:
         return []
 
 def job_names(jobs_pattern, exec_db):
+    """Resolve job labels from sources using read-only SQLite access."""
     names = {}
-    try:
-        c = sqlite3.connect(exec_db)
-        for jid, in c.execute("SELECT DISTINCT job_id FROM executions"):
-            names[jid] = jid[:8]
-    except Exception:
-        pass
-    for path in glob.glob(jobs_pattern):
+    if exec_db:
         try:
-            data = json.load(open(path))
-            items = data if isinstance(data, list) else data.get("jobs", list(data.values()) if isinstance(data, dict) else [])
-            for j in items:
-                if isinstance(j, dict) and j.get("id"):
-                    names[j["id"]] = j.get("name", j["id"][:8])
+            uri = "file:" + os.path.abspath(os.path.expanduser(exec_db)).replace("?", "%3f") + "?mode=ro"
+            c = sqlite3.connect(uri, uri=True, timeout=2)
+            try:
+                for jid, in c.execute("SELECT DISTINCT job_id FROM executions"):
+                    names[jid] = jid[:8]
+            finally:
+                c.close()
         except Exception:
             pass
+    if jobs_pattern:
+        for path in glob.glob(jobs_pattern):
+            try:
+                with open(path, "r", encoding="utf-8") as handle:
+                    data = json.load(handle)
+                items = data if isinstance(data, list) else data.get("jobs", list(data.values()) if isinstance(data, dict) else [])
+                for j in items:
+                    if isinstance(j, dict) and j.get("id"):
+                        names[j["id"]] = j.get("name", j["id"][:8])
+            except Exception:
+                pass
     return names
 
 def counter_summary(db_path, total_q, active_q):
+    """Run configured read-only count queries against a local SQLite source."""
     if not db_path or not total_q:
         return None
     try:
-        c = sqlite3.connect(db_path)
-        n, = c.execute(total_q).fetchone()
-        a, = c.execute(active_q).fetchone() if active_q else (n,)
-        return {"total": n, "active": a}
+        uri = "file:" + os.path.abspath(os.path.expanduser(db_path)).replace("?", "%3f") + "?mode=ro"
+        c = sqlite3.connect(uri, uri=True, timeout=2)
+        try:
+            n, = c.execute(total_q).fetchone()
+            a, = c.execute(active_q).fetchone() if active_q else (n,)
+            return {"total": n, "active": a}
+        finally:
+            c.close()
     except Exception:
         return None
 
@@ -493,13 +509,20 @@ def anomalies(jobs, execs, never_run_grace_hours=48):
 
 
 def ack_load(db_path):
-    """Load set of acknowledged anomaly keys."""
+    """Read existing acknowledgements without creating tables or changing sources."""
     acks = set()
+    if not db_path or not os.path.isfile(os.path.expanduser(db_path)):
+        return acks
     try:
-        c = sqlite3.connect(db_path)
-        c.execute("CREATE TABLE IF NOT EXISTS acks(key TEXT PRIMARY KEY, ts TEXT)")
-        for (k,) in c.execute("SELECT key FROM acks"):
-            acks.add(k)
+        uri = "file:" + os.path.abspath(os.path.expanduser(db_path)).replace("?", "%3f") + "?mode=ro"
+        c = sqlite3.connect(uri, uri=True, timeout=2)
+        try:
+            table = c.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='acks'").fetchone()
+            if table:
+                for (key,) in c.execute("SELECT key FROM acks"):
+                    acks.add(key)
+        finally:
+            c.close()
     except Exception:
         pass
     return acks
