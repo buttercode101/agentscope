@@ -109,6 +109,7 @@ class GenerateTests(unittest.TestCase):
             self.assertIn("not configured", rendered)
             self.assertIn("UNKNOWN", rendered)
             self.assertNotIn("All clear", rendered)
+            self.assertNotIn('class="ackbtn"', rendered, "missing-source evidence must not be acknowledgeable")
 
     def test_empty_mcp_source_is_unknown(self):
         with tempfile.TemporaryDirectory() as td:
