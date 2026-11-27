@@ -166,6 +166,16 @@ The next expansion points are additive: more source adapters, richer cost/usage 
 
 ## Development and verification
 
+Check configured inputs before generating a dashboard. This is a read-only diagnostic: it never creates or modifies source databases.
+
+```bash
+python3 generate.py --check
+# use a custom source map
+python3 generate.py --config config.example.json --check
+```
+
+A missing configured source is reported as `ERROR` and returns exit code 1; optional sources that are not configured are labelled `NOT SET`. This prevents an incomplete local setup from being mistaken for a healthy supervision scan.
+
 ```bash
 python3 -m unittest -v test_generate.py
 python3 -m http.server 3000 --directory site
