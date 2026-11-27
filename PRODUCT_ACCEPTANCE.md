@@ -10,8 +10,8 @@ AgentScope is a local-first supervision CLI that reads configured agent sources 
 
 | Check | Result |
 |---|---|
-| Full Python test suite | 148 passed, 6 skipped |
-| Focused unittest suite (test_generate, test_habitat_bridge) | 29 passed |
+| Full Python test suite | 152 passed, 6 skipped |
+| Focused unittest suite (test_generate, test_habitat_bridge) | 31 passed |
 | Browser acceptance | 4 pages × 5 viewport widths; navigation, filters, acknowledgement, clipboard, keyboard and proof-bundle checks passed |
 | Live production browser | 3 routes × 8 viewport widths; all HTTP 200, no horizontal overflow, system dark palette changes |
 | Live demo workflow | 24-hour/7-day filters and event visibility verified |
@@ -25,6 +25,9 @@ The production commit was deployed to the agent-supervision Vercel project. Live
 
 - Disconnected core telemetry is now reported as **UNKNOWN**, not “All clear.”
 - Missing-source findings cannot be acknowledged away.
+- Missing job/execution/session sources show **UNKNOWN** in their KPIs and tables; connected but empty sources show real zero/no-run states.
+- Job JSON and execution database schemas are validated before being reported ready.
+- AgentScope reads monitored SQLite sources in read-only mode. A full dashboard build left the execution/lead database byte-for-byte unchanged, including when the legacy acknowledgement path pointed at that source.
 - The Habitat bridge displays stored claim verdicts as stored records; it does not independently re-verify them.
 - The published proof snapshots are unsigned. A matching digest proves bundle integrity, not publisher identity or external truth.
 - The tested Habitat run was explicitly seeded sample data. No real autonomous agent execution was represented as live evidence.
