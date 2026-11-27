@@ -580,7 +580,8 @@ def build(cfg, out_path):
                 + esc(m) + btn + '</div>')
     active_items = [x for x in anom if x[0] != "ok"]
     ok_items = [x for x in anom if x[0] == "ok"]
-    an_html = "".join(_anom_row(x, with_ack=True) for x in active_items)
+    source_keys = {item[2] for item in source_anom}
+    an_html = "".join(_anom_row(item, with_ack=item[2] not in source_keys) for item in active_items)
     if ok_items and not active_items:
         an_html = _anom_row(ok_items[0])
     if ackd:
