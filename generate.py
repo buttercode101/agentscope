@@ -307,8 +307,11 @@ def source_diagnostics(sources):
                             if not line.strip():
                                 continue
                             try:
-                                json.loads(line)
-                                valid += 1
+                                record = json.loads(line)
+                                if not isinstance(record, dict) or not (record.get("tool") or record.get("name")):
+                                    invalid += 1
+                                else:
+                                    valid += 1
                             except json.JSONDecodeError:
                                 invalid += 1
                     if valid == 0 and invalid == 0:
@@ -548,7 +551,9 @@ def mcp_tool_stats(jsonl_path):
                     continue
                 try:
                     rec = json.loads(line)
-                except Exception:
+                except (json.JSONDecodeError, TypeError):
+                    continue
+                if not isinstance(rec, dict):
                     continue
                 tool = rec.get("tool") or rec.get("name")
                 if not tool:
