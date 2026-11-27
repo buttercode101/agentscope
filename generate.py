@@ -192,6 +192,91 @@ def source_health(sources):
     return [(kind, message, ack_key(kind, message)) for kind, message in findings]
 
 
+
+def source_diagnostics(sources):
+    """Inspect configured inputs without mutating them; return safe, actionable status rows."""
+    checks = [
+        ("cron_jobs_glob", "Scheduled job definitions", "glob", True),
+        ("executions_db", "Execution history", "sqlite", True),
+        ("sessions_dir", "Agent sessions", "directory", True),
+        ("mcp_jsonl", "MCP tool activity", "jsonl", False),
+        ("leads_db", "Lead activity", "sqlite", False),
+        ("habitat_db", "Habitat evidence ledger", "sqlite", False),
+    ]
+    rows = []
+    for key, label, kind, required in checks:
+        raw = sources.get(key)
+        if not raw:
+            rows.append({"key": key, "label": label, "status": "not configured",
+                         "detail": "Optional source is not connected." if not required else "No source path is configured.",
+                         "required": required})
+            continue
+        path = os.path.expanduser(str(raw))
+        status, detail = "ready", "Source is available."
+        try:
+            if kind == "glob":
+                count = len(glob.glob(path))
+                if not count:
+                    status, detail = "missing", "No job-definition files match the configured pattern."
+                else:
+                    detail = f"{count} job-definition file(s) found."
+            elif kind == "directory":
+                if not os.path.isdir(path):
+                    status, detail = "missing", "Session directory does not exist."
+                else:
+                    count = sum(1 for _ in os.scandir(path))
+                    if not count:
+                        status, detail = "empty", "Session directory exists but contains no entries."
+                    else:
+                        detail = f"{count} session entr(y/ies) found."
+            elif kind == "sqlite":
+                if not os.path.isfile(path):
+                    status, detail = "missing", "Database file does not exist."
+                elif os.path.getsize(path) == 0:
+                    status, detail = "empty", "Database file is empty."
+                else:
+                    db_uri = "file:" + os.path.abspath(path).replace("?", "%3f") + "?mode=ro"
+                    connection = sqlite3.connect(db_uri, uri=True, timeout=2)
+                    try:
+                        check = connection.execute("PRAGMA quick_check").fetchone()
+                        tables = connection.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()
+                        if not check or check[0] != "ok":
+                            status, detail = "invalid", "SQLite integrity check did not pass."
+                        elif not tables or tables[0] == 0:
+                            status, detail = "empty", "Database is readable but contains no tables."
+                        else:
+                            detail = f"Database readable; {tables[0]} table(s) present."
+                    finally:
+                        connection.close()
+            elif kind == "jsonl":
+                if not os.path.isfile(path):
+                    status, detail = "missing", "MCP activity file does not exist."
+                elif os.path.getsize(path) == 0:
+                    status, detail = "empty", "MCP activity file is empty."
+                else:
+                    valid, invalid = 0, 0
+                    with open(path, "r", encoding="utf-8") as handle:
+                        for line_number, line in enumerate(handle):
+                            if line_number >= 1000:
+                                break
+                            if not line.strip():
+                                continue
+                            try:
+                                json.loads(line)
+                                valid += 1
+                            except json.JSONDecodeError:
+                                invalid += 1
+                    if valid == 0:
+                        status, detail = "invalid", "No valid JSON records found in the first 1,000 lines."
+                    elif invalid:
+                        status, detail = "degraded", f"{valid} valid and {invalid} invalid JSON record(s) in the inspected sample."
+                    else:
+                        detail = f"{valid} valid JSON record(s) inspected."
+        except (OSError, sqlite3.Error, UnicodeError) as exc:
+            status, detail = "unreadable", f"Could not inspect source ({type(exc).__name__})."
+        rows.append({"key": key, "label": label, "status": status, "detail": detail, "required": required})
+    return rows
+
 def load_cron_jobs(pattern):
     jobs = []
     for path in glob.glob(pattern):
@@ -759,7 +844,17 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="Scan-first agent supervision dashboard")
     ap.add_argument("--config", default=None, help="Path to config JSON")
     ap.add_argument("-o", "--output", default=None, help="Output HTML path")
+    ap.add_argument("--check", action="store_true", help="Inspect configured sources and exit without generating a dashboard")
     args = ap.parse_args()
     cfg = load_config(args.config)
+    if args.check:
+        rows = source_diagnostics(cfg["sources"])
+        print("AgentScope source diagnostics")
+        for row in rows:
+            marker = {"ready": "READY", "not configured": "NOT SET", "degraded": "WARN"}.get(row["status"], "ERROR")
+            print(f"  [{marker}] {row['label']}: {row['detail']}")
+        failed = any(row["status"] in ("missing", "empty", "invalid", "unreadable") for row in rows)
+        print("Result: " + ("ACTION REQUIRED" if failed else "CONFIGURED SOURCES CHECKED"))
+        raise SystemExit(1 if failed else 0)
     out = args.output or os.path.expanduser("~/agent-supervision/dashboard.html")
     build(cfg, out)
