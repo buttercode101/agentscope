@@ -10,9 +10,9 @@ AgentScope is a local-first supervision CLI that reads configured agent sources 
 
 | Check | Result |
 |---|---|
-| Full Python test suite | 152 passed, 6 skipped |
-| Focused unittest suite (test_generate, test_habitat_bridge) | 31 passed |
-| Browser acceptance | 4 pages × 5 viewport widths; navigation, filters, acknowledgement, clipboard, keyboard and proof-bundle checks passed |
+| Full Python test suite | 154 passed, 6 skipped |
+| Focused unittest suite (test_generate, test_habitat_bridge) | 32 passed |
+| Browser acceptance | 5 pages × 5 viewport widths; navigation, filters, acknowledgement, clipboard, keyboard and proof-bundle checks passed |
 | Live production browser | 3 routes × 8 viewport widths; all HTTP 200, no horizontal overflow, system dark palette changes |
 | Live demo workflow | 24-hour/7-day filters and event visibility verified |
 | Live proof explorer | 2 published historical bundles passed bundle digest, pinned manifest digest, ledger export and claim-consistency checks |
@@ -28,6 +28,8 @@ The production commit was deployed to the agent-supervision Vercel project. Live
 - Missing job/execution/session sources show **UNKNOWN** in their KPIs and tables; connected but empty sources show real zero/no-run states.
 - Job JSON and execution database schemas are validated before being reported ready.
 - AgentScope reads monitored SQLite sources in read-only mode. A full dashboard build left the execution/lead database byte-for-byte unchanged, including when the legacy acknowledgement path pointed at that source.
+- Empty-but-connected sources show a genuine zero/empty state; disconnected or invalid sources show UNKNOWN rather than zero counts. The unknown-state dashboard is included in the responsive browser fixture.
+- MCP JSONL record shapes are validated; malformed records are skipped safely and a mixed file is reported as degraded.
 - The Habitat bridge displays stored claim verdicts as stored records; it does not independently re-verify them.
 - The published proof snapshots are unsigned. A matching digest proves bundle integrity, not publisher identity or external truth.
 - The tested Habitat run was explicitly seeded sample data. No real autonomous agent execution was represented as live evidence.
