@@ -223,11 +223,39 @@ def source_diagnostics(sources):
         status, detail = "ready", "Source is available."
         try:
             if kind == "glob":
-                count = len(glob.glob(path))
-                if not count:
+                matched = glob.glob(path)
+                if not matched:
                     status, detail = "missing", "No job-definition files match the configured pattern."
                 else:
-                    detail = f"{count} job-definition file(s) found."
+                    valid_files, invalid_files, job_count = 0, 0, 0
+                    for filename in matched:
+                        try:
+                            with open(filename, "r", encoding="utf-8") as handle:
+                                data = json.load(handle)
+                            if isinstance(data, list):
+                                items = data
+                            elif isinstance(data, dict):
+                                items = data.get("jobs", list(data.values()))
+                            else:
+                                invalid_files += 1
+                                continue
+                            if not isinstance(items, list):
+                                invalid_files += 1
+                                continue
+                            invalid_items = sum(1 for item in items if not isinstance(item, dict))
+                            if invalid_items:
+                                invalid_files += 1
+                            else:
+                                valid_files += 1
+                            job_count += sum(1 for item in items if isinstance(item, dict))
+                        except (OSError, json.JSONDecodeError, UnicodeError):
+                            invalid_files += 1
+                    if valid_files == 0:
+                        status, detail = "invalid", "No valid job-definition JSON files could be read."
+                    elif invalid_files:
+                        status, detail = "degraded", f"{valid_files} valid and {invalid_files} invalid job-definition file(s); {job_count} parsed job(s)."
+                    else:
+                        detail = f"{valid_files} valid job-definition file(s); {job_count} job(s) parsed."
             elif kind == "directory":
                 if not os.path.isdir(path):
                     status, detail = "missing", "Session directory does not exist."
@@ -247,13 +275,22 @@ def source_diagnostics(sources):
                     connection = sqlite3.connect(db_uri, uri=True, timeout=2)
                     try:
                         check = connection.execute("PRAGMA quick_check").fetchone()
-                        tables = connection.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()
+                        tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
                         if not check or check[0] != "ok":
                             status, detail = "invalid", "SQLite integrity check did not pass."
-                        elif not tables or tables[0] == 0:
+                        elif not tables:
                             status, detail = "empty", "Database is readable but contains no tables."
+                        elif key == "executions_db" and "executions" not in tables:
+                            status, detail = "invalid", "Database does not contain the required executions table."
+                        elif key == "executions_db":
+                            columns = {row[1] for row in connection.execute("PRAGMA table_info(executions)")}
+                            missing = {"job_id", "status", "started_at"} - columns
+                            if missing:
+                                status, detail = "invalid", "Executions table is missing required columns: " + ", ".join(sorted(missing)) + "."
+                            else:
+                                detail = f"Execution history readable; {len(columns)} column(s) present."
                         else:
-                            detail = f"Database readable; {tables[0]} table(s) present."
+                            detail = f"Database readable; {len(tables)} table(s) present."
                     finally:
                         connection.close()
             elif kind == "jsonl":
