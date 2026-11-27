@@ -16,7 +16,7 @@ class SourceDiagnosticsTests(unittest.TestCase):
             (root / "jobs.json").write_text(json.dumps({"jobs": []}), encoding="utf-8")
             db = root / "executions.db"
             with sqlite3.connect(db) as connection:
-                connection.execute("CREATE TABLE executions (id TEXT)")
+                connection.execute("CREATE TABLE executions (job_id TEXT, status TEXT, started_at TEXT, finished_at TEXT, error TEXT)")
             sessions = root / "sessions"
             sessions.mkdir()
             (sessions / "session.json").write_text("{}", encoding="utf-8")
@@ -51,6 +51,27 @@ class SourceDiagnosticsTests(unittest.TestCase):
             })
             self.assertEqual([row["status"] for row in rows[:3]], ["missing", "missing", "missing"])
             self.assertTrue(all(row["detail"] for row in rows))
+
+    def test_execution_database_without_required_schema_is_invalid(self):
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "executions.db"
+            with sqlite3.connect(db) as connection:
+                connection.execute("CREATE TABLE unrelated (id TEXT)")
+            rows = generate.source_diagnostics({"executions_db": str(db)})
+            row = next(item for item in rows if item["key"] == "executions_db")
+            self.assertEqual(row["status"], "invalid")
+            self.assertIn("executions table", row["detail"])
+            findings = generate.source_health({"executions_db": str(db)})
+            self.assertTrue(any("run health is UNKNOWN" in item[1] for item in findings))
+
+    def test_malformed_job_json_is_not_reported_ready(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "jobs.json"
+            path.write_text("{broken", encoding="utf-8")
+            rows = generate.source_diagnostics({"cron_jobs_glob": str(path)})
+            row = next(item for item in rows if item["key"] == "cron_jobs_glob")
+            self.assertEqual(row["status"], "invalid")
+            self.assertIn("valid job-definition JSON", row["detail"])
 
     def test_empty_and_invalid_mcp_jsonl_are_not_reported_ready(self):
         with tempfile.TemporaryDirectory() as td:
