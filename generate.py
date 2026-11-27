@@ -266,7 +266,9 @@ def source_diagnostics(sources):
                                 valid += 1
                             except json.JSONDecodeError:
                                 invalid += 1
-                    if valid == 0:
+                    if valid == 0 and invalid == 0:
+                        status, detail = "empty", "MCP activity file contains no non-empty records."
+                    elif valid == 0:
                         status, detail = "invalid", "No valid JSON records found in the first 1,000 lines."
                     elif invalid:
                         status, detail = "degraded", f"{valid} valid and {invalid} invalid JSON record(s) in the inspected sample."
