@@ -167,15 +167,21 @@ def load_config(path):
 def source_health(sources):
     """Return explicit source-health anomalies so missing telemetry never looks healthy."""
     findings = []
-    jobs_glob = sources.get("cron_jobs_glob")
-    if jobs_glob and not glob.glob(jobs_glob):
-        findings.append(("warn", "Job-definition source unavailable — scheduled-job state is UNKNOWN."))
-    exec_db = sources.get("executions_db")
-    if exec_db and not os.path.isfile(exec_db):
-        findings.append(("warn", "Execution-history source unavailable — run health is UNKNOWN."))
-    sessions = sources.get("sessions_dir")
-    if sessions and not os.path.isdir(sessions):
-        findings.append(("warn", "Session source unavailable — session activity is UNKNOWN."))
+    core_sources = [
+        ("cron_jobs_glob", "Job-definition source", "scheduled-job state"),
+        ("executions_db", "Execution-history source", "run health"),
+        ("sessions_dir", "Session source", "session activity"),
+    ]
+    for key, label, state in core_sources:
+        raw = sources.get(key)
+        if not raw:
+            findings.append(("warn", f"{label} not configured — {state} is UNKNOWN."))
+        elif key == "cron_jobs_glob" and not glob.glob(raw):
+            findings.append(("warn", "Job-definition source unavailable — scheduled-job state is UNKNOWN."))
+        elif key == "executions_db" and not os.path.isfile(raw):
+            findings.append(("warn", "Execution-history source unavailable — run health is UNKNOWN."))
+        elif key == "sessions_dir" and not os.path.isdir(raw):
+            findings.append(("warn", "Session source unavailable — session activity is UNKNOWN."))
     mcp = sources.get("mcp_jsonl")
     if mcp and not os.path.isfile(mcp):
         findings.append(("warn", "MCP activity source unavailable — tool-call health is UNKNOWN."))
