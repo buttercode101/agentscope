@@ -179,6 +179,13 @@ class GenerateTests(unittest.TestCase):
             self.assertEqual(tables, {"executions", "leads"})
             self.assertIn('1<span class="vsub">/1</span>', rendered)
 
+    def test_mcp_stats_skip_non_object_records_and_keep_valid_events(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "tools.jsonl"
+            path.write_text('[]\\n{"tool":"search","ok":true}\\n{"tool":"search","ok":false}\\n', encoding="utf-8")
+            rows = generate.mcp_tool_stats(str(path))
+            self.assertEqual(rows, [{"tool": "search", "total": 2, "rate": 50}])
+
     def test_empty_mcp_source_is_unknown(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "mcp.jsonl"
